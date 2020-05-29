@@ -1,0 +1,20 @@
+<use   name="DataFormats/HepMCCandidate"/>
+<use   name="DataFormats/Math"/>
+<use   name="DataFormats/PatCandidates"/>
+<use   name="DataFormats/ParticleFlowCandidate"/>
+<use   name="DataFormats/TauReco"/>
+<use   name="DQMServices/Core"/>
+<use   name="FWCore/Framework"/>
+<use   name="FWCore/ParameterSet"/>
+<use   name="FWCore/Utilities"/>
+<use   name="FWCore/ServiceRegistry"/>
+<use   name="HLTTrigger/TallinnHLTPFTauAnalyzer"/>
+<use   name="PhysicsTools/JetMCUtils"/>
+<use   name="RecoTauTag/RecoTau"/>
+<use   name="SimDataFormats/PileupSummaryInfo"/>
+<use   name="root"/>
+<!--Flags CXXFLAGS="-ggdb3 -Og" /-->
+<export>
+  <lib   name="1"/>
+</export>
+
