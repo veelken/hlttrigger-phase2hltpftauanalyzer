@@ -57,12 +57,11 @@ for algorithm in [ "hps", "shrinking-cone" ]:
   else:
     raise ValueError("Invalid parameter algorithm = '%s' !!" % algorithm)
 
-  ##for srcVertices in [ "offlinePrimaryVertices", "hltPixelVertices" ]:
-  for srcVertices in [ "offlinePrimaryVertices" ]:
+  for srcVertices in [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]:
     suffix = None
     if srcVertices == "offlinePrimaryVertices":
       suffix = "WithOfflineVertices"
-    elif srcVertices == "hltPixelVertices":
+    elif srcVertices == "hltPhase2PixelVertices":
       suffix = "WithOnlineVertices"
     else:
       raise ValueError("Invalid parameter srcVertices = '%s' !!" % srcVertices)
