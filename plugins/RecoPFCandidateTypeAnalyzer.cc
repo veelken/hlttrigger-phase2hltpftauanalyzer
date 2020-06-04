@@ -52,12 +52,12 @@ RecoPFCandidateTypeAnalyzer::~RecoPFCandidateTypeAnalyzer()
 
 void RecoPFCandidateTypeAnalyzer::beginJob()
 {
-  if ( !edm::Service<DQMStore>().isAvailable() ) {
+  if ( !edm::Service<dqm::legacy::DQMStore>().isAvailable() ) {
     throw cms::Exception("RecoPFCandidateTypeAnalyzer") 
       << " Failed to access dqmStore --> histograms will NEITHER be booked NOR filled !!\n";
   }
 
-  DQMStore& dqmStore = (*edm::Service<DQMStore>());
+  DQMStore& dqmStore = (*edm::Service<dqm::legacy::DQMStore>());
 
   dqmStore.setCurrentFolder(dqmDirectory_);
 

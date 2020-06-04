@@ -169,12 +169,12 @@ void DQMSimpleFileSaver::endJob()
   }
 
 //--- check that DQMStore service is available
-  if ( !edm::Service<DQMStore>().isAvailable() ) {
+  if ( !edm::Service<dqm::legacy::DQMStore>().isAvailable() ) {
     edm::LogError ("endJob") << " Failed to access dqmStore --> histograms will NOT be saved !!";
     return;
   }  
 
-  DQMStore& dqmStore = (*edm::Service<DQMStore>());
+  DQMStore& dqmStore = (*edm::Service<dqm::legacy::DQMStore>());
 
 //--- in case output commands have been specified in configuration file,
 //    recursively browser through DQM directory structure

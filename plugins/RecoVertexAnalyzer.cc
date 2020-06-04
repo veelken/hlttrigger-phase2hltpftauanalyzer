@@ -32,12 +32,12 @@ RecoVertexAnalyzer::~RecoVertexAnalyzer()
 
 void RecoVertexAnalyzer::beginJob()
 {
-  if ( !edm::Service<DQMStore>().isAvailable() ) {
+  if ( !edm::Service<dqm::legacy::DQMStore>().isAvailable() ) {
     throw cms::Exception("JetToTauFakeRateAnalyzer") 
       << " Failed to access dqmStore --> histograms will NEITHER be booked NOR filled !!\n";
   }
 
-  DQMStore& dqmStore = (*edm::Service<DQMStore>());
+  DQMStore& dqmStore = (*edm::Service<dqm::legacy::DQMStore>());
   dqmStore.setCurrentFolder(Form("%s/%s", dqmDirectory_.data(), "hltVertex"));
   hltVertexPlots_ = new vertexPlotEntryType();
   hltVertexPlots_->bookHistograms(dqmStore); 

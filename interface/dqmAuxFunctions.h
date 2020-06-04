@@ -4,7 +4,7 @@
 #include "DQMServices/Core/interface/DQMStore.h"
 #include "DQMServices/Core/interface/MonitorElement.h"
 
-using namespace dqm::implementation;
+using namespace dqm::legacy;
 
 #include <TPRegexp.h>
 #include <TAxis.h>

@@ -29,12 +29,12 @@ RecoPFTauAnalyzerBackground::~RecoPFTauAnalyzerBackground()
 
 void RecoPFTauAnalyzerBackground::beginJob()
 {
-  if ( !edm::Service<DQMStore>().isAvailable() ) {
+  if ( !edm::Service<dqm::legacy::DQMStore>().isAvailable() ) {
     throw cms::Exception("RecoPFTauAnalyzerBackground") 
       << " Failed to access dqmStore --> histograms will NEITHER be booked NOR filled !!\n";
   }
 
-  DQMStore& dqmStore = (*edm::Service<DQMStore>());
+  DQMStore& dqmStore = (*edm::Service<dqm::legacy::DQMStore>());
   dqmStore.setCurrentFolder(dqmDirectory_.data());
 
   ratePlots_.push_back(new ratePlotEntryType(-1.,  1.4,   0.40, -1., 0.4)); // vLoose

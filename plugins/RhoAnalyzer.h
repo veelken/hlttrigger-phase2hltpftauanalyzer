@@ -15,7 +15,7 @@
 #include <vector>    // std::vector
 #include <string>    // std::string
 
-using namespace dqm::implementation;
+using namespace dqm::legacy;
 
 class RhoAnalyzer : public edm::EDAnalyzer 
 {

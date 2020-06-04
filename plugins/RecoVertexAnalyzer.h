@@ -15,13 +15,13 @@
 #include <TH1.h>
 #include <TH2.h>
 #include <TString.h> // TString, Form()
-#include <TMath.h> // TMath::Abs(), TMath::Nint()
+#include <TMath.h>   // TMath::Abs(), TMath::Nint()
 
 #include <vector>
 #include <string>
 #include <algorithm> // std::sort
 
-using namespace dqm::implementation;
+using namespace dqm::legacy;
 
 class RecoVertexAnalyzer : public edm::EDAnalyzer 
 {

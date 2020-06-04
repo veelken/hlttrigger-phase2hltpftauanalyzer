@@ -25,7 +25,7 @@
 #include <string>    // std::string
 #include <algorithm> // std::sort
 
-using namespace dqm::implementation;
+using namespace dqm::legacy;
 
 namespace reco
 {

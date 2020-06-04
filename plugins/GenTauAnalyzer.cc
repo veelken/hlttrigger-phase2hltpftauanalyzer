@@ -34,12 +34,12 @@ GenTauAnalyzer::~GenTauAnalyzer()
 
 void GenTauAnalyzer::beginJob()
 {
-  if ( !edm::Service<DQMStore>().isAvailable() ) {
+  if ( !edm::Service<dqm::legacy::DQMStore>().isAvailable() ) {
     throw cms::Exception("GenTauAnalyzer") 
       << " Failed to access dqmStore --> histograms will NEITHER be booked NOR filled !!\n";
   }
 
-  DQMStore& dqmStore = (*edm::Service<DQMStore>());
+  DQMStore& dqmStore = (*edm::Service<dqm::legacy::DQMStore>());
   dqmStore.setCurrentFolder(dqmDirectory_.data());
 
   plots_.push_back(new plotEntryType(min_pt_, max_pt_, min_absEta_, max_absEta_, 0)); // leadingTau

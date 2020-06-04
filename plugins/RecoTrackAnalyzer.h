@@ -30,7 +30,7 @@
 #include <vector>
 #include <string>
 
-using namespace dqm::implementation;
+using namespace dqm::legacy;
 
 namespace 
 {
