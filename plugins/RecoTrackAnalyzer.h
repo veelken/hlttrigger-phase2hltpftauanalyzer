@@ -16,6 +16,7 @@
 #include "DataFormats/TrackReco/interface/TrackBase.h"                               // reco::TrackBase::Point
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"                 // reco::PFCandidate
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidateFwd.h"              // reco::PFCandidateCollection  
+#include "DataFormats/PatCandidates/interface/PackedCandidate.h"                     // pat::PackedCandidate, pat::PackedCandidateCollection  
 #include "DataFormats/JetReco/interface/GenJet.h"                                    // reco::GenJet
 #include "DataFormats/JetReco/interface/GenJetCollection.h"                          // reco::GenJetCollection
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"                        // reco::GenParticle
@@ -165,7 +166,8 @@ class RecoTrackAnalyzer : public edm::EDAnalyzer
   edm::EDGetTokenT<reco::TrackCollection> token_offlineTracks_;
 
   edm::InputTag src_offlinePFCands_;
-  edm::EDGetTokenT<reco::PFCandidateCollection> token_offlinePFCands_;
+  //edm::EDGetTokenT<reco::PFCandidateCollection> token_offlinePFCands_;
+  edm::EDGetTokenT<pat::PackedCandidateCollection> token_offlinePFCands_;
 
   edm::InputTag src_hltVertices_;
   edm::EDGetTokenT<reco::VertexCollection> token_hltVertices_;

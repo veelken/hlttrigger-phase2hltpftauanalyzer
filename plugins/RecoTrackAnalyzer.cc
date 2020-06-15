@@ -4,6 +4,7 @@
 #include "DataFormats/Common/interface/Handle.h"
 
 #include "PhysicsTools/JetMCUtils/interface/JetMCTag.h"                                // JetMCTagUtils::genTauDecayMode()
+#include "DataFormats/Math/interface/deltaR.h"                                         // deltaR
 
 #include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/GenChargedHadronToTrackMatch.h" // GenChargedHadronToRecoTrackMatch
 
@@ -46,7 +47,8 @@ RecoTrackAnalyzer::RecoTrackAnalyzer(const edm::ParameterSet& cfg)
   token_offlineTracks_ = consumes<reco::TrackCollection>(src_offlineTracks_);
 
   src_offlinePFCands_ = cfg.getParameter<edm::InputTag>("srcOfflinePFCands");
-  token_offlinePFCands_ = consumes<reco::PFCandidateCollection>(src_offlinePFCands_);
+  //token_offlinePFCands_ = consumes<reco::PFCandidateCollection>(src_offlinePFCands_);
+  token_offlinePFCands_ = consumes<pat::PackedCandidateCollection>(src_offlinePFCands_);
 
   src_hltTracks_ = cfg.getParameter<edm::InputTag>("srcHLTTracks");
   token_hltTracks_ = consumes<reco::TrackCollection>(src_hltTracks_);
@@ -220,7 +222,7 @@ namespace
       size_t idxRecTrack = 0;
       for ( auto recTrack : recTracks )
       {
-	double dR = deltaR(genTauChargedHadron.genChargedHadron_eta(), genTauChargedHadron.genChargedHadron_phi(), recTrack->eta(), recTrack->phi());
+	double dR = reco::deltaR(genTauChargedHadron.genChargedHadron_eta(), genTauChargedHadron.genChargedHadron_phi(), recTrack->eta(), recTrack->phi());
 	if ( dR < dRmatch ) 
         {
 	  if ( debug ) 
@@ -404,28 +406,45 @@ void RecoTrackAnalyzer::analyze(const edm::Event& evt, const edm::EventSetup& es
 
   //-----------------------------------------------------------------------------
   // process tracks associated to offline reconstructed PF candidates
-  if ( src_offlinePFCands_.label() != "" )
+  if ( src_offlinePFCands_.label() != "" && src_offlineTracks_.label() != "" )
   {
-    edm::Handle<reco::PFCandidateCollection> offlinePFCands;
+    //edm::Handle<reco::PFCandidateCollection> offlinePFCands;
+    edm::Handle<pat::PackedCandidateCollection> offlinePFCands;
     evt.getByToken(token_offlinePFCands_, offlinePFCands);
   
+    edm::Handle<reco::TrackCollection> offlineTracks;
+    evt.getByToken(token_offlineTracks_, offlineTracks);
+
     for ( int idxQualityCuts = kQualityCuts_disabled; idxQualityCuts <= kQualityCuts_enabled; ++idxQualityCuts )
     {
       std::vector<const reco::Track*> selectedOfflineTracks;
-      for ( reco::PFCandidateCollection::const_iterator recPFCand = offlinePFCands->begin(); recPFCand != offlinePFCands->end(); ++recPFCand )
+      //for ( reco::PFCandidateCollection::const_iterator recPFCand = offlinePFCands->begin(); recPFCand != offlinePFCands->end(); ++recPFCand )
+      for ( pat::PackedCandidateCollection::const_iterator recPFCand = offlinePFCands->begin(); recPFCand != offlinePFCands->end(); ++recPFCand )
       {
 	if ( recPFCand->charge() != 0 )
 	{
-	  const reco::Track* recTrack = nullptr;
-	  if      ( recPFCand->trackRef().isNonnull()    ) recTrack = recPFCand->trackRef().get();
-	  else if ( recPFCand->gsfTrackRef().isNonnull() ) recTrack = recPFCand->gsfTrackRef().get();
-	  if ( !recTrack ) continue;
+	  //const reco::Track* recTrack = nullptr;
+	  //if      ( recPFCand->trackRef().isNonnull()    ) recTrack = recPFCand->trackRef().get();
+	  //else if ( recPFCand->gsfTrackRef().isNonnull() ) recTrack = recPFCand->gsfTrackRef().get();
+	  //if ( !recTrack ) continue;
+          const reco::Track* recTrack_matched = nullptr;
+          double dRmin = 1.e+3;
+          for ( reco::TrackCollection::const_iterator recTrack = offlineTracks->begin(); recTrack != offlineTracks->end(); ++recTrack )
+          {
+            double dR = reco::deltaR(recPFCand->eta(), recPFCand->phi(), recTrack->eta(), recTrack->phi());
+            if ( dR < 1.e-2 && dR < dRmin ) 
+            {
+              recTrack_matched = &(*recTrack);
+              dRmin = dR;
+            }
+          }
+          if ( !recTrack_matched ) continue;
 
-          if (  idxQualityCuts == kQualityCuts_disabled                                                   ||
-	       (vtxMode_ == kGenVtx && passesRecoTrackQualityCuts(*recTrack, *genPrimaryVertex_position)) ||
-	       (vtxMode_ == kRecVtx && passesRecoTrackQualityCuts(*recTrack, offlinePrimaryVertex))       )
+          if (  idxQualityCuts == kQualityCuts_disabled                                                           ||
+	       (vtxMode_ == kGenVtx && passesRecoTrackQualityCuts(*recTrack_matched, *genPrimaryVertex_position)) ||
+	       (vtxMode_ == kRecVtx && passesRecoTrackQualityCuts(*recTrack_matched, offlinePrimaryVertex))       )
   	  {
-	    selectedOfflineTracks.push_back(&(*recTrack));
+	    selectedOfflineTracks.push_back(&(*recTrack_matched));
 	  }
 	}
       }
