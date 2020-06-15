@@ -11,7 +11,7 @@ process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(50000)
 )
 
 process.source = cms.Source("PoolSource",
@@ -22,24 +22,27 @@ process.source = cms.Source("PoolSource",
 
 #--------------------------------------------------------------------------------
 # set input files
-##
-##import os
-##import re
-##
-##inputFilePath = ''
-##
-##inputFile_regex = r"[a-zA-Z0-9_/:.-]*NTuple_TallinnL1PFTauProducer_[a-zA-Z0-9-_]+.root"
-##
+
+import os
+import re
+
+inputFilePaths = [
+    '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_Christian_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre6_numCores8_maxMem16kMB_T2_EE_Estonia_blacklist/200612_212847/0000/'
+]
+
+inputFile_regex = r"[a-zA-Z0-9_/:.-]*step3_RAW2DIGI_RECO_[a-zA-Z0-9-_]+.root"
+
 # check if name of inputFile matches regular expression
-##inputFileNames = []
-##files = [ "".join([ "file:", inputFilePath, file ]) for file in os.listdir(inputFilePath) ]
-##for file in files:
-##    inputFile_matcher = re.compile(inputFile_regex)
-##    if inputFile_matcher.match(file):
-##        inputFileNames.append(file)
-##print "inputFileNames = %s" % inputFileNames 
-##
-##process.source.fileNames = cms.untracked.vstring(inputFileNames)
+inputFileNames = []
+for inputFilePath in inputFilePaths:
+    files = [ "".join([ "file:", inputFilePath, file ]) for file in os.listdir(inputFilePath) ]
+    for file in files:
+        inputFile_matcher = re.compile(inputFile_regex)
+        if inputFile_matcher.match(file):
+            inputFileNames.append(file)
+print "inputFileNames = %s" % inputFileNames 
+
+process.source.fileNames = cms.untracked.vstring(inputFileNames)
 #--------------------------------------------------------------------------------
 
 from Configuration.AlCa.GlobalTag import GlobalTag
@@ -115,7 +118,7 @@ process.analyzeTracksWrtRecVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
   vtxMode = cms.string("recVtx"),
   srcOfflineVertices = cms.InputTag('offlineSlimmedPrimaryVertices'),                                       
   srcOfflineTracks = cms.InputTag('generalTracks'),                                                     
-  srcOfflinePFCands = cms.InputTag('particleFlowTmp'),
+  srcOfflinePFCands = cms.InputTag('packedPFCandidates'),
   #srcHLTVertices = cms.InputTag('hltPixelVertices'),
   srcHLTVertices = cms.InputTag('offlinePrimaryVertices'),                                                  
   srcHLTTracks = cms.InputTag('generalTracks'),
@@ -123,7 +126,7 @@ process.analyzeTracksWrtRecVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
   dqmDirectory = cms.string("recoTrackAnalyzerWrtRecVertex"),
   debug = cms.bool(False)                                     
 )
-process.analysisSequence += process.analyzeTracksWrtRecVertex
+##process.analysisSequence += process.analyzeTracksWrtRecVertex
 
 process.genVertex = cms.EDProducer("GenVertexProducer",
   src = cms.InputTag('prunedGenParticles'),
@@ -136,13 +139,13 @@ process.analyzeTracksWrtGenVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
   vtxMode = cms.string("genVtx"),
   srcGenVertex_position = cms.InputTag('genVertex:position'),                                                   
   srcOfflineTracks = cms.InputTag('generalTracks'),
-  srcOfflinePFCands = cms.InputTag('particleFlow'),
+  srcOfflinePFCands = cms.InputTag('packedPFCandidates'),
   srcHLTTracks = cms.InputTag('generalTracks'),
   srcHLTPFCands = cms.InputTag('particleFlowTmp'),
   dqmDirectory = cms.string("recoTrackAnalyzerWrtGenVertex"),
   debug = cms.bool(False)                                     
 )
-process.analysisSequence += process.analyzeTracksWrtGenVertex
+##process.analysisSequence += process.analyzeTracksWrtGenVertex
 
 for algorithm in [ "hps", "shrinking-cone" ]:
   pfTauLabel = None
