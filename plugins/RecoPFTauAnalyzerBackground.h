@@ -96,7 +96,7 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
 
       TString histogramName_numPFTaus_vs_ptThreshold = Form("numPFTaus_vs_ptThreshold%s", histogramName_suffix.Data());
-      me_numPFTaus_vs_ptThreshold_ = dqmStore.book2D(histogramName_numPFTaus_vs_ptThreshold.Data(), histogramName_numPFTaus_vs_ptThreshold.Data(), 101, -0.5, 100.5, 11, -0.5, +10.5);
+      me_numPFTaus_vs_ptThreshold_ = dqmStore.book2D(histogramName_numPFTaus_vs_ptThreshold.Data(), histogramName_numPFTaus_vs_ptThreshold.Data(), 251, -0.5, 250.5, 11, -0.5, +10.5);
       histogram_numPFTaus_vs_ptThreshold_ = dynamic_cast<TH2*>(me_numPFTaus_vs_ptThreshold_->getTH1());
       assert(histogram_numPFTaus_vs_ptThreshold_);
 
@@ -201,7 +201,8 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
                 if ( (*pfTau_zVtxRef)->leadPFChargedHadrCand().isNonnull() && (*pfTau_zVtxRef)->leadPFChargedHadrCand()->bestTrack() &&
                      (*pfTau_toMatch)->leadPFChargedHadrCand().isNonnull() && (*pfTau_toMatch)->leadPFChargedHadrCand()->bestTrack() )
 	        {  
-                  double dz = TMath::Abs((*pfTau_zVtxRef)->leadPFChargedHadrCand()->vertex().z() - (*pfTau_toMatch)->leadPFChargedHadrCand()->vertex().z());
+                  //double dz = TMath::Abs((*pfTau_zVtxRef)->leadPFChargedHadrCand()->vertex().z() - (*pfTau_toMatch)->leadPFChargedHadrCand()->vertex().z());
+                  double dz = TMath::Abs((*pfTau_zVtxRef)->leadPFChargedHadrCand()->bestTrack()->vertex().z() - (*pfTau_toMatch)->leadPFChargedHadrCand()->bestTrack()->vertex().z());
 		  if ( dz < max_dz_ ) 
 	          {
 		    ++numPFTaus_passingPt;

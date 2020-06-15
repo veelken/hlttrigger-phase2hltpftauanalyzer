@@ -143,16 +143,16 @@ class RecoPFTauPairAnalyzer : public edm::EDAnalyzer
 	      (leadPFTau_sumChargedIso         <=  max_absChargedIso_                     &&
 	       subleadPFTau_sumChargedIso      <=  max_absChargedIso_                    )) )
 	{
-	  double dz = 1.e+3;
 	  if ( leadPFTau->leadPFChargedHadrCand().isNonnull()    && leadPFTau->leadPFChargedHadrCand()->bestTrack()    &&
                subleadPFTau->leadPFChargedHadrCand().isNonnull() && subleadPFTau->leadPFChargedHadrCand()->bestTrack() )
 	  {
-	    dz = TMath::Abs(leadPFTau->leadPFChargedHadrCand()->vertex().z() - subleadPFTau->leadPFChargedHadrCand()->vertex().z());	    
-	  }
-	  if ( max_dz_ < 0. || dz < max_dz_ ) 
-	  {
-	    pfTauPairs_passingAbsEta.push_back(&(*pfTauPair));
-	  }
+	    //dz = TMath::Abs(leadPFTau->leadPFChargedHadrCand()->vertex().z() - subleadPFTau->leadPFChargedHadrCand()->vertex().z());	    
+            double dz = TMath::Abs(leadPFTau->leadPFChargedHadrCand()->bestTrack()->vertex().z() - subleadPFTau->leadPFChargedHadrCand()->bestTrack()->vertex().z());
+            if ( max_dz_ < 0. || dz < max_dz_ ) 
+	    {
+	      pfTauPairs_passingAbsEta.push_back(&(*pfTauPair));
+	    }
+          }
 	}
       }
 
