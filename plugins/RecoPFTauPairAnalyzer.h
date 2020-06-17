@@ -9,11 +9,10 @@
 #include "DQMServices/Core/interface/DQMStore.h" 
 #include "DQMServices/Core/interface/MonitorElement.h"
 
-#include "DataFormats/TauReco/interface/PFTau.h"                                // reco::PFTau
-#include "DataFormats/TauReco/interface/PFTauFwd.h"                             // reco::PFTauCollection
-#include "DataFormats/TauReco/interface/PFTauDiscriminator.h"                   // reco::PFTauDiscriminator
 #include "DataFormats/Candidate/interface/CandidateFwd.h"                       // reco::CandidateView
 #include "DataFormats/Candidate/interface/Candidate.h"                          // reco::Candidate
+#include "DataFormats/Phase2HLTPFTaus/interface/PFTauPair.h"                    // reco::PFTauPair
+#include "DataFormats/Phase2HLTPFTaus/interface/PFTauPairFwd.h"                 // reco::PFTauPairCollection
 #include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow()
 
 #include <TH1.h>     // TH1
@@ -26,33 +25,6 @@
 #include <algorithm> // std::sort
 
 using namespace dqm::legacy;
-
-namespace reco
-{
-  class PFTauPair
-  {
-   public:
-    PFTauPair(const reco::PFTau* leadPFTau, double leadPFTau_sumChargedIso, const reco::PFTau* subleadPFTau, double subleadPFTau_sumChargedIso)
-      : leadPFTau_(leadPFTau)
-      , leadPFTau_sumChargedIso_(leadPFTau_sumChargedIso)
-      , subleadPFTau_(subleadPFTau)
-      , subleadPFTau_sumChargedIso_(subleadPFTau_sumChargedIso)
-    {}
-    ~PFTauPair() 
-    {}
-    const reco::PFTau* leadPFTau() const { return leadPFTau_; }
-    double leadPFTau_sumChargedIso() const { return leadPFTau_sumChargedIso_; }
-    const reco::PFTau* subleadPFTau() const { return subleadPFTau_; }
-    double subleadPFTau_sumChargedIso() const { return subleadPFTau_sumChargedIso_; }
-   private:
-    const reco::PFTau* leadPFTau_;
-    double leadPFTau_sumChargedIso_;
-    const reco::PFTau* subleadPFTau_;
-    double subleadPFTau_sumChargedIso_;
-  };
-
-  typedef std::vector<PFTauPair> PFTauPairCollection;
-}
 
 class RecoPFTauPairAnalyzer : public edm::EDAnalyzer 
 {
@@ -70,10 +42,8 @@ class RecoPFTauPairAnalyzer : public edm::EDAnalyzer
 
   std::string moduleLabel_;
 
-  edm::InputTag srcPFTaus_;
-  edm::EDGetTokenT<reco::PFTauCollection> tokenPFTaus_;
-  edm::InputTag srcPFTauSumChargedIso_;
-  edm::EDGetTokenT<reco::PFTauDiscriminator> tokenPFTauSumChargedIso_;
+  edm::InputTag srcPFTauPairs_;
+  edm::EDGetTokenT<reco::PFTauPairCollection> tokenPFTauPairs_;
   edm::InputTag srcRefTaus_;
   edm::EDGetTokenT<reco::CandidateView> tokenRefTaus_;
 
@@ -120,16 +90,16 @@ class RecoPFTauPairAnalyzer : public edm::EDAnalyzer
       histogram_denominator_ = me_denominator_->getTH1();
       assert(histogram_denominator_);
     }
-    void fillHistograms(const reco::PFTauPairCollection& pfTauPairs, double evtWeight)
+    void fillHistograms(const std::vector<const reco::PFTauPair*>& pfTauPairs, double evtWeight)
     {
       std::vector<const reco::PFTauPair*> pfTauPairs_passingAbsEta;
-      for ( reco::PFTauPairCollection::const_iterator pfTauPair = pfTauPairs.begin(); 
+      for ( std::vector<const reco::PFTauPair*>::const_iterator pfTauPair = pfTauPairs.begin(); 
 	    pfTauPair != pfTauPairs.end(); ++pfTauPair ) 
       {
-	const reco::PFTau* leadPFTau = pfTauPair->leadPFTau();
-        double leadPFTau_sumChargedIso = pfTauPair->leadPFTau_sumChargedIso();
-	const reco::PFTau* subleadPFTau = pfTauPair->subleadPFTau();
-        double subleadPFTau_sumChargedIso = pfTauPair->subleadPFTau_sumChargedIso();
+	const reco::PFTauRef& leadPFTau = (*pfTauPair)->leadPFTau();
+        double leadPFTau_sumChargedIso = (*pfTauPair)->leadPFTau_sumChargedIso();
+	const reco::PFTauRef& subleadPFTau = (*pfTauPair)->subleadPFTau();
+        double subleadPFTau_sumChargedIso = (*pfTauPair)->subleadPFTau_sumChargedIso();
 	if ( ( min_absEta_ < 0.                                                         || 
 	      (TMath::Abs(leadPFTau->eta())    >=  min_absEta_                            && 
 	       TMath::Abs(subleadPFTau->eta()) >=  min_absEta_                          ) ) &&
@@ -146,11 +116,10 @@ class RecoPFTauPairAnalyzer : public edm::EDAnalyzer
 	  if ( leadPFTau->leadPFChargedHadrCand().isNonnull()    && leadPFTau->leadPFChargedHadrCand()->bestTrack()    &&
                subleadPFTau->leadPFChargedHadrCand().isNonnull() && subleadPFTau->leadPFChargedHadrCand()->bestTrack() )
 	  {
-	    //dz = TMath::Abs(leadPFTau->leadPFChargedHadrCand()->vertex().z() - subleadPFTau->leadPFChargedHadrCand()->vertex().z());	    
-            double dz = TMath::Abs(leadPFTau->leadPFChargedHadrCand()->bestTrack()->vertex().z() - subleadPFTau->leadPFChargedHadrCand()->bestTrack()->vertex().z());
+            double dz = (*pfTauPair)->dz();
             if ( max_dz_ < 0. || dz < max_dz_ ) 
 	    {
-	      pfTauPairs_passingAbsEta.push_back(&(*pfTauPair));
+	      pfTauPairs_passingAbsEta.push_back(*pfTauPair);
 	    }
           }
 	}

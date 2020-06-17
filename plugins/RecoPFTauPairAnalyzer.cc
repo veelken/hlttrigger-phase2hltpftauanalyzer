@@ -18,10 +18,8 @@ RecoPFTauPairAnalyzer::RecoPFTauPairAnalyzer(const edm::ParameterSet& cfg)
   , max_refTau_absEta_(-1.)
   , dRmatch_(0.3)
 {
-  srcPFTaus_ = cfg.getParameter<edm::InputTag>("srcPFTaus");
-  tokenPFTaus_ = consumes<reco::PFTauCollection>(srcPFTaus_);
-  srcPFTauSumChargedIso_ = cfg.getParameter<edm::InputTag>("srcPFTauSumChargedIso");
-  tokenPFTauSumChargedIso_ = consumes<reco::PFTauDiscriminator>(srcPFTauSumChargedIso_);
+  srcPFTauPairs_ = cfg.getParameter<edm::InputTag>("srcPFTauPairs");
+  tokenPFTauPairs_ = consumes<reco::PFTauPairCollection>(srcPFTauPairs_);
   srcRefTaus_ = cfg.getParameter<edm::InputTag>("srcRefTaus");
   if ( srcRefTaus_.label() != "" )
   {
@@ -97,13 +95,6 @@ void RecoPFTauPairAnalyzer::beginJob()
 namespace
 {
   bool
-  isHigherPt(const std::pair<const reco::PFTau*, double>& pfTau_wChargedIso1,
-	     const std::pair<const reco::PFTau*, double>& pfTau_wChargedIso2)
-  {
-    return pfTau_wChargedIso1.first->pt() > pfTau_wChargedIso2.first->pt();
-  }
-
-  bool
   isGenMatched(const reco::PFTau& pfTau, const std::vector<const reco::Candidate*>& refTaus, double dRmatch)
   {
     for ( std::vector<const reco::Candidate*>::const_iterator refTau = refTaus.begin();
@@ -117,22 +108,10 @@ namespace
 
 void RecoPFTauPairAnalyzer::analyze(const edm::Event& evt, const edm::EventSetup& es)
 {
-  edm::Handle<reco::PFTauCollection> pfTaus;
-  evt.getByToken(tokenPFTaus_, pfTaus);
-  edm::Handle<reco::PFTauDiscriminator> pfTauSumChargedIso;
-  evt.getByToken(tokenPFTauSumChargedIso_, pfTauSumChargedIso);
+  edm::Handle<reco::PFTauPairCollection> pfTauPairs;
+  evt.getByToken(tokenPFTauPairs_, pfTauPairs);
 
-  std::vector<std::pair<const reco::PFTau*, double>> pfTaus_wChargedIso_sorted;
-  size_t numPFTaus = pfTaus->size();
-  for ( size_t idxPFTau = 0; idxPFTau < numPFTaus; ++idxPFTau ) 
-  { 
-    reco::PFTauRef pfTauRef(pfTaus, idxPFTau);
-    double sumChargedIso = (*pfTauSumChargedIso)[pfTauRef];
-    pfTaus_wChargedIso_sorted.push_back(std::pair<const reco::PFTau*, double>(pfTauRef.get(), sumChargedIso));
-  }
-  std::sort(pfTaus_wChargedIso_sorted.begin(), pfTaus_wChargedIso_sorted.end(), isHigherPt);
-
-  reco::PFTauPairCollection pfTauPairs;
+  std::vector<const reco::PFTauPair*> pfTauPairs_matched;
   if ( srcRefTaus_.label() != "" ) 
   {
     edm::Handle<reco::CandidateView> refTaus;
@@ -149,28 +128,19 @@ void RecoPFTauPairAnalyzer::analyze(const edm::Event& evt, const edm::EventSetup
     }
     if ( !(refTaus_passingAbsEtaAndPt.size() >= 2) ) return;
 
-    for ( std::vector<std::pair<const reco::PFTau*, double>>::const_iterator leadPFTau_wChargedIso = pfTaus_wChargedIso_sorted.begin();
-           leadPFTau_wChargedIso != pfTaus_wChargedIso_sorted.end(); ++leadPFTau_wChargedIso ) {
-      if ( !isGenMatched(*leadPFTau_wChargedIso->first, refTaus_passingAbsEtaAndPt, dRmatch_) ) continue;
-      for ( std::vector<std::pair<const reco::PFTau*, double>>::const_iterator subleadPFTau_wChargedIso = leadPFTau_wChargedIso + 1;
-            subleadPFTau_wChargedIso != pfTaus_wChargedIso_sorted.end(); ++subleadPFTau_wChargedIso ) {
-        if ( !isGenMatched(*subleadPFTau_wChargedIso->first, refTaus_passingAbsEtaAndPt, dRmatch_) ) continue;
-	pfTauPairs.push_back(reco::PFTauPair(
-          leadPFTau_wChargedIso->first, leadPFTau_wChargedIso->second, 
-          subleadPFTau_wChargedIso->first, subleadPFTau_wChargedIso->second));
+    for ( reco::PFTauPairCollection::const_iterator pfTauPair = pfTauPairs->begin();
+          pfTauPair != pfTauPairs->end(); ++pfTauPair ) {
+      if ( isGenMatched(*pfTauPair->leadPFTau(),    refTaus_passingAbsEtaAndPt, dRmatch_) &&
+           isGenMatched(*pfTauPair->subleadPFTau(), refTaus_passingAbsEtaAndPt, dRmatch_) ) {
+        pfTauPairs_matched.push_back(&(*pfTauPair));
       }
     }
   } 
-  else
+  else 
   {
-    for ( std::vector<std::pair<const reco::PFTau*, double>>::const_iterator leadPFTau_wChargedIso = pfTaus_wChargedIso_sorted.begin();
-           leadPFTau_wChargedIso != pfTaus_wChargedIso_sorted.end(); ++leadPFTau_wChargedIso ) {
-      for ( std::vector<std::pair<const reco::PFTau*, double>>::const_iterator subleadPFTau_wChargedIso = leadPFTau_wChargedIso + 1;
-            subleadPFTau_wChargedIso != pfTaus_wChargedIso_sorted.end(); ++subleadPFTau_wChargedIso ) {
-	pfTauPairs.push_back(reco::PFTauPair(
-          leadPFTau_wChargedIso->first, leadPFTau_wChargedIso->second, 
-          subleadPFTau_wChargedIso->first, subleadPFTau_wChargedIso->second));
-      }
+    for ( reco::PFTauPairCollection::const_iterator pfTauPair = pfTauPairs->begin();
+          pfTauPair != pfTauPairs->end(); ++pfTauPair ) {
+      pfTauPairs_matched.push_back(&(*pfTauPair));
     }
   }
 
@@ -178,7 +148,7 @@ void RecoPFTauPairAnalyzer::analyze(const edm::Event& evt, const edm::EventSetup
 
   for ( auto efficiency_or_ratePlot : efficiency_or_ratePlots_ ) 
   {
-    efficiency_or_ratePlot->fillHistograms(pfTauPairs, evtWeight);
+    efficiency_or_ratePlot->fillHistograms(pfTauPairs_matched, evtWeight);
   }
 }
 
