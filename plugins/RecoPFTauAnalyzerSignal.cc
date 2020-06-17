@@ -81,9 +81,10 @@ void RecoPFTauAnalyzerSignal::beginJob()
         {
           dqmDirectory.Append(Form("/absEtaLt%1.2f", max_absEta));
         }
-        std::string decayMode_capitalized = decayMode;
-        decayMode_capitalized[0] = toupper(decayMode_capitalized[0]);	
-        dqmDirectory.Append(Form("/gen%sTau", decayMode_capitalized.data()));
+        //std::string decayMode_capitalized = decayMode;
+        //decayMode_capitalized[0] = toupper(decayMode_capitalized[0]);	
+        //dqmDirectory.Append(Form("/gen%sTau", decayMode_capitalized.data()));
+        dqmDirectory.Append(Form("/%s", decayMode.data()));
         dqmDirectory = dqmDirectory.ReplaceAll(".", "p");
 
 	dqmStore.setCurrentFolder(dqmDirectory.Data());

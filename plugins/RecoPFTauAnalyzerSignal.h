@@ -104,38 +104,38 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
       if ( max_absChargedIso_ > 0. ) histogramName_suffix.Append(Form("_absChargedIsoLt%1.2f", max_absChargedIso_));
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
 
-      TString histogramName_pt_numerator = Form("effL1PFTau_vs_pt_numerator_%s", histogramName_suffix.Data());
+      TString histogramName_pt_numerator = Form("effPFTau_vs_pt_numerator_%s", histogramName_suffix.Data());
       me_pt_numerator_ = dqmStore.book1D(histogramName_pt_numerator.Data(), histogramName_pt_numerator.Data(), 16, 20., 100.);
       histogram_pt_numerator_ = me_pt_numerator_->getTH1();
       assert(histogram_pt_numerator_);
-      TString histogramName_pt_denominator = Form("effL1PFTau_vs_pt_denominator_%s", histogramName_suffix.Data());
+      TString histogramName_pt_denominator = Form("effPFTau_vs_pt_denominator_%s", histogramName_suffix.Data());
       me_pt_denominator_ = dqmStore.book1D(histogramName_pt_denominator.Data(), histogramName_pt_denominator.Data(), 16, 20., 100.);
       histogram_pt_denominator_ = me_pt_denominator_->getTH1();
       assert(histogram_pt_denominator_);
 
-      TString histogramName_eta_numerator = Form("effL1PFTau_vs_eta_numerator_%s", histogramName_suffix.Data());
+      TString histogramName_eta_numerator = Form("effPFTau_vs_eta_numerator_%s", histogramName_suffix.Data());
       me_eta_numerator_ = dqmStore.book1D(histogramName_eta_numerator.Data(), histogramName_eta_numerator.Data(), 30, -3., +3.);
       histogram_eta_numerator_ = me_eta_numerator_->getTH1();
       assert(histogram_eta_numerator_);
-      TString histogramName_eta_denominator = Form("effL1PFTau_vs_eta_denominator_%s", histogramName_suffix.Data());
+      TString histogramName_eta_denominator = Form("effPFTau_vs_eta_denominator_%s", histogramName_suffix.Data());
       me_eta_denominator_ = dqmStore.book1D(histogramName_eta_denominator.Data(), histogramName_eta_denominator.Data(), 30, -3., +3.);
       histogram_eta_denominator_ = me_eta_denominator_->getTH1();
       assert(histogram_eta_denominator_);
 
-      TString histogramName_phi_numerator = Form("effL1PFTau_vs_phi_numerator_%s", histogramName_suffix.Data());
+      TString histogramName_phi_numerator = Form("effPFTau_vs_phi_numerator_%s", histogramName_suffix.Data());
       me_phi_numerator_ = dqmStore.book1D(histogramName_phi_numerator.Data(), histogramName_phi_numerator.Data(), 18, -TMath::Pi(), +TMath::Pi());
       histogram_phi_numerator_ = me_phi_numerator_->getTH1();
       assert(histogram_phi_numerator_);
-      TString histogramName_phi_denominator = Form("effL1PFTau_vs_phi_denominator_%s", histogramName_suffix.Data());
+      TString histogramName_phi_denominator = Form("effPFTau_vs_phi_denominator_%s", histogramName_suffix.Data());
       me_phi_denominator_ = dqmStore.book1D(histogramName_phi_denominator.Data(), histogramName_phi_denominator.Data(), 18, -TMath::Pi(), +TMath::Pi());
       histogram_phi_denominator_ = me_phi_denominator_->getTH1();
       assert(histogram_phi_denominator_);
 
-      TString histogramName_minDeltaR_numerator = Form("effL1PFTau_vs_minDeltaR_numerator_%s", histogramName_suffix.Data());
+      TString histogramName_minDeltaR_numerator = Form("effPFTau_vs_minDeltaR_numerator_%s", histogramName_suffix.Data());
       me_minDeltaR_numerator_ = dqmStore.book1D(histogramName_minDeltaR_numerator.Data(), histogramName_minDeltaR_numerator.Data(), 50, 0., 5.); 
       histogram_minDeltaR_numerator_ = me_minDeltaR_numerator_->getTH1();
       assert(histogram_minDeltaR_numerator_);
-      TString histogramName_minDeltaR_denominator = Form("effL1PFTau_vs_minDeltaR_denominator_%s", histogramName_suffix.Data());
+      TString histogramName_minDeltaR_denominator = Form("effPFTau_vs_minDeltaR_denominator_%s", histogramName_suffix.Data());
       me_minDeltaR_denominator_ = dqmStore.book1D(histogramName_minDeltaR_denominator.Data(), histogramName_minDeltaR_denominator.Data(), 50, 0., 5.); 
       histogram_minDeltaR_denominator_ = me_minDeltaR_denominator_->getTH1();
       assert(histogram_minDeltaR_denominator_);
@@ -150,11 +150,11 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
         20., 25., 30., 35., 40., 50., 60., 80., 100.
       };
 
-      TString histogramName_pt_vs_absEta_numerator = Form("effL1PFTau_vs_pt_vs_absEta_numerator_%s", histogramName_suffix.Data());
+      TString histogramName_pt_vs_absEta_numerator = Form("effPFTau_vs_pt_vs_absEta_numerator_%s", histogramName_suffix.Data());
       me_pt_vs_absEta_numerator_ = dqmStore.book2D(histogramName_pt_vs_absEta_numerator.Data(), histogramName_pt_vs_absEta_numerator.Data(), numBins_absEta, binning_absEta, numBins_pt, binning_pt);
       histogram_pt_vs_absEta_numerator_ = dynamic_cast<TH2*>(me_pt_vs_absEta_numerator_->getTH1());
       assert(histogram_pt_vs_absEta_numerator_);
-      TString histogramName_pt_vs_absEta_denominator = Form("effL1PFTau_vs_pt_vs_absEta_denominator_%s", histogramName_suffix.Data());
+      TString histogramName_pt_vs_absEta_denominator = Form("effPFTau_vs_pt_vs_absEta_denominator_%s", histogramName_suffix.Data());
       me_pt_vs_absEta_denominator_ = dqmStore.book2D(histogramName_pt_vs_absEta_denominator.Data(), histogramName_pt_vs_absEta_denominator.Data(), numBins_absEta, binning_absEta, numBins_pt, binning_pt);
       histogram_pt_vs_absEta_denominator_ = dynamic_cast<TH2*>(me_pt_vs_absEta_denominator_->getTH1());
       assert(histogram_pt_vs_absEta_denominator_);
