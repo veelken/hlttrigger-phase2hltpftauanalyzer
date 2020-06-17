@@ -211,7 +211,7 @@ void makeRatePlots()
   gROOT->SetBatch(true);
 
   std::string inputFilePath = Form("%s/src/HLTTrigger/TallinnHLTPFTauAnalyzer/test/", gSystem->Getenv("CMSSW_BASE"));
-  std::string inputFileName = "analyzePFTaus_background_2020Jun03bak.root";
+  std::string inputFileName = "analyzePFTaus_background_2020Jun16.root";
   std::string inputFileName_full = inputFilePath;
   if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
   inputFileName_full.append(inputFileName);
@@ -228,6 +228,7 @@ void makeRatePlots()
   std::vector<std::string> vertexOptions;
   vertexOptions.push_back("WithOfflineVertices");
   vertexOptions.push_back("WithOnlineVertices");
+  vertexOptions.push_back("WithOnlineVerticesTrimmed");
 
   std::vector<std::string> absEtaRanges;
   absEtaRanges.push_back("absEtaLt1p40");
