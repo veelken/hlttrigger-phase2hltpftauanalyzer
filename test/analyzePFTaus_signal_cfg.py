@@ -1,7 +1,7 @@
 
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process("analyzeTallinnL1PFTausSignal")
+process = cms.Process("analyzePFTausSignal")
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
@@ -11,7 +11,7 @@ process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(50000)
+    input = cms.untracked.int32(100000)
 )
 
 process.source = cms.Source("PoolSource",
@@ -156,12 +156,14 @@ for algorithm in [ "hps", "shrinking-cone" ]:
   else:
     raise ValueError("Invalid parameter algorithm = '%s' !!" % algorithm)
 
-  for srcVertices in [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]:
+  for srcVertices in [ "offlinePrimaryVertices", "hltPhase2PixelVertices", "hltPhase2TrimmedPixelVertices" ]:
     suffix = None
     if srcVertices == "offlinePrimaryVertices":
       suffix = "WithOfflineVertices"
     elif srcVertices == "hltPhase2PixelVertices":
       suffix = "WithOnlineVertices"
+    elif srcVertices == "hltPhase2TrimmedPixelVertices":
+      suffix = "WithOnlineVerticesTrimmed"
     else:
       raise ValueError("Invalid parameter srcVertices = '%s' !!" % srcVertices)
 
@@ -176,10 +178,18 @@ for algorithm in [ "hps", "shrinking-cone" ]:
     setattr(process, moduleName_PFTauAnalyzerSignal_wrtGenHadTaus, modulePF_PFTauAnalyzerSignal_wrtGenHadTaus)
     process.analysisSequence += modulePF_PFTauAnalyzerSignal_wrtGenHadTaus
 
+    from HLTTrigger.Phase2HLTPFTaus.PFTauPairProducer_cfi import PFTauPairs
+    moduleName_PFTauPairProducer = "hlt%sPairs%s" % (pfTauLabel, suffix)
+    module_PFTauPairProducer = PFTauPairs.clone(
+      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (pfTauLabel, suffix)),
+      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix))
+    )
+    setattr(process, moduleName_PFTauPairProducer, module_PFTauPairProducer)
+    process.analysisSequence += module_PFTauPairProducer
+
     moduleName_PFTauPairAnalyzer_wrtGenHadTaus = "analyze%sPairs%sWrtGenHadTaus" % (pfTauLabel, suffix)
     module_PFTauPairAnalyzer_wrtGenHadTaus = cms.EDAnalyzer("RecoPFTauPairAnalyzer",
-      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (pfTauLabel, suffix)),
-      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix)),
+      srcPFTauPairs = cms.InputTag(moduleName_PFTauPairProducer),
       srcRefTaus = cms.InputTag('offlineMatchedGenHadTaus'),
       min_refTau_pt = cms.double(20.),
       max_refTau_pt = cms.double(1.e+3),                                                                
@@ -203,8 +213,7 @@ for algorithm in [ "hps", "shrinking-cone" ]:
 
     moduleName_PFTauPairAnalyzer_wrtOfflineTaus = "analyze%sPairs%sWrtOfflineTaus" % (pfTauLabel, suffix)
     module_PFTauPairAnalyzer_wrtOfflineTaus = cms.EDAnalyzer("RecoPFTauPairAnalyzer",
-      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (pfTauLabel, suffix)),
-      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix)),
+      srcPFTauPairs = cms.InputTag(moduleName_PFTauPairProducer),
       srcRefTaus = cms.InputTag('selectedOfflinePFTaus'),
       min_refTau_pt = cms.double(20.),
       max_refTau_pt = cms.double(1.e+3),                                                                
@@ -236,7 +245,7 @@ for algorithm in [ "hps", "shrinking-cone" ]:
 process.load("DQMServices.Core.DQMStore_cfi")
 
 process.savePlots = cms.EDAnalyzer("DQMSimpleFileSaver",
-    outputFileName = cms.string('analyzePFTaus_signal_2020Jun03.root')
+    outputFileName = cms.string('analyzePFTaus_signal_2020Jun17v2.root')
 )
 
 process.p = cms.Path(process.analysisSequence + process.savePlots)
