@@ -57,10 +57,12 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
 
   struct responsePlotEntryType
   {
-    responsePlotEntryType(double min_pt, double max_absEta, const std::string& decayMode, double max_relChargedIso, double max_absChargedIso)
+    responsePlotEntryType(double min_pt, double max_pt, double min_absEta, double max_absEta, const std::string& decayMode, double max_relChargedIso, double max_absChargedIso)
       : me_response_(nullptr)
       , histogram_response_(nullptr)
       , min_pt_(min_pt)
+      , max_pt_(max_pt)
+      , min_absEta_(min_absEta)
       , max_absEta_(max_absEta)
       , decayMode_(decayMode)
       , max_relChargedIso_(max_relChargedIso)
@@ -71,9 +73,13 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
     {}
     void bookHistograms(DQMStore& dqmStore)
     {
-      TString histogramName_suffix = decayMode_.data();      
-      if ( max_absEta_        > 0. ) histogramName_suffix.Append(Form("_absEtaLt%1.2f",        max_absEta_));
-      if ( min_pt_            > 0. ) histogramName_suffix.Append(Form("_ptGt%1.0f",            min_pt_));
+      TString histogramName_suffix = decayMode_.data(); 
+      if      ( min_pt_     >= 0. && max_pt_     > 0. ) histogramName_suffix.Append(Form("_pt%1.0fto%1.0f", min_pt_, max_pt_));
+      else if ( min_pt_     >= 0.                     ) histogramName_suffix.Append(Form("_ptGt%1.0f", min_pt_));
+      else if (                      max_pt_     > 0. ) histogramName_suffix.Append(Form("_ptLt%1.0f", max_pt_));
+      if      ( min_absEta_ >= 0. && max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEta%1.2fto%1.2f", min_absEta_, max_absEta_));
+      else if ( min_absEta_ >= 0.                     ) histogramName_suffix.Append(Form("_absEtaGt%1.2f", min_absEta_));
+      else if (                      max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEtaLt%1.2f", max_absEta_));      
       if ( max_relChargedIso_ > 0. ) histogramName_suffix.Append(Form("_relChargedIsoLt%1.2f", max_relChargedIso_));
       if ( max_absChargedIso_ > 0. ) histogramName_suffix.Append(Form("_absChargedIsoLt%1.2f", max_absChargedIso_));
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
@@ -89,26 +95,30 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
       size_t numPFTaus = pfTaus->size();
       for ( size_t idxPFTau = 0; idxPFTau < numPFTaus; ++idxPFTau ) 
       { 
-        reco::PFTauRef pfTauRef(pfTaus, idxPFTau);
-        double sumChargedIso = pfTauSumChargedIso[pfTauRef];
+        reco::PFTauRef pfTau(pfTaus, idxPFTau);
+        double sumChargedIso = pfTauSumChargedIso[pfTau];
 
-        if ( (                           pfTauRef->leadPFChargedHadrCand().isNonnull()       &&   
-                                         pfTauRef->leadPFChargedHadrCand()->bestTrack()      ) && 
-             (max_relChargedIso_ < 0. || sumChargedIso <= (max_relChargedIso_*pfTauRef->pt())) &&
-             (max_absChargedIso_ < 0. || sumChargedIso <=  max_absChargedIso_                ) )
-
-        for ( auto refTau : refTaus )
+        if ( (                           pfTau->leadPFChargedHadrCand().isNonnull()         &&   
+                                         pfTau->leadPFChargedHadrCand()->bestTrack()      ) && 
+             (max_relChargedIso_ < 0. || sumChargedIso <= (max_relChargedIso_*pfTau->pt())) &&
+             (max_absChargedIso_ < 0. || sumChargedIso <=  max_absChargedIso_             ) )
         {
-          if ( refTau.pt() > min_pt_ && TMath::Abs(refTau.eta()) < max_absEta_ ) 
-	  {
-  	    std::string refTau_decayMode = JetMCTagUtils::genTauDecayMode(refTau);
-	    if ( decayMode_ != "all" && refTau_decayMode != decayMode_ ) continue;
-
-	    double dR = reco::deltaR(refTau.eta(), refTau.phi(), pfTauRef->eta(), pfTauRef->phi());
-	    if ( dR < dRmatch_ ) 
+          for ( auto refTau : refTaus )
+          {
+            if ( (min_pt_     < 0. || refTau.pt()              > min_pt_     ) && 
+                 (max_pt_     < 0. || refTau.pt()              < max_pt_     ) && 
+                 (min_absEta_ < 0. || TMath::Abs(refTau.eta()) > min_absEta_ ) &&
+                 (max_absEta_ < 0. || TMath::Abs(refTau.eta()) < max_absEta_ ) )
 	    {
-  	      histogram_response_->Fill(pfTauRef->pt()/TMath::Max(1., refTau.pt()), evtWeight);
-	    }
+  	      std::string refTau_decayMode = JetMCTagUtils::genTauDecayMode(refTau);
+	      if ( decayMode_ != "all" && refTau_decayMode != decayMode_ ) continue;
+
+	      double dR = reco::deltaR(refTau.eta(), refTau.phi(), pfTau->eta(), pfTau->phi());
+	      if ( dR < dRmatch_ ) 
+	      {
+  	        histogram_response_->Fill(pfTau->pt()/TMath::Max(1., refTau.pt()), evtWeight);
+	      }
+            }
 	  }
 	}
       }
@@ -126,22 +136,26 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
                                          pfTauRef->leadPFChargedHadrCand()->bestTrack()      ) && 
              (max_relChargedIso_ < 0. || sumChargedIso <= (max_relChargedIso_*pfTauRef->pt())) &&
              (max_absChargedIso_ < 0. || sumChargedIso <=  max_absChargedIso_                ) )
-
-        for ( auto refTau : refTaus )
         {
-	  if ( refTau.pt() > min_pt_ && TMath::Abs(refTau.eta()) < max_absEta_ ) 
+          for ( auto refTau : refTaus )
           {
-	    if ( (decayMode_ == "oneProng0Pi0"   && refTau.decayMode() != reco::PFTau::kOneProng0PiZero)   ||
-	         (decayMode_ == "oneProng1Pi0"   && refTau.decayMode() != reco::PFTau::kOneProng1PiZero)   ||
-	         (decayMode_ == "oneProng1Pi0"   && refTau.decayMode() != reco::PFTau::kOneProng2PiZero)   ||
-                 (decayMode_ == "threeProng0Pi0" && refTau.decayMode() != reco::PFTau::kThreeProng0PiZero) ||
-                 (decayMode_ == "threeProng1Pi0" && refTau.decayMode() != reco::PFTau::kThreeProng1PiZero) ) continue;	       
+            if ( (min_pt_     < 0. || refTau.pt()              > min_pt_     ) && 
+                 (max_pt_     < 0. || refTau.pt()              < max_pt_     ) && 
+                 (min_absEta_ < 0. || TMath::Abs(refTau.eta()) > min_absEta_ ) &&
+                 (max_absEta_ < 0. || TMath::Abs(refTau.eta()) < max_absEta_ ) )
+            {
+	      if ( (decayMode_ == "oneProng0Pi0"   && refTau.decayMode() != reco::PFTau::kOneProng0PiZero)   ||
+	           (decayMode_ == "oneProng1Pi0"   && refTau.decayMode() != reco::PFTau::kOneProng1PiZero)   ||
+	           (decayMode_ == "oneProng1Pi0"   && refTau.decayMode() != reco::PFTau::kOneProng2PiZero)   ||
+                   (decayMode_ == "threeProng0Pi0" && refTau.decayMode() != reco::PFTau::kThreeProng0PiZero) ||
+                   (decayMode_ == "threeProng1Pi0" && refTau.decayMode() != reco::PFTau::kThreeProng1PiZero) ) continue;	       
 
-	    double dR = reco::deltaR(refTau.eta(), refTau.phi(), pfTauRef->eta(), pfTauRef->phi());
-	    if ( dR < dRmatch_ ) 
-	    {
-  	      histogram_response_->Fill(pfTauRef->pt()/TMath::Max(1., refTau.pt()), evtWeight);
-	    }
+  	      double dR = reco::deltaR(refTau.eta(), refTau.phi(), pfTauRef->eta(), pfTauRef->phi());
+	      if ( dR < dRmatch_ ) 
+	      {
+  	        histogram_response_->Fill(pfTauRef->pt()/TMath::Max(1., refTau.pt()), evtWeight);
+	      }
+            }
 	  }
 	}
       }
@@ -150,6 +164,8 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
     TH1* histogram_response_;
     // cuts applied to offline and generator-level taus
     double min_pt_;
+    double max_pt_;
+    double min_absEta_;
     double max_absEta_;
     std::string decayMode_;
     // cuts applied to L1 trigger taus

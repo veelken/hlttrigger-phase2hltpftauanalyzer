@@ -56,26 +56,76 @@ void RecoPFTauResponseAnalyzer::beginJob()
   dqmStore.setCurrentFolder(dqmDirectory_.data());
 
   std::vector<std::string> decayModes = { "oneProng0Pi0", "oneProng1Pi0", "oneProng2Pi0", "threeProng0Pi0", "threeProng1Pi0", "all" };
-  std::vector<double> min_pts = { 20., 25., 30., 35., 40. };
-  for ( auto decayMode : decayModes )
+  std::vector<double> min_ptValues = { 20., 25., 30., 35., 40., 45., 50. };
+  std::vector<double> max_ptValues = { -1., -1., -1., -1., -1., -1., -1. }; 
+  assert(min_ptValues.size() == max_ptValues.size());
+  size_t numPtRanges = min_ptValues.size();
+  std::vector<double> min_absEtaValues = { -1.,   1.4,   1.4, -1.,    -1.  };
+  std::vector<double> max_absEtaValues = {  1.4,  2.172, 2.4,  2.172,  2.4 };
+  assert(min_absEtaValues.size() == max_absEtaValues.size());
+  size_t numAbsEtaRanges = min_absEtaValues.size();
+  for ( size_t idxPtRange = 0; idxPtRange < numPtRanges; ++idxPtRange )
   {
-    for ( auto min_pt : min_pts )
+    double min_pt = min_ptValues[idxPtRange];
+    double max_pt = max_ptValues[idxPtRange];
+    for ( size_t idxAbsEtaRange = 0; idxAbsEtaRange < numAbsEtaRanges; ++idxAbsEtaRange )
     {
-      responsePlots_.push_back(new responsePlotEntryType(min_pt, 1.0, decayMode, 0.40, -1.)); // vLoose
-      responsePlots_.push_back(new responsePlotEntryType(min_pt, 1.0, decayMode, 0.20, -1.)); // Loose
-      responsePlots_.push_back(new responsePlotEntryType(min_pt, 1.0, decayMode, 0.10, -1.)); // Medium
-      responsePlots_.push_back(new responsePlotEntryType(min_pt, 1.0, decayMode, 0.05, -1.)); // Tight
-    
-      responsePlots_.push_back(new responsePlotEntryType(min_pt, 1.4, decayMode, 0.40, -1.)); // vLoose
-      responsePlots_.push_back(new responsePlotEntryType(min_pt, 1.4, decayMode, 0.20, -1.)); // Loose
-      responsePlots_.push_back(new responsePlotEntryType(min_pt, 1.4, decayMode, 0.10, -1.)); // Medium
-      responsePlots_.push_back(new responsePlotEntryType(min_pt, 1.4, decayMode, 0.05, -1.)); // Tight
-    }
-  }
+      double min_absEta = min_absEtaValues[idxAbsEtaRange];
+      double max_absEta = max_absEtaValues[idxAbsEtaRange];
+      for ( auto decayMode : decayModes )
+      {
+	TString dqmDirectory = dqmDirectory_.data();
+        if ( min_pt >= 0. && max_pt > 0. ) 
+	{ 
+	  dqmDirectory.Append(Form("/pt%1.0fto%1.0f", min_pt, max_pt));
+        }
+        else if ( min_pt >= 0. ) 
+        {
+          dqmDirectory.Append(Form("/ptGt%1.0f", min_pt));
+        }
+        else if ( max_pt > 0. ) 
+        {
+          dqmDirectory.Append(Form("/ptLt%1.0f", max_pt));
+        }
+	if ( min_absEta >= 0. && max_absEta > 0. ) 
+	{ 
+	  dqmDirectory.Append(Form("/absEta%1.2fto%1.2f", min_absEta, max_absEta));
+        }
+        else if ( min_absEta >= 0. ) 
+        {
+          dqmDirectory.Append(Form("/absEtaGt%1.2f", min_absEta));
+        }
+        else if ( max_absEta > 0. ) 
+        {
+          dqmDirectory.Append(Form("/absEtaLt%1.2f", max_absEta));
+        }
+        //std::string decayMode_capitalized = decayMode;
+        //decayMode_capitalized[0] = toupper(decayMode_capitalized[0]);	
+        //dqmDirectory.Append(Form("/gen%sTau", decayMode_capitalized.data()));
+        dqmDirectory.Append(Form("/%s", decayMode.data()));
+        dqmDirectory = dqmDirectory.ReplaceAll(".", "p");
 
-  for ( auto responsePlot : responsePlots_ ) 
-  {
-    responsePlot->bookHistograms(dqmStore);
+        dqmStore.setCurrentFolder(dqmDirectory.Data());
+        responsePlotEntryType* responsePlots_vLoose  = new responsePlotEntryType(min_pt, max_pt, min_absEta, max_absEta, decayMode, 0.40, -1.); // vLoose
+	responsePlots_vLoose->bookHistograms(dqmStore);
+        responsePlots_.push_back(responsePlots_vLoose);
+        responsePlotEntryType* responsePlots_Loose   = new responsePlotEntryType(min_pt, max_pt, min_absEta, max_absEta, decayMode, 0.20, -1.); // Loose
+	responsePlots_Loose->bookHistograms(dqmStore);
+        responsePlots_.push_back(responsePlots_Loose);
+        responsePlotEntryType* responsePlots_Medium  = new responsePlotEntryType(min_pt, max_pt, min_absEta, max_absEta, decayMode, 0.10, -1.); // Medium
+	responsePlots_Medium->bookHistograms(dqmStore);
+        responsePlots_.push_back(responsePlots_Medium);
+        responsePlotEntryType* responsePlots_Tight   = new responsePlotEntryType(min_pt, max_pt, min_absEta, max_absEta, decayMode, 0.05, -1.); // Tight
+	responsePlots_Tight->bookHistograms(dqmStore);
+        responsePlots_.push_back(responsePlots_Tight);
+        responsePlotEntryType* responsePlots_vTight  = new responsePlotEntryType(min_pt, max_pt, min_absEta, max_absEta, decayMode, 0.02, -1.); // vTight
+	responsePlots_vTight->bookHistograms(dqmStore);
+        responsePlots_.push_back(responsePlots_vTight);
+        responsePlotEntryType* responsePlots_vvTight = new responsePlotEntryType(min_pt, max_pt, min_absEta, max_absEta, decayMode, 0.01, -1.); // vvTight
+	responsePlots_vvTight->bookHistograms(dqmStore);
+        responsePlots_.push_back(responsePlots_vvTight);
+      }
+    }
   }
 }
 
