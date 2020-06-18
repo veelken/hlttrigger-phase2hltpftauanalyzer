@@ -43,6 +43,7 @@ void DumpRecoVertices::analyze(const edm::Event& evt, const edm::EventSetup& es)
   for ( size_t idxVertex = 0; idxVertex < numVertices; ++idxVertex ) 
   {
     const reco::Vertex& vertex = vertices->at(idxVertex);
+/*
     std::cout << "offlineVertex #" << idxVertex << ":" 
 	      << " z0 = " << vertex.position().z() << " (sum track pT^2 = " << compSumTrackPt2(vertex) << ")" << std::endl;
     size_t idxTrack = 0;
@@ -52,6 +53,9 @@ void DumpRecoVertices::analyze(const edm::Event& evt, const edm::EventSetup& es)
 		<< " pT = " << (*track)->pt() << ", eta = " << (*track)->eta() << ", phi = " << (*track)->phi() << std::endl;
       ++idxTrack;
     }
+ */
+    std::cout << "offlineVertex #" << idxVertex << ":" 
+	      << " z0 = " << vertex.position().z() << std::endl;
   }
 }
 

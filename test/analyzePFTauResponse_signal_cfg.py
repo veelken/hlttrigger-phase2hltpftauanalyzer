@@ -11,7 +11,7 @@ process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(100000)
 )
 
 process.source = cms.Source("PoolSource",
@@ -22,23 +22,27 @@ process.source = cms.Source("PoolSource",
 
 #--------------------------------------------------------------------------------
 # set input files
-##
-##import os
-##import re
-##
-##inputFilePath = '/hdfs/cms/store/user/sbhowmik/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack/PhaseIIMTDTDRAutumn18MiniAOD_20190524/190524_111901/0000/'
-##inputFile_regex = r"[a-zA-Z0-9_/:.-]*NTuple_TallinnL1PFTauProducer_[a-zA-Z0-9-_]+.root"
-##
+
+import os
+import re
+
+inputFilePaths = [
+    '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_Christian_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre6_numCores8_maxMem16kMB_T2_EE_Estonia_blacklist/200612_212847/0000/'
+]
+
+inputFile_regex = r"[a-zA-Z0-9_/:.-]*step3_RAW2DIGI_RECO_[a-zA-Z0-9-_]+.root"
+
 # check if name of inputFile matches regular expression
-##inputFileNames = []
-##files = [ "".join([ "file:", inputFilePath, file ]) for file in os.listdir(inputFilePath) ]
-##for file in files:
-##    inputFile_matcher = re.compile(inputFile_regex)
-##    if inputFile_matcher.match(file):
-##        inputFileNames.append(file)
-##print "inputFileNames = %s" % inputFileNames 
-##
-##process.source.fileNames = cms.untracked.vstring(inputFileNames)
+inputFileNames = []
+for inputFilePath in inputFilePaths:
+    files = [ "".join([ "file:", inputFilePath, file ]) for file in os.listdir(inputFilePath) ]
+    for file in files:
+        inputFile_matcher = re.compile(inputFile_regex)
+        if inputFile_matcher.match(file):
+            inputFileNames.append(file)
+print "inputFileNames = %s" % inputFileNames 
+
+process.source.fileNames = cms.untracked.vstring(inputFileNames)
 #--------------------------------------------------------------------------------
 
 from Configuration.AlCa.GlobalTag import GlobalTag
@@ -106,12 +110,14 @@ for algorithm in [ "hps", "shrinking-cone" ]:
   else:
     raise ValueError("Invalid parameter algorithm = '%s' !!" % algorithm)
 
-  for srcVertices in [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]:
+  for srcVertices in [ "offlinePrimaryVertices", "hltPhase2PixelVertices", "hltPhase2TrimmedPixelVertices" ]:
     suffix = None
     if srcVertices == "offlinePrimaryVertices":
       suffix = "WithOfflineVertices"
     elif srcVertices == "hltPhase2PixelVertices":
       suffix = "WithOnlineVertices"
+    elif srcVertices == "hltPhase2TrimmedPixelVertices":
+      suffix = "WithOnlineVerticesTrimmed"
     else:
       raise ValueError("Invalid parameter srcVertices = '%s' !!" % srcVertices)
 
@@ -141,7 +147,7 @@ for algorithm in [ "hps", "shrinking-cone" ]:
 process.load("DQMServices.Core.DQMStore_cfi")
 
 process.savePlots = cms.EDAnalyzer("DQMSimpleFileSaver",
-    outputFileName = cms.string('analyzePFTauResponse_signal_2020Jun03.root')
+    outputFileName = cms.string('analyzePFTauResponse_signal_2020Jun18.root')
 )
 
 process.p = cms.Path(process.analysisSequence + process.savePlots)
