@@ -60,7 +60,7 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
 
   struct ratePlotEntryType
   {
-    ratePlotEntryType(double min_absEta, double max_absEta, double max_relChargedIso, double max_absChargedIso, double max_dz)
+    ratePlotEntryType(double min_absEta, double max_absEta, double min_leadTrackPt, double max_relChargedIso, double max_absChargedIso, double max_dz)
       : me_numPFTaus_vs_ptThreshold_(nullptr)
       , histogram_numPFTaus_vs_ptThreshold_(nullptr)
       , me_numPFTausPtGt20_(nullptr)
@@ -79,6 +79,7 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
       , histogram_numPFTausPtGt50_(nullptr)
       , min_absEta_(min_absEta)
       , max_absEta_(max_absEta)
+      , min_leadTrackPt_(min_leadTrackPt)
       , max_relChargedIso_(max_relChargedIso)
       , max_absChargedIso_(max_absChargedIso)
       , max_dz_(max_dz)
@@ -91,6 +92,7 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
       if      ( min_absEta_ >= 0. && max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEta%1.2fto%1.2f", min_absEta_, max_absEta_));
       else if ( min_absEta_ >= 0.                     ) histogramName_suffix.Append(Form("_absEtaGt%1.2f", min_absEta_));
       else if (                      max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEtaLt%1.2f", max_absEta_));
+      if ( min_leadTrackPt_   > 0. ) histogramName_suffix.Append(Form("_leadTrackPtGt%1.0f", min_leadTrackPt_));
       if ( max_relChargedIso_ > 0. ) histogramName_suffix.Append(Form("_relChargedIsoLt%1.2f", max_relChargedIso_));
       if ( max_absChargedIso_ > 0. ) histogramName_suffix.Append(Form("_absChargedIsoLt%1.2f", max_absChargedIso_));
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
@@ -146,8 +148,10 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
       for ( std::vector<std::pair<const reco::PFTau*, double>>::const_iterator pfTau_wChargedIso = pfTaus_wChargedIso_sorted.begin();
             pfTau_wChargedIso != pfTaus_wChargedIso_sorted.end(); ++pfTau_wChargedIso ) {
         double pfTau_absEta = TMath::Abs(pfTau_wChargedIso->first->eta());
+        double leadTrackPt = pfTau_wChargedIso->first->leadPFChargedHadrCand()->pt();
         if ( (min_absEta_        < 0. || pfTau_absEta              >=  min_absEta_                                       ) &&
 	     (max_absEta_        < 0. || pfTau_absEta              <=  max_absEta_                                       ) &&
+             (min_leadTrackPt_   < 0. || leadTrackPt               >=  min_leadTrackPt_                                  ) &&
 	     (max_relChargedIso_ < 0. || pfTau_wChargedIso->second <= (max_relChargedIso_*pfTau_wChargedIso->first->pt())) &&
 	     (max_absChargedIso_ < 0. || pfTau_wChargedIso->second <=  max_absChargedIso_                                ) )
 	{
@@ -244,6 +248,7 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
     TH1* histogram_numPFTausPtGt50_;  
     double min_absEta_;    
     double max_absEta_;    
+    double min_leadTrackPt_;
     double max_relChargedIso_;
     double max_absChargedIso_;
     double max_dz_;

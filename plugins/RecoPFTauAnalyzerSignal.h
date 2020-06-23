@@ -60,7 +60,7 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
   struct efficiencyPlotEntryType
   {
     efficiencyPlotEntryType(double min_pt, double max_pt, double min_absEta, double max_absEta, const std::string& decayMode, 
-			    double ptThreshold, double max_relChargedIso, double max_absChargedIso)
+			    double ptThreshold, double min_leadTrackPt, double max_relChargedIso, double max_absChargedIso)
       : me_pt_numerator_(nullptr)
       , histogram_pt_numerator_(nullptr)
       , me_pt_denominator_(nullptr)
@@ -87,6 +87,7 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
       , max_absEta_(max_absEta)
       , decayMode_(decayMode)
       , ptThreshold_(ptThreshold)
+      , min_leadTrackPt_(min_leadTrackPt)
       , max_relChargedIso_(max_relChargedIso)
       , max_absChargedIso_(max_absChargedIso)
       , dRmatch_(0.3)
@@ -99,7 +100,8 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
       if      ( min_absEta_ >= 0. && max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEta%1.2fto%1.2f", min_absEta_, max_absEta_));
       else if ( min_absEta_ >= 0.                     ) histogramName_suffix.Append(Form("_absEtaGt%1.2f", min_absEta_));
       else if (                      max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEtaLt%1.2f", max_absEta_));
-      if ( ptThreshold_ > 0. ) histogramName_suffix.Append(Form("_ptGt%1.0f", ptThreshold_));
+      if ( ptThreshold_       > 0. ) histogramName_suffix.Append(Form("_ptGt%1.0f", ptThreshold_));
+      if ( min_leadTrackPt_   > 0. ) histogramName_suffix.Append(Form("_leadTrackPtGt%1.0f", min_leadTrackPt_));
       if ( max_relChargedIso_ > 0. ) histogramName_suffix.Append(Form("_relChargedIsoLt%1.2f", max_relChargedIso_));
       if ( max_absChargedIso_ > 0. ) histogramName_suffix.Append(Form("_absChargedIsoLt%1.2f", max_absChargedIso_));
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
@@ -184,11 +186,12 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
         {  
           reco::PFTauRef pfTauRef(pfTaus, idxPFTau);
           double sumChargedIso = pfTauSumChargedIso[pfTauRef];
-  	  if ( (ptThreshold_       < 0. || pfTauRef->pt() >=  ptThreshold_                      ) &&
-               (                           pfTauRef->leadPFChargedHadrCand().isNonnull()        &&   
-                                           pfTauRef->leadPFChargedHadrCand()->bestTrack()       ) && 
-               (max_relChargedIso_ < 0. || sumChargedIso  <= (max_relChargedIso_*pfTauRef->pt())) &&
-	       (max_absChargedIso_ < 0. || sumChargedIso  <=  max_absChargedIso_                ) )
+  	  if ( (ptThreshold_       < 0. || pfTauRef->pt() >=  ptThreshold_                            ) &&
+               (                           pfTauRef->leadPFChargedHadrCand().isNonnull()              &&   
+                                           pfTauRef->leadPFChargedHadrCand()->bestTrack()             ) && 
+               (min_leadTrackPt_   < 0. || pfTauRef->leadPFChargedHadrCand()->pt() >= min_leadTrackPt_) &&
+               (max_relChargedIso_ < 0. || sumChargedIso  <= (max_relChargedIso_*pfTauRef->pt())      ) &&
+	       (max_absChargedIso_ < 0. || sumChargedIso  <=  max_absChargedIso_                      ) )
 	  {
 	    double dR = reco::deltaR(denominatorTau.eta(), denominatorTau.phi(), pfTauRef->eta(), pfTauRef->phi());
 	    if ( dR < dRmatch_ ) isMatched = true;
@@ -310,8 +313,9 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
     double min_absEta_;
     double max_absEta_;
     std::string decayMode_;
-    // cuts applied to L1 trigger taus in numerator 
+    // cuts applied to HLT trigger taus in numerator 
     double ptThreshold_;
+    double min_leadTrackPt_;
     double max_relChargedIso_;
     double max_absChargedIso_;
     // matching between offline or generator-level taus in denominator and L1 trigger taus in numerator

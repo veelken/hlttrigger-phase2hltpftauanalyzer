@@ -58,8 +58,9 @@ void RecoPFTauAnalyzerSignal::beginJob()
   std::vector<double> min_absEtaValues = { -1.,   1.4,   1.4, -1.,    -1.  };
   std::vector<double> max_absEtaValues = {  1.4,  2.172, 2.4,  2.172,  2.4 };
   assert(min_absEtaValues.size() == max_absEtaValues.size());
-  std::vector<double> ptThresholds = { 20., 25., 30., 35., 40., 45., 50. };
   size_t numAbsEtaRanges = min_absEtaValues.size();
+  std::vector<double> ptThresholds = { 20., 25., 30., 35., 40., 45., 50. };
+  std::vector<double> min_leadTrackPtValues = { 1., 2., 5. };
   for ( size_t idxAbsEtaRange = 0; idxAbsEtaRange < numAbsEtaRanges; ++idxAbsEtaRange )
   {
     double min_absEta = min_absEtaValues[idxAbsEtaRange];
@@ -68,44 +69,53 @@ void RecoPFTauAnalyzerSignal::beginJob()
     {
       for ( auto ptThreshold : ptThresholds )
       {
-	TString dqmDirectory = dqmDirectory_.data();
-	if ( min_absEta >= 0. && max_absEta > 0. ) 
-	{ 
-	  dqmDirectory.Append(Form("/absEta%1.2fto%1.2f", min_absEta, max_absEta));
-        }
-        else if ( min_absEta >= 0. ) 
+        for ( auto min_leadTrackPt : min_leadTrackPtValues )
         {
-          dqmDirectory.Append(Form("/absEtaGt%1.2f", min_absEta));
-        }
-        else if ( max_absEta > 0. ) 
-        {
-          dqmDirectory.Append(Form("/absEtaLt%1.2f", max_absEta));
-        }
-        //std::string decayMode_capitalized = decayMode;
-        //decayMode_capitalized[0] = toupper(decayMode_capitalized[0]);	
-        //dqmDirectory.Append(Form("/gen%sTau", decayMode_capitalized.data()));
-        dqmDirectory.Append(Form("/%s", decayMode.data()));
-        dqmDirectory = dqmDirectory.ReplaceAll(".", "p");
+  	  TString dqmDirectory = dqmDirectory_.data();
+	  if ( min_absEta >= 0. && max_absEta > 0. ) 
+	  { 
+	    dqmDirectory.Append(Form("/absEta%1.2fto%1.2f", min_absEta, max_absEta));
+          }
+          else if ( min_absEta >= 0. ) 
+          {
+            dqmDirectory.Append(Form("/absEtaGt%1.2f", min_absEta));
+          }
+          else if ( max_absEta > 0. ) 
+          {
+            dqmDirectory.Append(Form("/absEtaLt%1.2f", max_absEta));
+          }
+          //std::string decayMode_capitalized = decayMode;
+          //decayMode_capitalized[0] = toupper(decayMode_capitalized[0]);	
+          //dqmDirectory.Append(Form("/gen%sTau", decayMode_capitalized.data()));
+          dqmDirectory.Append(Form("/%s", decayMode.data()));
+          dqmDirectory = dqmDirectory.ReplaceAll(".", "p");
 
-	dqmStore.setCurrentFolder(dqmDirectory.Data());
-        efficiencyPlotEntryType* efficiencyPlots_vLoose  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, ptThreshold, 0.40, -1.); // vLoose
-	efficiencyPlots_vLoose->bookHistograms(dqmStore);
-	efficiencyPlots_.push_back(efficiencyPlots_vLoose);
-	efficiencyPlotEntryType* efficiencyPlots_Loose   = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, ptThreshold, 0.20, -1.); // Loose
-	efficiencyPlots_Loose->bookHistograms(dqmStore);
-	efficiencyPlots_.push_back(efficiencyPlots_Loose);
-	efficiencyPlotEntryType* efficiencyPlots_Medium  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, ptThreshold, 0.10, -1.); // Medium
-	efficiencyPlots_Medium->bookHistograms(dqmStore);
-	efficiencyPlots_.push_back(efficiencyPlots_Medium);
-	efficiencyPlotEntryType* efficiencyPlots_Tight   = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, ptThreshold, 0.05, -1.); // Tight
-	efficiencyPlots_Tight->bookHistograms(dqmStore);
-	efficiencyPlots_.push_back(efficiencyPlots_Tight);
-	efficiencyPlotEntryType* efficiencyPlots_vTight  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, ptThreshold, 0.02, -1.); // vTight
-	efficiencyPlots_vTight->bookHistograms(dqmStore);
-	efficiencyPlots_.push_back(efficiencyPlots_vTight);
-	efficiencyPlotEntryType* efficiencyPlots_vvTight = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, ptThreshold, 0.01, -1.); // vvTight
-	efficiencyPlots_vvTight->bookHistograms(dqmStore);
-	efficiencyPlots_.push_back(efficiencyPlots_vvTight);
+	  dqmStore.setCurrentFolder(dqmDirectory.Data());
+          efficiencyPlotEntryType* efficiencyPlots_vLoose  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
+            ptThreshold, min_leadTrackPt, 0.40, -1.); // vLoose
+	  efficiencyPlots_vLoose->bookHistograms(dqmStore);
+	  efficiencyPlots_.push_back(efficiencyPlots_vLoose);
+	  efficiencyPlotEntryType* efficiencyPlots_Loose   = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
+            ptThreshold, min_leadTrackPt, 0.20, -1.); // Loose
+	  efficiencyPlots_Loose->bookHistograms(dqmStore);
+	  efficiencyPlots_.push_back(efficiencyPlots_Loose);
+	  efficiencyPlotEntryType* efficiencyPlots_Medium  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
+            ptThreshold, min_leadTrackPt, 0.10, -1.); // Medium
+	  efficiencyPlots_Medium->bookHistograms(dqmStore);
+	  efficiencyPlots_.push_back(efficiencyPlots_Medium);
+	  efficiencyPlotEntryType* efficiencyPlots_Tight   = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
+            ptThreshold, min_leadTrackPt, 0.05, -1.); // Tight
+	  efficiencyPlots_Tight->bookHistograms(dqmStore);
+	  efficiencyPlots_.push_back(efficiencyPlots_Tight);
+	  efficiencyPlotEntryType* efficiencyPlots_vTight  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
+            ptThreshold, min_leadTrackPt, 0.02, -1.); // vTight
+	  efficiencyPlots_vTight->bookHistograms(dqmStore);
+	  efficiencyPlots_.push_back(efficiencyPlots_vTight);
+	  efficiencyPlotEntryType* efficiencyPlots_vvTight = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode,
+            ptThreshold, min_leadTrackPt, 0.01, -1.); // vvTight
+	  efficiencyPlots_vvTight->bookHistograms(dqmStore);
+	  efficiencyPlots_.push_back(efficiencyPlots_vvTight);
+        }
       }
     }
   }

@@ -37,40 +37,25 @@ void RecoPFTauAnalyzerBackground::beginJob()
   DQMStore& dqmStore = (*edm::Service<dqm::legacy::DQMStore>());
   dqmStore.setCurrentFolder(dqmDirectory_.data());
 
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  1.4,   0.40, -1., 0.4)); // vLoose
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  1.4,   0.20, -1., 0.4)); // Loose
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  1.4,   0.10, -1., 0.4)); // Medium
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  1.4,   0.05, -1., 0.4)); // Tight
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  1.4,   0.02, -1., 0.4)); // vTight
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  1.4,   0.01, -1., 0.4)); // vvTight
-  
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.172, 0.40, -1., 0.4)); // vLoose
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.172, 0.20, -1., 0.4)); // Loose
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.172, 0.10, -1., 0.4)); // Medium
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.172, 0.05, -1., 0.4)); // Tight
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.172, 0.02, -1., 0.4)); // vTight
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.172, 0.01, -1., 0.4)); // vvTight
-
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.4,   0.40, -1., 0.4)); // vLoose
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.4,   0.20, -1., 0.4)); // Loose
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.4,   0.10, -1., 0.4)); // Medium
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.4,   0.05, -1., 0.4)); // Tight
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.4,   0.02, -1., 0.4)); // vTight
-  ratePlots_.push_back(new ratePlotEntryType( 1.4, 2.4,   0.01, -1., 0.4)); // vvTight
-
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.172, 0.40, -1., 0.4)); // vLoose
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.172, 0.20, -1., 0.4)); // Loose
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.172, 0.10, -1., 0.4)); // Medium
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.172, 0.05, -1., 0.4)); // Tight
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.172, 0.02, -1., 0.4)); // vTight
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.172, 0.01, -1., 0.4)); // vvTight
-
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.4,   0.40, -1., 0.4)); // vLoose
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.4,   0.20, -1., 0.4)); // Loose
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.4,   0.10, -1., 0.4)); // Medium
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.4,   0.05, -1., 0.4)); // Tight
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.4,   0.02, -1., 0.4)); // vTight
-  ratePlots_.push_back(new ratePlotEntryType(-1.,  2.4,   0.01, -1., 0.4)); // vvTight
+  std::vector<double> min_absEtaValues = { -1.,   1.4,   1.4, -1.,    -1.  };
+  std::vector<double> max_absEtaValues = {  1.4,  2.172, 2.4,  2.172,  2.4 };
+  assert(min_absEtaValues.size() == max_absEtaValues.size());
+  size_t numAbsEtaRanges = min_absEtaValues.size();
+  std::vector<double> min_leadTrackPtValues = { 1., 2., 5. };
+  for ( size_t idxAbsEtaRange = 0; idxAbsEtaRange < numAbsEtaRanges; ++idxAbsEtaRange )
+  {
+    double min_absEta = min_absEtaValues[idxAbsEtaRange];
+    double max_absEta = max_absEtaValues[idxAbsEtaRange];
+    for ( auto min_leadTrackPt : min_leadTrackPtValues )
+    {
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.40, -1., 0.2)); // vLoose
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.20, -1., 0.2)); // Loose
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.10, -1., 0.2)); // Medium
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.05, -1., 0.2)); // Tight
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.02, -1., 0.2)); // vTight
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.01, -1., 0.2)); // vvTight
+    }
+  }
 
   for ( auto ratePlot : ratePlots_ ) 
   {
