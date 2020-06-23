@@ -237,6 +237,11 @@ void makeRatePlots()
   absEtaRanges.push_back("absEtaLt2p17");
   absEtaRanges.push_back("absEtaLt2p40");
 
+  std::vector<std::string> min_leadTrackPtValues;
+  min_leadTrackPtValues.push_back("leadTrackPtGt1");
+  min_leadTrackPtValues.push_back("leadTrackPtGt2");
+  min_leadTrackPtValues.push_back("leadTrackPtGt5");
+
   std::vector<std::string> isolationWPs;
   isolationWPs.push_back("relChargedIsoLt0p40");
   isolationWPs.push_back("relChargedIsoLt0p20");
@@ -273,53 +278,56 @@ void makeRatePlots()
 	  vertexOption != vertexOptions.end(); ++vertexOption ) {
       for ( std::vector<std::string>::const_iterator absEtaRange = absEtaRanges.begin();
 	    absEtaRange != absEtaRanges.end(); ++absEtaRange ) {
-        for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
-	      isolationWP != isolationWPs.end(); ++isolationWP ) {
-          std::string histogram2dName = Form((dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s").data(), 
-            pfAlgo->data(), vertexOption->data(), absEtaRange->data(), isolationWP->data());
-          TH2* histogram2d = loadHistogram2d(inputFile, histogram2dName);
+        for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
+              min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
+          for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
+	        isolationWP != isolationWPs.end(); ++isolationWP ) {
+            std::string histogram2dName = Form((dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s_%s").data(), 
+              pfAlgo->data(), vertexOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
+            TH2* histogram2d = loadHistogram2d(inputFile, histogram2dName);
 
-          TH1* histogram_rateSingleTau = makeRateHistogram(histogram2d, 1);
-          histograms_rateSingleTau[*pfAlgo][*vertexOption][*absEtaRange][*isolationWP] = histogram_rateSingleTau;
-          TH1* histogram_rateDoubleTau = makeRateHistogram(histogram2d, 2);
-          histograms_rateDoubleTau[*pfAlgo][*vertexOption][*absEtaRange][*isolationWP] = histogram_rateDoubleTau;
+            TH1* histogram_rateSingleTau = makeRateHistogram(histogram2d, 1);
+            histograms_rateSingleTau[*pfAlgo][*vertexOption][*absEtaRange][*isolationWP] = histogram_rateSingleTau;
+            TH1* histogram_rateDoubleTau = makeRateHistogram(histogram2d, 2);
+            histograms_rateDoubleTau[*pfAlgo][*vertexOption][*absEtaRange][*isolationWP] = histogram_rateDoubleTau;
+          }
+      
+          string_to_TH1Map1 histograms1 = histograms_rateSingleTau[*pfAlgo][*vertexOption][*absEtaRange];
+          std::string outputFileName1 = Form("makeRatePlots_SingleTau_%s%s_%s_%s.png", 
+            pfAlgo->data(), vertexOption->data(), absEtaRange->data(), min_leadTrackPt->data());
+          showHistograms(1150, 1150,
+	    	         histograms1["relChargedIsoLt0p40"], legendEntries["relChargedIsoLt0p40"],
+		         histograms1["relChargedIsoLt0p20"], legendEntries["relChargedIsoLt0p20"],
+		         histograms1["relChargedIsoLt0p10"], legendEntries["relChargedIsoLt0p10"],
+		         histograms1["relChargedIsoLt0p05"], legendEntries["relChargedIsoLt0p05"],
+                         histograms1["relChargedIsoLt0p02"], legendEntries["relChargedIsoLt0p02"],
+		         histograms1["relChargedIsoLt0p01"], legendEntries["relChargedIsoLt0p01"],
+		         colors, lineStyles, 
+		         0.040, 0.66, 0.66, 0.23, 0.28,
+		         labelTextLines, 0.050,
+		         0.63, 0.66, 0.26, 0.07, 
+		         -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
+		         true, 1.e0, 1.e+6, "Single #tau Trigger Rate [Hz]", 1.4, 
+		         outputFileName1);
+      
+          string_to_TH1Map1 histograms2 = histograms_rateDoubleTau[*pfAlgo][*vertexOption][*absEtaRange];
+          std::string outputFileName_rateDoubleTau = Form("makeRatePlots_DoubleTau_%s%s_%s_%s.png", 
+            pfAlgo->data(), vertexOption->data(), absEtaRange->data(), min_leadTrackPt->data());
+          showHistograms(1150, 1150,
+	   	         histograms2["relChargedIsoLt0p40"], legendEntries["relChargedIsoLt0p40"],
+		         histograms2["relChargedIsoLt0p20"], legendEntries["relChargedIsoLt0p20"],
+		         histograms2["relChargedIsoLt0p10"], legendEntries["relChargedIsoLt0p10"],
+		         histograms2["relChargedIsoLt0p05"], legendEntries["relChargedIsoLt0p05"],
+                         histograms2["relChargedIsoLt0p02"], legendEntries["relChargedIsoLt0p02"],
+		         histograms2["relChargedIsoLt0p01"], legendEntries["relChargedIsoLt0p01"],
+		         colors, lineStyles, 
+		         0.040, 0.66, 0.66, 0.23, 0.28,
+		         labelTextLines, 0.050,
+		         0.63, 0.66, 0.26, 0.07, 
+		         -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
+		         true, 1.e+1, 1.e+7, "Double #tau Trigger Rate [Hz]", 1.4, 
+		         outputFileName_rateDoubleTau);
         }
-      
-        string_to_TH1Map1 histograms1 = histograms_rateSingleTau[*pfAlgo][*vertexOption][*absEtaRange];
-        std::string outputFileName1 = Form("makeRatePlots_SingleTau_%s%s_%s.png", 
-          pfAlgo->data(), vertexOption->data(), absEtaRange->data());
-        showHistograms(1150, 1150,
-	  	       histograms1["relChargedIsoLt0p40"], legendEntries["relChargedIsoLt0p40"],
-		       histograms1["relChargedIsoLt0p20"], legendEntries["relChargedIsoLt0p20"],
-		       histograms1["relChargedIsoLt0p10"], legendEntries["relChargedIsoLt0p10"],
-		       histograms1["relChargedIsoLt0p05"], legendEntries["relChargedIsoLt0p05"],
-                       histograms1["relChargedIsoLt0p02"], legendEntries["relChargedIsoLt0p02"],
-		       histograms1["relChargedIsoLt0p01"], legendEntries["relChargedIsoLt0p01"],
-		       colors, lineStyles, 
-		       0.040, 0.66, 0.66, 0.23, 0.28,
-		       labelTextLines, 0.050,
-		       0.63, 0.66, 0.26, 0.07, 
-		       -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		       true, 1.e0, 1.e+6, "Single #tau Trigger Rate [Hz]", 1.4, 
-		       outputFileName1);
-      
-        string_to_TH1Map1 histograms2 = histograms_rateDoubleTau[*pfAlgo][*vertexOption][*absEtaRange];
-        std::string outputFileName_rateDoubleTau = Form("makeRatePlots_DoubleTau_%s%s_%s.png", 
-          pfAlgo->data(), vertexOption->data(), absEtaRange->data());
-        showHistograms(1150, 1150,
-	  	       histograms2["relChargedIsoLt0p40"], legendEntries["relChargedIsoLt0p40"],
-		       histograms2["relChargedIsoLt0p20"], legendEntries["relChargedIsoLt0p20"],
-		       histograms2["relChargedIsoLt0p10"], legendEntries["relChargedIsoLt0p10"],
-		       histograms2["relChargedIsoLt0p05"], legendEntries["relChargedIsoLt0p05"],
-                       histograms2["relChargedIsoLt0p02"], legendEntries["relChargedIsoLt0p02"],
-		       histograms2["relChargedIsoLt0p01"], legendEntries["relChargedIsoLt0p01"],
-		       colors, lineStyles, 
-		       0.040, 0.66, 0.66, 0.23, 0.28,
-		       labelTextLines, 0.050,
-		       0.63, 0.66, 0.26, 0.07, 
-		       -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		       true, 1.e+1, 1.e+7, "Double #tau Trigger Rate [Hz]", 1.4, 
-		       outputFileName_rateDoubleTau);
       }
     }
   }
