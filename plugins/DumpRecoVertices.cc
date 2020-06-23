@@ -44,12 +44,12 @@ void DumpRecoVertices::analyze(const edm::Event& evt, const edm::EventSetup& es)
   {
     const reco::Vertex& vertex = vertices->at(idxVertex);
 /*
-    std::cout << "offlineVertex #" << idxVertex << ":" 
+    std::cout << "vertex #" << idxVertex << ":" 
 	      << " z0 = " << vertex.position().z() << " (sum track pT^2 = " << compSumTrackPt2(vertex) << ")" << std::endl;
     size_t idxTrack = 0;
     for ( reco::Vertex::trackRef_iterator track = vertex.tracks_begin(); track != vertex.tracks_end(); ++track )
     {
-      std::cout << " offlineTrack #" << idxTrack << ":" 
+      std::cout << " track #" << idxTrack << ":" 
 		<< " pT = " << (*track)->pt() << ", eta = " << (*track)->eta() << ", phi = " << (*track)->phi() << std::endl;
       ++idxTrack;
     }
