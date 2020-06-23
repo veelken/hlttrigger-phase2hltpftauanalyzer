@@ -1,7 +1,7 @@
 
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process("analyzeTallinnL1PFTausSignal")
+process = cms.Process("analyzeGenHadTaus")
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
@@ -22,24 +22,27 @@ process.source = cms.Source("PoolSource",
 
 #--------------------------------------------------------------------------------
 # set input files
-##
-##import os
-##import re
-##
-##inputFilePath = '/hdfs/cms/store/user/sbhowmik/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack/PhaseIIMTDTDRAutumn18MiniAOD_20190524/190524_111901/0000/'
-##
-##inputFile_regex = r"[a-zA-Z0-9_/:.-]*NTuple_TallinnL1PFTauProducer_[a-zA-Z0-9-_]+.root"
-##
+
+import os
+import re
+
+inputFilePaths = [
+    '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_Christian_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre6_numCores8_maxMem16kMB_T2_EE_Estonia_blacklist/200612_212847/0000/'
+]
+
+inputFile_regex = r"[a-zA-Z0-9_/:.-]*step3_RAW2DIGI_RECO_[a-zA-Z0-9-_]+.root"
+
 # check if name of inputFile matches regular expression
-##inputFileNames = []
-##files = [ "".join([ "file:", inputFilePath, file ]) for file in os.listdir(inputFilePath) ]
-##for file in files:
-##    inputFile_matcher = re.compile(inputFile_regex)
-##    if inputFile_matcher.match(file):
-##        inputFileNames.append(file)
-##print "inputFileNames = %s" % inputFileNames 
-##
-##process.source.fileNames = cms.untracked.vstring(inputFileNames)
+inputFileNames = []
+for inputFilePath in inputFilePaths:
+    files = [ "".join([ "file:", inputFilePath, file ]) for file in os.listdir(inputFilePath) ]
+    for file in files:
+        inputFile_matcher = re.compile(inputFile_regex)
+        if inputFile_matcher.match(file):
+            inputFileNames.append(file)
+print "inputFileNames = %s" % inputFileNames 
+
+process.source.fileNames = cms.untracked.vstring(inputFileNames)
 #--------------------------------------------------------------------------------
 
 from Configuration.AlCa.GlobalTag import GlobalTag
@@ -180,10 +183,10 @@ process.analyzeOfflineTaus = cms.EDAnalyzer("PATTauAnalyzer",
 process.analysisSequence += process.analyzeOfflineTaus
 #--------------------------------------------------------------------------------
 
-process.DQMStore = cms.Service("DQMStore")
+process.load("DQMServices.Core.DQMStore_cfi")
 
 process.savePlots = cms.EDAnalyzer("DQMSimpleFileSaver",
-    outputFileName = cms.string('GenHadTauAnalyzer_signal_%s_2019Oct16.root' % sample)
+    outputFileName = cms.string('GenHadTauAnalyzer_signal_2020Jun22.root')
 )
 
 process.p = cms.Path(process.analysisSequence + process.savePlots)
