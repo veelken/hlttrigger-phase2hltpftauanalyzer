@@ -89,30 +89,33 @@ void RecoPFTauAnalyzerSignal::beginJob()
           //dqmDirectory.Append(Form("/gen%sTau", decayMode_capitalized.data()));
           dqmDirectory.Append(Form("/%s", decayMode.data()));
           dqmDirectory = dqmDirectory.ReplaceAll(".", "p");
-
+          
 	  dqmStore.setCurrentFolder(dqmDirectory.Data());
+          efficiencyPlotEntryType* efficiencyPlots_noIsolation  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
+            ptThreshold, min_leadTrackPt, -1.,   -1.); // no isolation cut applied
+	  efficiencyPlots_noIsolation->bookHistograms(dqmStore);
           efficiencyPlotEntryType* efficiencyPlots_vLoose  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
-            ptThreshold, min_leadTrackPt, 0.40, -1.); // vLoose
+            ptThreshold, min_leadTrackPt,  0.40, -1.); // vLoose
 	  efficiencyPlots_vLoose->bookHistograms(dqmStore);
 	  efficiencyPlots_.push_back(efficiencyPlots_vLoose);
 	  efficiencyPlotEntryType* efficiencyPlots_Loose   = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
-            ptThreshold, min_leadTrackPt, 0.20, -1.); // Loose
+            ptThreshold, min_leadTrackPt,  0.20, -1.); // Loose
 	  efficiencyPlots_Loose->bookHistograms(dqmStore);
 	  efficiencyPlots_.push_back(efficiencyPlots_Loose);
 	  efficiencyPlotEntryType* efficiencyPlots_Medium  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
-            ptThreshold, min_leadTrackPt, 0.10, -1.); // Medium
+            ptThreshold, min_leadTrackPt,  0.10, -1.); // Medium
 	  efficiencyPlots_Medium->bookHistograms(dqmStore);
 	  efficiencyPlots_.push_back(efficiencyPlots_Medium);
 	  efficiencyPlotEntryType* efficiencyPlots_Tight   = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
-            ptThreshold, min_leadTrackPt, 0.05, -1.); // Tight
+            ptThreshold, min_leadTrackPt,  0.05, -1.); // Tight
 	  efficiencyPlots_Tight->bookHistograms(dqmStore);
 	  efficiencyPlots_.push_back(efficiencyPlots_Tight);
 	  efficiencyPlotEntryType* efficiencyPlots_vTight  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
-            ptThreshold, min_leadTrackPt, 0.02, -1.); // vTight
+            ptThreshold, min_leadTrackPt,  0.02, -1.); // vTight
 	  efficiencyPlots_vTight->bookHistograms(dqmStore);
 	  efficiencyPlots_.push_back(efficiencyPlots_vTight);
 	  efficiencyPlotEntryType* efficiencyPlots_vvTight = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode,
-            ptThreshold, min_leadTrackPt, 0.01, -1.); // vvTight
+            ptThreshold, min_leadTrackPt,  0.01, -1.); // vvTight
 	  efficiencyPlots_vvTight->bookHistograms(dqmStore);
 	  efficiencyPlots_.push_back(efficiencyPlots_vvTight);
         }

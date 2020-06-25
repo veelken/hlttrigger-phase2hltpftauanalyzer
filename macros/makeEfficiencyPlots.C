@@ -419,7 +419,7 @@ void makeEfficiencyPlots()
   gROOT->SetBatch(true);
 
   std::string inputFilePath = Form("%s/src/HLTTrigger/TallinnHLTPFTauAnalyzer/test/", gSystem->Getenv("CMSSW_BASE"));
-  std::string inputFileName = "analyzePFTaus_signal_2020Jun16.root";
+  std::string inputFileName = "analyzePFTaus_signal_2020Jun24.root";
   std::string inputFileName_full = inputFilePath;
   if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
   inputFileName_full.append(inputFileName);
@@ -430,13 +430,13 @@ void makeEfficiencyPlots()
   }
 
   std::vector<std::string> pfAlgos;
-  pfAlgos.push_back("PFTau");
+  //pfAlgos.push_back("PFTau");
   pfAlgos.push_back("HpsPFTau");
 
   std::vector<std::string> vertexOptions;
   vertexOptions.push_back("WithOfflineVertices");
-  vertexOptions.push_back("WithOnlineVertices");
-  vertexOptions.push_back("WithOnlineVerticesTrimmed");
+  //vertexOptions.push_back("WithOnlineVertices");
+  //vertexOptions.push_back("WithOnlineVerticesTrimmed");
 
   std::vector<std::string> observables;
   observables.push_back("pt");
@@ -446,9 +446,9 @@ void makeEfficiencyPlots()
 
   std::vector<std::string> absEtaRanges;
   absEtaRanges.push_back("absEtaLt1p40");
-  absEtaRanges.push_back("absEta1p40to2p17");
+  //absEtaRanges.push_back("absEta1p40to2p17");
   absEtaRanges.push_back("absEta1p40to2p40");
-  absEtaRanges.push_back("absEtaLt2p17");
+  //absEtaRanges.push_back("absEtaLt2p17");
   absEtaRanges.push_back("absEtaLt2p40");
 
   std::vector<std::string> decayModes;
@@ -474,6 +474,7 @@ void makeEfficiencyPlots()
   min_leadTrackPtValues.push_back("leadTrackPtGt5");
 
   std::vector<std::string> isolationWPs;
+  isolationWPs.push_back("noIsolation");
   isolationWPs.push_back("relChargedIsoLt0p40");
   isolationWPs.push_back("relChargedIsoLt0p20");
   isolationWPs.push_back("relChargedIsoLt0p10");
@@ -503,12 +504,18 @@ void makeEfficiencyPlots()
   xAxisTitles["minDeltaR"] = "#Delta R";
   
   std::map<std::string, std::string> legendEntries_vs_isolationWPs; // key = isolationWP
+  legendEntries_vs_isolationWPs["noIsolation"]         = "No Isolation";
   legendEntries_vs_isolationWPs["relChargedIsoLt0p40"] = "I_{ch} < 0.40*p_{T}";
   legendEntries_vs_isolationWPs["relChargedIsoLt0p20"] = "I_{ch} < 0.20*p_{T}";
   legendEntries_vs_isolationWPs["relChargedIsoLt0p10"] = "I_{ch} < 0.10*p_{T}";
   legendEntries_vs_isolationWPs["relChargedIsoLt0p05"] = "I_{ch} < 0.05*p_{T}";
   legendEntries_vs_isolationWPs["relChargedIsoLt0p02"] = "I_{ch} < 0.02*p_{T}";
   legendEntries_vs_isolationWPs["relChargedIsoLt0p01"] = "I_{ch} < 0.01*p_{T}";
+
+  std::map<std::string, std::string> legendEntries_vs_leadTrackPt; // key = min_leadTrackPt
+  legendEntries_vs_leadTrackPt["leadTrackPtGt1"] = "lead. Track p_{T} > 1 GeV";
+  legendEntries_vs_leadTrackPt["leadTrackPtGt2"] = "lead. Track p_{T} > 2 GeV";
+  legendEntries_vs_leadTrackPt["leadTrackPtGt5"] = "lead. Track p_{T} > 3 GeV";
 
   std::map<std::string, std::string> legendEntries_vs_decayModes; // key = decayMode
   legendEntries_vs_decayModes["oneProng0Pi0"]   = "h^{#pm}";
@@ -531,9 +538,11 @@ void makeEfficiencyPlots()
   typedef std::map<std::string, string_to_TGraphMap4> string_to_TGraphMap5;
   typedef std::map<std::string, string_to_TGraphMap5> string_to_TGraphMap6;
   typedef std::map<std::string, string_to_TGraphMap6> string_to_TGraphMap7;
-  string_to_TGraphMap6 graphs_efficiency_vs_isolationWPs;                // key = pfAlgo, vertexOption, observable, absEtaRange, ptThreshold, isolationWP
-  string_to_TGraphMap7 graphs_efficiency_vs_isolationWPs_and_decayModes; // key = pfAlgo, vertexOption, observable, absEtaRange, ptThreshold, isolationWP, decayMode
-
+  typedef std::map<std::string, string_to_TGraphMap7> string_to_TGraphMap8;
+  string_to_TGraphMap7 graphs_efficiency_vs_isolationWPs; // key = pfAlgo, vertexOption, observable, absEtaRange, ptThreshold, min_leadTrackPt, isolationWP
+  string_to_TGraphMap7 graphs_efficiency_vs_leadTrackPt;  // key = pfAlgo, vertexOption, observable, absEtaRange, ptThreshold, isolationWP, min_leadTrackPt
+  string_to_TGraphMap8 graphs_efficiency_vs_decayModes;   // key = pfAlgo, vertexOption, observable, absEtaRange, ptThreshold, min_leadTrackPt, isolationWP, decayMode
+  
   for ( std::vector<std::string>::const_iterator pfAlgo = pfAlgos.begin();
 	pfAlgo != pfAlgos.end(); ++pfAlgo ) {
     for ( std::vector<std::string>::const_iterator vertexOption = vertexOptions.begin();
@@ -563,34 +572,69 @@ void makeEfficiencyPlots()
                   observable->data(),absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                 TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
 	        TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
-	        graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*isolationWP] = graph_efficiency;
+	        graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt][*isolationWP] = graph_efficiency;
+                graphs_efficiency_vs_leadTrackPt[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*isolationWP][*min_leadTrackPt] = graph_efficiency;
               }
+            }
 
-  	      string_to_TGraphMap1 graphs1 = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold];
-	      bool addFitFunctions = false;
+            for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
+                  min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
+  	      string_to_TGraphMap1 graphs1 = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt];
+	      bool addFitFunctions1 = false;
 	      if ( (*observable) == "pt" ) 
 	      {
-	        addFitFunctions = true;
+	        addFitFunctions1 = true;
 	      }
-	      std::vector<std::string> labelTextLines = getLabelTextLines(*ptThreshold);
+	      std::vector<std::string> labelTextLines1 = getLabelTextLines(*ptThreshold);
               std::string outputFileName1 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_%s.png", 
                 pfAlgo->data(), vertexOption->data(), observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data());
 	      showGraphs(1150, 850,
+                         graphs1["noIsolation"],         legendEntries_vs_isolationWPs["noIsolation"],
 		         graphs1["relChargedIsoLt0p40"], legendEntries_vs_isolationWPs["relChargedIsoLt0p40"],
 		         graphs1["relChargedIsoLt0p20"], legendEntries_vs_isolationWPs["relChargedIsoLt0p20"],
 		         graphs1["relChargedIsoLt0p10"], legendEntries_vs_isolationWPs["relChargedIsoLt0p10"],
   		         graphs1["relChargedIsoLt0p05"], legendEntries_vs_isolationWPs["relChargedIsoLt0p05"],
-                         graphs1["relChargedIsoLt0p02"], legendEntries_vs_isolationWPs["relChargedIsoLt0p02"],
-		         graphs1["relChargedIsoLt0p01"], legendEntries_vs_isolationWPs["relChargedIsoLt0p01"],
-		         addFitFunctions,
+                         nullptr, "",
+		         addFitFunctions1,
 		         colors, markerStyles, lineStyles, 
 		         0.040, 0.71, 0.17, 0.23, 0.29, 
-		         labelTextLines, 0.050,
+		         labelTextLines1, 0.050,
 		         0.17, 0.85, 0.26, 0.05, 
 		         xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
 		         false, 0., 1.09, "Efficiency", 1.4, 
 		         outputFileName1);
+            }
+
+            for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
+	          isolationWP != isolationWPs.end(); ++isolationWP ) {
+              string_to_TGraphMap1 graphs2 = graphs_efficiency_vs_leadTrackPt[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*isolationWP];
+	      bool addFitFunctions2 = false;
+	      if ( (*observable) == "pt" ) 
+	      {
+	        addFitFunctions2 = true;
+	      }
+	      std::vector<std::string> labelTextLines2 = getLabelTextLines(*ptThreshold);
+              std::string outputFileName2 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_%s.png", 
+                pfAlgo->data(), vertexOption->data(), observable->data(), absEtaRange->data(), ptThreshold->data(), isolationWP->data());
+	      showGraphs(1150, 850,
+                         graphs2["leadTrackPtGt1"], legendEntries_vs_leadTrackPt["leadTrackPtGt1"],
+		         graphs2["leadTrackPtGt2"], legendEntries_vs_leadTrackPt["leadTrackPtGt2"],
+		         graphs2["leadTrackPtGt4"], legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
+                         nullptr, "",
+                         nullptr, "",
+                         nullptr, "",
+		         addFitFunctions2,
+		         colors, markerStyles, lineStyles, 
+		         0.040, 0.61, 0.17, 0.33, 0.23, 
+		         labelTextLines2, 0.050,
+		         0.17, 0.85, 0.26, 0.05, 
+		         xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
+		         false, 0., 1.09, "Efficiency", 1.4, 
+		         outputFileName2);
+            }
 /*
+            for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
+                  min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
     	      for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
 	            isolationWP != isolationWPs.end(); ++isolationWP ) {  
 	        for ( std::vector<std::string>::const_iterator decayMode = decayModes.begin();
@@ -610,30 +654,59 @@ void makeEfficiencyPlots()
                     observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                   TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
 	          TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
-	          graphs_efficiency_vs_isolationWPs_and_decayModes[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*isolationWP][*decayMode] = graph_efficiency;
+	          graphs_efficiency_vs_decayModes[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt][*isolationWP][*decayMode] = graph_efficiency;
                 }
 
-	        string_to_TGraphMap1 graphs2 = graphs_efficiency_vs_isolationWPs_and_decayModes[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*isolationWP];
-	        std::vector<std::string> labelTextLines = getLabelTextLines(*ptThreshold);
-	        std::string outputFileName2 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_%s_%s.png", 
+	        string_to_TGraphMap1 graphs3 = graphs_efficiency_vs_decayModes[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt][*isolationWP];
+	        std::vector<std::string> labelTextLines3 = getLabelTextLines(*ptThreshold);
+	        std::string outputFileName3 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_%s_%s.png", 
                   pfAlgo->data(), vertexOption->data(), observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
 	        showGraphs(1150, 850,
-  		           graphs2["oneProng0Pi0"],   legendEntries_vs_decayModes["oneProng0Pi0"],
-		           graphs2["oneProng1Pi0"],   legendEntries_vs_decayModes["oneProng1Pi0"],
-		           graphs2["oneProng2Pi0"],   legendEntries_vs_decayModes["oneProng2Pi0"],
-		           graphs2["threeProng0Pi0"], legendEntries_vs_decayModes["threeProng0Pi0"],
-		           graphs2["threeProng1Pi0"], legendEntries_vs_decayModes["threeProng1Pi0"],
+  		           graphs3["oneProng0Pi0"],   legendEntries_vs_decayModes["oneProng0Pi0"],
+		           graphs3["oneProng1Pi0"],   legendEntries_vs_decayModes["oneProng1Pi0"],
+		           graphs3["oneProng2Pi0"],   legendEntries_vs_decayModes["oneProng2Pi0"],
+		           graphs3["threeProng0Pi0"], legendEntries_vs_decayModes["threeProng0Pi0"],
+		           graphs3["threeProng1Pi0"], legendEntries_vs_decayModes["threeProng1Pi0"],
 		           0, "",
 		           false,
 		           colors, markerStyles, lineStyles, 
 		           0.045, 0.69, 0.17, 0.23, 0.26, 
-		           labelTextLines, 0.045,
+		           labelTextLines3, 0.045,
 		           0.17, 0.85, 0.26, 0.05, 
 		           xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
 		           false, 0., 1.09, "Efficiency", 1.4, 
-		           outputFileName2);
+		           outputFileName3);
+              }
             }
  */
+
+            // CV: make final plot that shows trigger efficiency in steps
+            TGraph* graph_trackFinding = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold]["leadTrackPtGt1"]["noIsolation"];
+            TGraph* graph_leadTrackPt  = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold]["leadTrackPtGt5"]["noIsolation"];
+            TGraph* graph_isolation    = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold]["leadTrackPtGt5"]["relChargedIsoLt0p05"];
+	    bool addFitFunctions4 = false;
+	    if ( (*observable) == "pt" ) 
+	    {
+	      addFitFunctions4 = true;
+	    }
+	    std::vector<std::string> labelTextLines4 = getLabelTextLines(*ptThreshold);
+            std::string outputFileName4 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_final.png", 
+              pfAlgo->data(), vertexOption->data(), observable->data(), absEtaRange->data(), ptThreshold->data());
+	    showGraphs(1150, 850,
+                       graph_trackFinding, "Track finding",
+                       graph_leadTrackPt, legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
+                       graph_isolation, legendEntries_vs_isolationWPs["relChargedIsoLt0p05"],
+                       nullptr, "",
+                       nullptr, "",
+                       nullptr, "",
+		       addFitFunctions4,
+		       colors, markerStyles, lineStyles, 
+		       0.040, 0.61, 0.17, 0.33, 0.23, 
+		       labelTextLines4, 0.050,
+		       0.17, 0.85, 0.26, 0.05, 
+		       xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
+		       false, 0., 1.09, "Efficiency", 1.4, 
+		       outputFileName4);
 	  }
 	}
       }

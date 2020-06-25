@@ -102,8 +102,15 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
       else if (                      max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEtaLt%1.2f", max_absEta_));
       if ( ptThreshold_       > 0. ) histogramName_suffix.Append(Form("_ptGt%1.0f", ptThreshold_));
       if ( min_leadTrackPt_   > 0. ) histogramName_suffix.Append(Form("_leadTrackPtGt%1.0f", min_leadTrackPt_));
-      if ( max_relChargedIso_ > 0. ) histogramName_suffix.Append(Form("_relChargedIsoLt%1.2f", max_relChargedIso_));
-      if ( max_absChargedIso_ > 0. ) histogramName_suffix.Append(Form("_absChargedIsoLt%1.2f", max_absChargedIso_));
+      if ( max_relChargedIso_ > 0. || max_absChargedIso_ > 0. )
+      {
+        if ( max_relChargedIso_ > 0. ) histogramName_suffix.Append(Form("_relChargedIsoLt%1.2f", max_relChargedIso_));
+        if ( max_absChargedIso_ > 0. ) histogramName_suffix.Append(Form("_absChargedIsoLt%1.2f", max_absChargedIso_));
+      } 
+      else
+      {
+        histogramName_suffix.Append("_noIsolation");
+      }
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
 
       TString histogramName_pt_numerator = Form("effPFTau_vs_pt_numerator_%s", histogramName_suffix.Data());
