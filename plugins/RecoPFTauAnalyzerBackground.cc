@@ -10,11 +10,14 @@
 
 RecoPFTauAnalyzerBackground::RecoPFTauAnalyzerBackground(const edm::ParameterSet& cfg)
   : moduleLabel_(cfg.getParameter<std::string>("@module_label"))
+  , numEvents_processed_(0)
 {
   srcPFTaus_ = cfg.getParameter<edm::InputTag>("srcPFTaus");
   tokenPFTaus_ = consumes<reco::PFTauCollection>(srcPFTaus_);
   srcPFTauSumChargedIso_ = cfg.getParameter<edm::InputTag>("srcPFTauSumChargedIso");
   tokenPFTauSumChargedIso_ = consumes<reco::PFTauDiscriminator>(srcPFTauSumChargedIso_);
+
+  lumiScale_ = cfg.getParameter<double>("lumiScale");
 
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }
@@ -48,12 +51,13 @@ void RecoPFTauAnalyzerBackground::beginJob()
     double max_absEta = max_absEtaValues[idxAbsEtaRange];
     for ( auto min_leadTrackPt : min_leadTrackPtValues )
     {
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.40, -1., 0.2)); // vLoose
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.20, -1., 0.2)); // Loose
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.10, -1., 0.2)); // Medium
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.05, -1., 0.2)); // Tight
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.02, -1., 0.2)); // vTight
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, 0.01, -1., 0.2)); // vvTight
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, -1.,   -1., 0.2)); // no isolation cut applied
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.40, -1., 0.2)); // vLoose
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.20, -1., 0.2)); // Loose
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.10, -1., 0.2)); // Medium
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.05, -1., 0.2)); // Tight
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.02, -1., 0.2)); // vTight
+      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.01, -1., 0.2)); // vvTight
     }
   }
 
@@ -71,16 +75,23 @@ void RecoPFTauAnalyzerBackground::analyze(const edm::Event& evt, const edm::Even
   edm::Handle<reco::PFTauDiscriminator> pfTauSumChargedIso;
   evt.getByToken(tokenPFTauSumChargedIso_, pfTauSumChargedIso);
   
-  const double evtWeight = 1.;
+  const double evtWeight = lumiScale_;
 
   for ( auto ratePlot : ratePlots_ ) 
   {
     ratePlot->fillHistograms(pfTaus, *pfTauSumChargedIso, evtWeight);
   }
+
+  ++numEvents_processed_;
 }
 
 void RecoPFTauAnalyzerBackground::endJob()
-{}
+{
+  for ( auto ratePlot : ratePlots_ ) 
+  {
+    ratePlot->scaleHistograms(1./numEvents_processed);
+  }
+}
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 

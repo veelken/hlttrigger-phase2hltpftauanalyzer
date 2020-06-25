@@ -93,8 +93,15 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
       else if ( min_absEta_ >= 0.                     ) histogramName_suffix.Append(Form("_absEtaGt%1.2f", min_absEta_));
       else if (                      max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEtaLt%1.2f", max_absEta_));
       if ( min_leadTrackPt_   > 0. ) histogramName_suffix.Append(Form("_leadTrackPtGt%1.0f", min_leadTrackPt_));
-      if ( max_relChargedIso_ > 0. ) histogramName_suffix.Append(Form("_relChargedIsoLt%1.2f", max_relChargedIso_));
-      if ( max_absChargedIso_ > 0. ) histogramName_suffix.Append(Form("_absChargedIsoLt%1.2f", max_absChargedIso_));
+      if ( max_relChargedIso_ > 0. || max_absChargedIso_ > 0. )
+      {
+        if ( max_relChargedIso_ > 0. ) histogramName_suffix.Append(Form("_relChargedIsoLt%1.2f", max_relChargedIso_));
+        if ( max_absChargedIso_ > 0. ) histogramName_suffix.Append(Form("_absChargedIsoLt%1.2f", max_absChargedIso_));
+      } 
+      else
+      {
+        histogramName_suffix.Append("_noIsolation");
+      }
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
 
       TString histogramName_numPFTaus_vs_ptThreshold = Form("numPFTaus_vs_ptThreshold%s", histogramName_suffix.Data());
@@ -230,6 +237,17 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
 	}
       }
     }
+    void scaleHistograms(double sf)
+    {
+      histogram_numPFTaus_vs_ptThreshold_->Scale(sf);
+      histogram_numPFTausPtGt20_->Scale(sf);
+      histogram_numPFTausPtGt25_->Scale(sf);
+      histogram_numPFTausPtGt30_->Scale(sf);
+      histogram_numPFTausPtGt35_->Scale(sf);
+      histogram_numPFTausPtGt40_->Scale(sf);   
+      histogram_numPFTausPtGt45_->Scale(sf);
+      histogram_numPFTausPtGt50_->Scale(sf);  
+    }
     MonitorElement* me_numPFTaus_vs_ptThreshold_;
     TH2* histogram_numPFTaus_vs_ptThreshold_;
     MonitorElement* me_numPFTausPtGt20_;
@@ -254,6 +272,8 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
     double max_dz_;
   };
   std::vector<ratePlotEntryType*> ratePlots_;
+
+  unsigned long numEvents_processed_;
 };
 
 #endif   
