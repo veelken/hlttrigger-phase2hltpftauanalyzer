@@ -89,7 +89,7 @@ void RecoPFTauAnalyzerBackground::endJob()
 {
   for ( auto ratePlot : ratePlots_ ) 
   {
-    ratePlot->scaleHistograms(1./numEvents_processed);
+    ratePlot->scaleHistograms(1./numEvents_processed_);
   }
 }
 

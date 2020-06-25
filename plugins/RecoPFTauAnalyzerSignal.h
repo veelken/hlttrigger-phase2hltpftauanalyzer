@@ -55,6 +55,8 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
   edm::EDGetTokenT<reco::GenJetCollection> tokenDenominator_gen_;
   edm::EDGetTokenT<pat::TauCollection> tokenDenominator_offline_;
 
+  double lumiScale_;
+
   std::string dqmDirectory_;
 
   struct efficiencyPlotEntryType

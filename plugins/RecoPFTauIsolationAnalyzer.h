@@ -66,6 +66,8 @@ class RecoPFTauIsolationAnalyzer : public edm::EDAnalyzer
   TH1* histogram_rhoCorr_;
   double histogram_rhoCorr_yMax_;
 
+  double lumiScale_;
+
   std::string dqmDirectory_;
 
   struct isolationPlotEntryType

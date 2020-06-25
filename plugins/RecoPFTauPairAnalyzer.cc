@@ -30,6 +30,8 @@ RecoPFTauPairAnalyzer::RecoPFTauPairAnalyzer(const edm::ParameterSet& cfg)
     max_refTau_absEta_ = cfg.getParameter<double>("max_refTau_absEta");
   }
 
+  lumiScale_ = cfg.getParameter<double>("lumiScale"); // for background: rate in Hz corresponding to one MC event
+
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }
 
@@ -144,7 +146,7 @@ void RecoPFTauPairAnalyzer::analyze(const edm::Event& evt, const edm::EventSetup
     }
   }
 
-  const double evtWeight = 1.;
+  const double evtWeight = lumiScale_;
 
   for ( auto efficiency_or_ratePlot : efficiency_or_ratePlots_ ) 
   {

@@ -49,6 +49,8 @@ RecoPFTauIsolationAnalyzer::RecoPFTauIsolationAnalyzer(const edm::ParameterSet& 
     inputFile_rhoCorr_ = nullptr;
   }
 
+  lumiScale_ = cfg.getParameter<double>("lumiScale");
+
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }
 
@@ -142,7 +144,7 @@ void RecoPFTauIsolationAnalyzer::analyze(const edm::Event& evt, const edm::Event
     evt.getByToken(token_rho_, rho);
   }
   
-  const double evtWeight = 1.;
+  const double evtWeight = lumiScale_;
   
   size_t numPFTaus = pfTaus->size();
   for ( size_t idxPFTau = 0; idxPFTau < numPFTaus; ++idxPFTau ) 

@@ -53,6 +53,8 @@ class RecoPFTauPairAnalyzer : public edm::EDAnalyzer
   double max_refTau_absEta_;
   double dRmatch_;
 
+  double lumiScale_;
+
   std::string dqmDirectory_;
 
   struct efficiency_or_ratePlotEntryType

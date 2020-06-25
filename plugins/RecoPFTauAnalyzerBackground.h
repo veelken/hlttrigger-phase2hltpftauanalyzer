@@ -56,6 +56,8 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
   edm::InputTag srcPFTauSumChargedIso_;
   edm::EDGetTokenT<reco::PFTauDiscriminator> tokenPFTauSumChargedIso_;
 
+  double lumiScale_;
+
   std::string dqmDirectory_;
 
   struct ratePlotEntryType

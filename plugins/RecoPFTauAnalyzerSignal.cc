@@ -34,6 +34,8 @@ RecoPFTauAnalyzerSignal::RecoPFTauAnalyzerSignal(const edm::ParameterSet& cfg)
       << " Invalid Configuration parameter 'typeDenominator' = " << typeDenominator_string << " !!\n";;
   }
 
+  lumiScale_ = cfg.getParameter<double>("lumiScale");
+
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }
 
@@ -132,7 +134,7 @@ void RecoPFTauAnalyzerSignal::analyze(const edm::Event& evt, const edm::EventSet
   edm::Handle<reco::PFTauDiscriminator> pfTauSumChargedIso;
   evt.getByToken(tokenPFTauSumChargedIso_, pfTauSumChargedIso);
   
-  const double evtWeight = 1.;
+  const double evtWeight = lumiScale_;
 
   if ( typeDenominator_ == kGen )
   {
