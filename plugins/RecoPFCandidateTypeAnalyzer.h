@@ -62,86 +62,56 @@ class RecoPFCandidateTypeAnalyzer : public edm::EDAnalyzer
       , max_absEta_(max_absEta)
       , me_energyFraction_vs_eta_(nullptr)
       , histogram_energyFraction_vs_eta_(nullptr)
-      , me_ptFraction_vs_eta_(nullptr)
-      , histogram_ptFraction_vs_eta_(nullptr)
-      , me_energyFraction_vs_eta_fine_binning_(nullptr)
-      , histogram_energyFraction_vs_eta_fine_binning_(nullptr)
-      , me_ptFraction_vs_eta_fine_binning_(nullptr)
-      , histogram_ptFraction_vs_eta_fine_binning_(nullptr)
       , me_energyFraction_vs_absEta_(nullptr)
       , histogram_energyFraction_vs_absEta_(nullptr)
-      , me_ptFraction_vs_absEta_(nullptr)
-      , histogram_ptFraction_vs_absEta_(nullptr)
       , me_energyFraction_vs_pt_(nullptr)
       , histogram_energyFraction_vs_pt_(nullptr)
+      , me_energyFraction_vs_numPileup_(nullptr)
+      , histogram_energyFraction_vs_numPileup_(nullptr)
+      , me_ptFraction_vs_eta_(nullptr)
+      , histogram_ptFraction_vs_eta_(nullptr)
+      , me_ptFraction_vs_absEta_(nullptr)
+      , histogram_ptFraction_vs_absEta_(nullptr)
       , me_ptFraction_vs_pt_(nullptr)
       , histogram_ptFraction_vs_pt_(nullptr)
+      , me_ptFraction_vs_numPileup_(nullptr)
+      , histogram_ptFraction_vs_numPileup_(nullptr)
+      , me_multiplicity_vs_eta_(nullptr)
+      , histogram_multiplicity_vs_eta_(nullptr)
+      , me_multiplicity_vs_absEta_(nullptr)
+      , histogram_multiplicity_vs_absEta_(nullptr)
+      , me_multiplicity_vs_pt_(nullptr)
+      , histogram_multiplicity_vs_pt_(nullptr)
+      , me_multiplicity_vs_numPileup_(nullptr)
+      , histogram_multiplicity_vs_numPileup_(nullptr)
     {}
     ~pfCandTypePlotEntryType()
     {}
     void bookHistograms(DQMStore& dqmStore)
     {
+      const int numBins_pt = 15;
+      float binning_pt[numBins_pt + 1] = { 
+        0., 1., 2., 4., 6., 10., 15., 25., 40., 60., 100., 150., 250., 400., 600., 1000.
+      };
+
       std::string histogramName_energyFraction_vs_eta = Form("%sEnergyFraction_vs_eta", label_.data());
       me_energyFraction_vs_eta_ = dqmStore.book1D(
         histogramName_energyFraction_vs_eta.data(), histogramName_energyFraction_vs_eta.data(), 
 	68, -34*0.087, +34*0.087); // 0.087 = size of one CaloTower (5 ECAL crystals) in eta
       histogram_energyFraction_vs_eta_ = me_energyFraction_vs_eta_->getTH1();
       assert(histogram_energyFraction_vs_eta_);
-
-      std::string histogramName_ptFraction_vs_eta = Form("%sPtFraction_vs_eta", label_.data());
-      me_ptFraction_vs_eta_ = dqmStore.book1D(
-        histogramName_ptFraction_vs_eta.data(), histogramName_ptFraction_vs_eta.data(), 
-	68, -34*0.087, +34*0.087); // 0.087 = size of one CaloTower (5 ECAL crystals) in eta
-      histogram_ptFraction_vs_eta_ = me_ptFraction_vs_eta_->getTH1();
-      assert(histogram_ptFraction_vs_eta_);
-
-      std::string histogramName_energyFraction_vs_eta_fine_binning = Form("%sEnergyFraction_vs_eta_fine_binning", label_.data());
-      me_energyFraction_vs_eta_fine_binning_ = dqmStore.book1D(
-        histogramName_energyFraction_vs_eta_fine_binning.data(), histogramName_energyFraction_vs_eta_fine_binning.data(), 
-	6000, -3.0, +3.0);
-      histogram_energyFraction_vs_eta_fine_binning_ = me_energyFraction_vs_eta_fine_binning_->getTH1();
-      assert(histogram_energyFraction_vs_eta_fine_binning_);
-
-      std::string histogramName_ptFraction_vs_eta_fine_binning = Form("%sPtFraction_vs_eta_fine_binning", label_.data());
-      me_ptFraction_vs_eta_fine_binning_ = dqmStore.book1D(
-        histogramName_ptFraction_vs_eta_fine_binning.data(), histogramName_ptFraction_vs_eta_fine_binning.data(), 
-	6000, -3.0, +3.0);
-      histogram_ptFraction_vs_eta_fine_binning_ = me_ptFraction_vs_eta_fine_binning_->getTH1();
-      assert(histogram_ptFraction_vs_eta_fine_binning_);
-
       std::string histogramName_energyFraction_vs_absEta = Form("%sEnergyFraction_vs_absEta", label_.data());
       me_energyFraction_vs_absEta_ = dqmStore.book1D(
         histogramName_energyFraction_vs_absEta.data(), histogramName_energyFraction_vs_absEta.data(), 
 	34, 0., 34*0.087); // 0.087 = size of one CaloTower (5 ECAL crystals) in eta
       histogram_energyFraction_vs_absEta_ = me_energyFraction_vs_absEta_->getTH1();
       assert(histogram_energyFraction_vs_absEta_);
-
-      std::string histogramName_ptFraction_vs_absEta = Form("%sPtFraction_vs_absEta", label_.data());
-      me_ptFraction_vs_absEta_ = dqmStore.book1D(
-        histogramName_ptFraction_vs_absEta.data(), histogramName_ptFraction_vs_absEta.data(), 
-	34, 0., 34*0.087); // 0.087 = size of one CaloTower (5 ECAL crystals) in eta
-      histogram_ptFraction_vs_absEta_ = me_ptFraction_vs_absEta_->getTH1();
-      assert(histogram_ptFraction_vs_absEta_);
-
-      const int numBins_pt = 15;
-      float binning_pt[numBins_pt + 1] = { 
-        0., 1., 2., 4., 6., 10., 15., 25., 40., 60., 100., 150., 250., 400., 600., 1000.
-      };
-
       std::string histogramName_energyFraction_vs_pt = Form("%sEnergyFraction_vs_pt", label_.data());
       me_energyFraction_vs_pt_ = dqmStore.book1D(
         histogramName_energyFraction_vs_pt.data(), histogramName_energyFraction_vs_pt.data(), 
 	numBins_pt, binning_pt);
       histogram_energyFraction_vs_pt_ = me_energyFraction_vs_pt_->getTH1();
       assert(histogram_energyFraction_vs_pt_);
-
-      std::string histogramName_ptFraction_vs_pt = Form("%sPtFraction_vs_pt", label_.data());
-      me_ptFraction_vs_pt_ = dqmStore.book1D(
-        histogramName_ptFraction_vs_pt.data(), histogramName_ptFraction_vs_pt.data(), 
-	numBins_pt, binning_pt);
-      histogram_ptFraction_vs_pt_ = me_ptFraction_vs_pt_->getTH1();
-      assert(histogram_ptFraction_vs_pt_);
-
       std::string histogramName_energyFraction_vs_numPileup = Form("%sEnergyFraction_vs_numPileup", label_.data());
       me_energyFraction_vs_numPileup_ = dqmStore.book1D(
         histogramName_energyFraction_vs_numPileup.data(), histogramName_energyFraction_vs_numPileup.data(), 
@@ -149,12 +119,55 @@ class RecoPFCandidateTypeAnalyzer : public edm::EDAnalyzer
       histogram_energyFraction_vs_numPileup_ = me_energyFraction_vs_numPileup_->getTH1();
       assert(histogram_energyFraction_vs_numPileup_);
 
+      std::string histogramName_ptFraction_vs_eta = Form("%sPtFraction_vs_eta", label_.data());
+      me_ptFraction_vs_eta_ = dqmStore.book1D(
+        histogramName_ptFraction_vs_eta.data(), histogramName_ptFraction_vs_eta.data(), 
+	68, -34*0.087, +34*0.087); // 0.087 = size of one CaloTower (5 ECAL crystals) in eta
+      histogram_ptFraction_vs_eta_ = me_ptFraction_vs_eta_->getTH1();
+      assert(histogram_ptFraction_vs_eta_);
+      std::string histogramName_ptFraction_vs_absEta = Form("%sPtFraction_vs_absEta", label_.data());
+      me_ptFraction_vs_absEta_ = dqmStore.book1D(
+        histogramName_ptFraction_vs_absEta.data(), histogramName_ptFraction_vs_absEta.data(), 
+	34, 0., 34*0.087); // 0.087 = size of one CaloTower (5 ECAL crystals) in eta
+      histogram_ptFraction_vs_absEta_ = me_ptFraction_vs_absEta_->getTH1();
+      assert(histogram_ptFraction_vs_absEta_);
+      std::string histogramName_ptFraction_vs_pt = Form("%sPtFraction_vs_pt", label_.data());
+      me_ptFraction_vs_pt_ = dqmStore.book1D(
+        histogramName_ptFraction_vs_pt.data(), histogramName_ptFraction_vs_pt.data(), 
+	numBins_pt, binning_pt);
+      histogram_ptFraction_vs_pt_ = me_ptFraction_vs_pt_->getTH1();
+      assert(histogram_ptFraction_vs_pt_);
       std::string histogramName_ptFraction_vs_numPileup = Form("%sPtFraction_vs_numPileup", label_.data());
       me_ptFraction_vs_numPileup_ = dqmStore.book1D(
         histogramName_ptFraction_vs_numPileup.data(), histogramName_ptFraction_vs_numPileup.data(), 
 	40, 0., 400.);
       histogram_ptFraction_vs_numPileup_ = me_ptFraction_vs_numPileup_->getTH1();
       assert(histogram_ptFraction_vs_numPileup_);
+
+      std::string histogramName_multiplicity_vs_eta = Form("%sMultiplicity_vs_eta", label_.data());
+      me_multiplicity_vs_eta_ = dqmStore.book1D(
+        histogramName_multiplicity_vs_eta.data(), histogramName_multiplicity_vs_eta.data(), 
+	68, -34*0.087, +34*0.087); // 0.087 = size of one CaloTower (5 ECAL crystals) in eta
+      histogram_multiplicity_vs_eta_ = me_multiplicity_vs_eta_->getTH1();
+      assert(histogram_multiplicity_vs_eta_);
+      std::string histogramName_multiplicity_vs_absEta = Form("%sMultiplicity_vs_absEta", label_.data());
+      me_multiplicity_vs_absEta_ = dqmStore.book1D(
+        histogramName_multiplicity_vs_absEta.data(), histogramName_multiplicity_vs_absEta.data(), 
+	34, 0., 34*0.087); // 0.087 = size of one CaloTower (5 ECAL crystals) in eta
+      histogram_multiplicity_vs_absEta_ = me_multiplicity_vs_absEta_->getTH1();
+      assert(histogram_multiplicity_vs_absEta_);
+      std::string histogramName_multiplicity_vs_pt = Form("%sMultiplicity_vs_pt", label_.data());
+      me_multiplicity_vs_pt_ = dqmStore.book1D(
+        histogramName_multiplicity_vs_pt.data(), histogramName_multiplicity_vs_pt.data(), 
+	numBins_pt, binning_pt);
+      histogram_multiplicity_vs_pt_ = me_multiplicity_vs_pt_->getTH1();
+      assert(histogram_multiplicity_vs_pt_);
+      std::string histogramName_multiplicity_vs_numPileup = Form("%sMultiplicity_vs_numPileup", label_.data());
+      me_multiplicity_vs_numPileup_ = dqmStore.book1D(
+        histogramName_multiplicity_vs_numPileup.data(), histogramName_multiplicity_vs_numPileup.data(), 
+	40, 0., 400.);
+      histogram_multiplicity_vs_numPileup_ = me_multiplicity_vs_numPileup_->getTH1();
+      assert(histogram_multiplicity_vs_numPileup_);
     }
     void fillHistograms(const reco::PFCandidate& pfCand, int numPileup, double evtWeight)
     {
@@ -163,21 +176,23 @@ class RecoPFCandidateTypeAnalyzer : public edm::EDAnalyzer
       if ( pfCand.pt() > min_pt_ ) 
       {
 	histogram_energyFraction_vs_eta_->Fill(pfCand.eta(), weight_energyFraction);
+        histogram_energyFraction_vs_absEta_->Fill(TMath::Abs(pfCand.eta()), weight_energyFraction);
 	histogram_ptFraction_vs_eta_->Fill(pfCand.eta(), weight_ptFraction);
-	histogram_energyFraction_vs_eta_fine_binning_->Fill(pfCand.eta(), weight_energyFraction);
-	histogram_ptFraction_vs_eta_fine_binning_->Fill(pfCand.eta(), weight_ptFraction);
-	histogram_energyFraction_vs_absEta_->Fill(TMath::Abs(pfCand.eta()), weight_energyFraction);
 	histogram_ptFraction_vs_absEta_->Fill(TMath::Abs(pfCand.eta()), weight_ptFraction);
+        histogram_multiplicity_vs_eta_->Fill(pfCand.eta(), evtWeight);
+	histogram_multiplicity_vs_absEta_->Fill(TMath::Abs(pfCand.eta()), evtWeight);
       }
       if ( TMath::Abs(pfCand.eta()) < max_absEta_ ) 
       {
 	histogram_energyFraction_vs_pt_->Fill(pfCand.pt(), weight_energyFraction);
 	histogram_ptFraction_vs_pt_->Fill(pfCand.pt(), weight_ptFraction);
+        histogram_multiplicity_vs_pt_->Fill(pfCand.pt(), evtWeight);
       }
       if ( pfCand.pt() > min_pt_ && TMath::Abs(pfCand.eta()) < max_absEta_ && numPileup >= 0 ) 
       {
 	histogram_energyFraction_vs_numPileup_->Fill(numPileup, weight_energyFraction);
 	histogram_ptFraction_vs_numPileup_->Fill(numPileup, weight_ptFraction);
+        histogram_multiplicity_vs_numPileup_->Fill(numPileup, evtWeight);
       }
     }
     void normalizeHistograms(double numEvents_processed)
@@ -186,47 +201,59 @@ class RecoPFCandidateTypeAnalyzer : public edm::EDAnalyzer
       {
 	divideByBinWidth(histogram_energyFraction_vs_eta_);
 	histogram_energyFraction_vs_eta_->Scale(1./numEvents_processed);
+        divideByBinWidth(histogram_energyFraction_vs_absEta_);
+	histogram_energyFraction_vs_absEta_->Scale(1./numEvents_processed);
+        divideByBinWidth(histogram_energyFraction_vs_pt_);
+	histogram_energyFraction_vs_pt_->Scale(1./numEvents_processed);
+        histogram_energyFraction_vs_numPileup_->Scale(1./numEvents_processed);
+
 	divideByBinWidth(histogram_ptFraction_vs_eta_);
 	histogram_ptFraction_vs_eta_->Scale(1./numEvents_processed);
-	divideByBinWidth(histogram_energyFraction_vs_eta_fine_binning_);
-	histogram_energyFraction_vs_eta_fine_binning_->Scale(1./numEvents_processed);
-	divideByBinWidth(histogram_ptFraction_vs_eta_fine_binning_);
-	histogram_ptFraction_vs_eta_fine_binning_->Scale(1./numEvents_processed);
-	divideByBinWidth(histogram_energyFraction_vs_absEta_);
-	histogram_energyFraction_vs_absEta_->Scale(1./numEvents_processed);
 	divideByBinWidth(histogram_ptFraction_vs_absEta_);
 	histogram_ptFraction_vs_absEta_->Scale(1./numEvents_processed);
-	divideByBinWidth(histogram_energyFraction_vs_pt_);
-	histogram_energyFraction_vs_pt_->Scale(1./numEvents_processed);
 	divideByBinWidth(histogram_ptFraction_vs_pt_);
 	histogram_ptFraction_vs_pt_->Scale(1./numEvents_processed);
-	histogram_energyFraction_vs_numPileup_->Scale(1./numEvents_processed);
 	histogram_ptFraction_vs_numPileup_->Scale(1./numEvents_processed);
+
+        divideByBinWidth(histogram_multiplicity_vs_eta_);
+	histogram_multiplicity_vs_eta_->Scale(1./numEvents_processed);
+        divideByBinWidth(histogram_multiplicity_vs_absEta_);
+	histogram_multiplicity_vs_absEta_->Scale(1./numEvents_processed);
+        divideByBinWidth(histogram_multiplicity_vs_pt_);
+	histogram_multiplicity_vs_pt_->Scale(1./numEvents_processed);
+        histogram_multiplicity_vs_numPileup_->Scale(1./numEvents_processed);
       }
     }
     std::string label_;
     double min_pt_;
     double max_absEta_;
+
     MonitorElement* me_energyFraction_vs_eta_;
     TH1* histogram_energyFraction_vs_eta_;
-    MonitorElement* me_ptFraction_vs_eta_;
-    TH1* histogram_ptFraction_vs_eta_;
-    MonitorElement* me_energyFraction_vs_eta_fine_binning_;
-    TH1* histogram_energyFraction_vs_eta_fine_binning_;
-    MonitorElement* me_ptFraction_vs_eta_fine_binning_;
-    TH1* histogram_ptFraction_vs_eta_fine_binning_;
     MonitorElement* me_energyFraction_vs_absEta_;
     TH1* histogram_energyFraction_vs_absEta_;
-    MonitorElement* me_ptFraction_vs_absEta_;
-    TH1* histogram_ptFraction_vs_absEta_;
     MonitorElement* me_energyFraction_vs_pt_;
     TH1* histogram_energyFraction_vs_pt_;
-    MonitorElement* me_ptFraction_vs_pt_;
-    TH1* histogram_ptFraction_vs_pt_;
     MonitorElement* me_energyFraction_vs_numPileup_;
     TH1* histogram_energyFraction_vs_numPileup_;
+
+    MonitorElement* me_ptFraction_vs_eta_;
+    TH1* histogram_ptFraction_vs_eta_;
+    MonitorElement* me_ptFraction_vs_absEta_;
+    TH1* histogram_ptFraction_vs_absEta_;
+    MonitorElement* me_ptFraction_vs_pt_;
+    TH1* histogram_ptFraction_vs_pt_;
     MonitorElement* me_ptFraction_vs_numPileup_;
     TH1* histogram_ptFraction_vs_numPileup_;
+
+    MonitorElement* me_multiplicity_vs_eta_;
+    TH1* histogram_multiplicity_vs_eta_;
+    MonitorElement* me_multiplicity_vs_absEta_;
+    TH1* histogram_multiplicity_vs_absEta_;
+    MonitorElement* me_multiplicity_vs_pt_;
+    TH1* histogram_multiplicity_vs_pt_;
+    MonitorElement* me_multiplicity_vs_numPileup_;
+    TH1* histogram_multiplicity_vs_numPileup_;
   };
   pfCandTypePlotEntryType* pfChargedHadronPlots_;
   pfCandTypePlotEntryType* pfChargedHadronPileupPlots_;

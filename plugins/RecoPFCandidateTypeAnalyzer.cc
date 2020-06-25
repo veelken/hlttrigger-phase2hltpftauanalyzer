@@ -37,12 +37,12 @@ RecoPFCandidateTypeAnalyzer::RecoPFCandidateTypeAnalyzer(const edm::ParameterSet
   cfg_isolationQualityCuts_dzCut_enabled_primary.addParameter<double>("maxDeltaZ", 0.2);
   isolationQualityCuts_dzCut_enabled_primary_ = new reco::tau::RecoTauQualityCuts(cfg_isolationQualityCuts_dzCut_enabled_primary);
 
-  pfChargedHadronPlots_       = new pfCandTypePlotEntryType(-1., 1.4, "chargedHadron");
-  pfChargedHadronPileupPlots_ = new pfCandTypePlotEntryType(-1., 1.4, "chargedHadronPileup");
-  pfElectronPlots_            = new pfCandTypePlotEntryType(-1., 1.4, "electron");
-  pfNeutralHadronPlots_       = new pfCandTypePlotEntryType(-1., 1.4, "neutralHadron");
-  pfPhotonPlots_              = new pfCandTypePlotEntryType(-1., 1.4, "photon");
-  pfMuonPlots_                = new pfCandTypePlotEntryType(-1., 1.4, "muon");
+  pfChargedHadronPlots_       = new pfCandTypePlotEntryType(-1., 2.4, "chargedHadron");
+  pfChargedHadronPileupPlots_ = new pfCandTypePlotEntryType(-1., 2.4, "chargedHadronPileup");
+  pfElectronPlots_            = new pfCandTypePlotEntryType(-1., 2.4, "electron");
+  pfNeutralHadronPlots_       = new pfCandTypePlotEntryType(-1., 2.4, "neutralHadron");
+  pfPhotonPlots_              = new pfCandTypePlotEntryType(-1., 2.4, "photon");
+  pfMuonPlots_                = new pfCandTypePlotEntryType(-1., 2.4, "muon");
 
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }
@@ -117,7 +117,7 @@ void RecoPFCandidateTypeAnalyzer::analyze(const edm::Event& evt, const edm::Even
     //else if ( pfCand->particleId() == reco::PFCandidate::h0    ) type_string = "PFNeutralHadron";
     //else if ( pfCand->particleId() == reco::PFCandidate::gamma ) type_string = "PFPhoton";
     //else if ( pfCand->particleId() == reco::PFCandidate::mu    ) type_string = "PFMuon";
-    //else                                                 type_string = "N/A";
+    //else                                                         type_string = "N/A";
     //std::cout << "PFCandidate #" << idxPFCand << " (type = " << type_string << "):" 
     //	        << " pT = " << l1PFCand->pt() << ", eta = " << pfCand->eta() << ", phi = " << pfCand->phi() << ","
     //	        << " isSelected (dZcut disabled) = " << isolationQualityCuts_dzCut_disabled_->filterCand(*pfCand) << std::endl;

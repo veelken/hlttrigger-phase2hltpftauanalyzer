@@ -445,43 +445,43 @@ void makePFCandidateTypePlots()
 			     labelTextLines, 0.040,
 			     0.70, 0.21, 0.23, 0.06, 
 			     useLogScaleX[*observable], xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.3, 
-			     false, 0., 1., "Transverse momentum fraction", 1.4, 
+			     false, 0., 1., "Energy fraction", 1.4, 
 			     outputFileName_ptFraction_normalized);
 
-      std::map<std::string, TH1*> histograms_energyFraction_rebinned; // key = pfCandType
+      std::map<std::string, TH1*> histograms_multiplicity_rebinned; // key = pfCandType
       for ( std::vector<std::string>::const_iterator pfCandType = pfCandTypes.begin();
 	    pfCandType != pfCandTypes.end(); ++pfCandType ) {
-	std::string histogramName_energyFraction = Form("%s/%sEnergyFraction_vs_%s", dqmDirectories[idxOnline_or_Offline].data(), pfCandType->data(), observable->data());
-	TH1* histogram_energyFraction = loadHistogram(inputFile, histogramName_energyFraction);
-	TH1* histogram_energyFraction_rebinned = (TH1*)histogram_energyFraction->Clone(Form("%s_rebinned", histogram_energyFraction->GetName()));
+	std::string histogramName_multiplicity = Form("%s/%sMultiplicity_vs_%s", dqmDirectories[idxOnline_or_Offline].data(), pfCandType->data(), observable->data());
+	TH1* histogram_multiplicity = loadHistogram(inputFile, histogramName_multiplicity);
+	TH1* histogram_multiplicity_rebinned = (TH1*)histogram_energyFraction->Clone(Form("%s_rebinned", histogram_multiplicity->GetName()));
 	if ( rebin[*observable] > 1 ) {
-	  multiplyByBinWidth(histogram_energyFraction_rebinned);
-	  histogram_energyFraction_rebinned = histogram_energyFraction->Rebin(rebin[*observable]);
-	  divideByBinWidth(histogram_energyFraction_rebinned);
+	  multiplyByBinWidth(histogram_multiplicity_rebinned);
+	  histogram_multiplicity_rebinned = histogram_multiplicity->Rebin(rebin[*observable]);
+	  divideByBinWidth(histogram_multiplicity_rebinned);
 	}
-	histograms_energyFraction_rebinned[*pfCandType] = histogram_energyFraction_rebinned;
+	histograms_multiplicity_rebinned[*pfCandType] = histogram_multiplicity_rebinned;
       }
 
-      double yMin_energyFraction_unnormalized;
-      double yMax_energyFraction_unnormalized;
+      double yMin_multiplicity_unnormalized;
+      double yMax_multiplicity_unnormalized;
       if ( idxOnline_or_Offline == kOnline ) {
 	if ( (*observable) == "pt" ) {
-	  yMin_energyFraction_unnormalized = 2.99e-4;
-	  yMax_energyFraction_unnormalized = 3.99e+2;
+	  yMin_multiplicity_unnormalized = 2.99e-4;
+	  yMax_multiplicity_unnormalized = 3.99e+2;
 	} else {
-	  yMin_energyFraction_unnormalized = 1.99e0;
-	  yMax_energyFraction_unnormalized = 3.99e+2;
+	  yMin_multiplicity_unnormalized = 1.99e0;
+	  yMax_multiplicity_unnormalized = 3.99e+2;
 	}
       } else {
 	if ( (*observable) == "pt" ) {
-	  yMin_energyFraction_unnormalized = 1.e-5;
-	  yMax_energyFraction_unnormalized = 1.99e+3;
+	  yMin_multiplicity_unnormalized = 1.e-5;
+	  yMax_multiplicity_unnormalized = 1.99e+3;
 	} else {
-	  yMin_energyFraction_unnormalized = 1.e+1;
-	  yMax_energyFraction_unnormalized = 1.99e+3;
+	  yMin_multiplicity_unnormalized = 1.e+1;
+	  yMax_multiplicity_unnormalized = 1.99e+3;
 	}
       }
-      std::string outputFileName_energyFraction_unnormalized = Form("makePFCandidateTypePlots_%s_energyFraction_%s_unnormalized.png", labelOnline_or_Offline.data(), observable->data());
+      std::string outputFileName_multiplicity_unnormalized = Form("makePFCandidateTypePlots_%s_multiplicity_%s_unnormalized.png", labelOnline_or_Offline.data(), observable->data());
       showHistograms_stacked(1150, 1150,
 			     "chargedHadronPileup", histograms_energyFraction_rebinned["chargedHadronPileup"],
 			     "chargedHadron",       histograms_energyFraction_rebinned["chargedHadron"], 
@@ -496,32 +496,32 @@ void makePFCandidateTypePlots()
 			     labelTextLines, 0.040,
 			     0.70, 0.21, 0.23, 0.06, 
 			     useLogScaleX[*observable], xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.3, 
-			     true, yMin_energyFraction_unnormalized, yMax_energyFraction_unnormalized, "#Sigma p_{T} [GeV]", 1.4, 
-			     outputFileName_energyFraction_unnormalized);
+			     true, yMin_multiplicity_unnormalized, yMax_multiplicity_unnormalized, "Particle multiplicity", 1.4, 
+			     outputFileName_multiplicity_unnormalized);
 
-      double legendPosX_energyFraction_normalized = 0.17;
-      double legendPosY_energyFraction_normalized = 0.17;
+      double legendPosX_multiplicity_normalized = 0.17;
+      double legendPosY_multiplicity_normalized = 0.17;
       if ( (*observable) == "pt" ) {
-    	legendPosX_energyFraction_normalized = 0.53;
-	legendPosY_energyFraction_normalized = 0.17;
+    	legendPosX_multiplicity_normalized = 0.53;
+	legendPosY_multiplicity_normalized = 0.17;
       }
-      std::string outputFileName_energyFraction_normalized = Form("makePFCandidateTypePlots_%s_energyFraction_%s_normalized.png", labelOnline_or_Offline.data(), observable->data());
+      std::string outputFileName_multiplicity_normalized = Form("makePFCandidateTypePlots_%s_multiplicity_%s_normalized.png", labelOnline_or_Offline.data(), observable->data());
       showHistograms_stacked(1150, 1150,
-			     "chargedHadronPileup", histograms_energyFraction_rebinned["chargedHadronPileup"], 
-			     "chargedHadron",       histograms_energyFraction_rebinned["chargedHadron"],
-			     "photon",              histograms_energyFraction_rebinned["photon"],       
-			     "neutralHadron",       histograms_energyFraction_rebinned["neutralHadron"],
-			     "electron",            histograms_energyFraction_rebinned["electron"],
-			     "muon",                histograms_energyFraction_rebinned["muon"],
+			     "chargedHadronPileup", histograms_multiplicity_rebinned["chargedHadronPileup"], 
+			     "chargedHadron",       histograms_multiplicity_rebinned["chargedHadron"],
+			     "photon",              histograms_multiplicity_rebinned["photon"],       
+			     "neutralHadron",       histograms_multiplicity_rebinned["neutralHadron"],
+			     "electron",            histograms_multiplicity_rebinned["electron"],
+			     "muon",                histograms_multiplicity_rebinned["muon"],
 			     legendEntries,
 			     true,
 			     colors, fillStyles, 
-			     0.035, legendPosX_energyFraction_normalized, legendPosY_energyFraction_normalized, 0.42, 0.24, 
+			     0.035, legendPosX_multiplicity_normalized, legendPosY_multiplicity_normalized, 0.42, 0.24, 
 			     labelTextLines, 0.040,
 			     0.70, 0.21, 0.23, 0.06, 
 			     useLogScaleX[*observable], xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.3, 
-			     false, 0., 1., "Energy fraction", 1.4, 
-			     outputFileName_energyFraction_normalized);
+			     false, 0., 1., "Multiplicity fraction", 1.4, 
+			     outputFileName_multiplicity_normalized);
     }
   }
 
