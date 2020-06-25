@@ -76,7 +76,7 @@ process.analysisSequence += process.analyzeOfflinePFCandidateType
 process.load("DQMServices.Core.DQMStore_cfi")
 
 process.savePlots = cms.EDAnalyzer("DQMSimpleFileSaver",
-    outputFileName = cms.string('analyzePFCandidateType_signal_2020Jun22.root')
+    outputFileName = cms.string('analyzePFCandidateType_signal_2020Jun24.root')
 )
 
 process.p = cms.Path(process.analysisSequence + process.savePlots)

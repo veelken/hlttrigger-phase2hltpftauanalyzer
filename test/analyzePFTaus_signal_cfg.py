@@ -103,7 +103,7 @@ process.analysisSequence += process.genVertex
 
 process.analyzeVertices = cms.EDAnalyzer("RecoVertexAnalyzer",
   srcGenVertex_z = cms.InputTag('genVertex:z0'),
-  srcHLTVertices = cms.InputTag('hltPixelVertices'),
+  srcHLTVertices = cms.InputTag('hltPhase2PixelVertices'),
   #srcHLTVertices = cms.InputTag('offlinePrimaryVertices'),                        
   srcOfflineVertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
   dqmDirectory = cms.string("recoVertexAnalyzer")
@@ -119,7 +119,7 @@ process.analyzeTracksWrtRecVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
   srcOfflineVertices = cms.InputTag('offlineSlimmedPrimaryVertices'),                                       
   srcOfflineTracks = cms.InputTag('generalTracks'),                                                     
   srcOfflinePFCands = cms.InputTag('packedPFCandidates'),
-  srcHLTVertices = cms.InputTag('hltPixelVertices'),
+  srcHLTVertices = cms.InputTag('hltPhase2PixelVertices'),
   #srcHLTVertices = cms.InputTag('offlinePrimaryVertices'),                                                  
   srcHLTTracks = cms.InputTag('generalTracks'),
   srcHLTPFCands = cms.InputTag('particleFlowTmp'),
@@ -140,7 +140,7 @@ process.analyzeTracksWrtGenVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
   srcGenVertex_position = cms.InputTag('genVertex:position'),                                                   
   srcOfflineTracks = cms.InputTag('generalTracks'),
   srcOfflinePFCands = cms.InputTag('packedPFCandidates'),
-  srcHLTVertices = cms.InputTag('hltPixelVertices'),
+  srcHLTVertices = cms.InputTag('hltPhase2PixelVertices'),
   #srcHLTVertices = cms.InputTag('offlinePrimaryVertices'),  
   srcHLTTracks = cms.InputTag('generalTracks'),
   srcHLTPFCands = cms.InputTag('particleFlowTmp'),
@@ -175,6 +175,7 @@ for algorithm in [ "hps", "shrinking-cone" ]:
       srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix)),
       srcDenominator = cms.InputTag('offlineMatchedGenHadTaus'),
       typeDenominator = cms.string("gen"),                                                                            
+      lumiScale = cms.double(1.),
       dqmDirectory = cms.string("%sAnalyzerSignal%s_wrtGenHadTaus" % (pfTauLabel, suffix))
     )
     setattr(process, moduleName_PFTauAnalyzerSignal_wrtGenHadTaus, modulePF_PFTauAnalyzerSignal_wrtGenHadTaus)
@@ -196,7 +197,8 @@ for algorithm in [ "hps", "shrinking-cone" ]:
       min_refTau_pt = cms.double(20.),
       max_refTau_pt = cms.double(1.e+3),                                                                
       min_refTau_absEta = cms.double(-1.),
-      max_refTau_absEta = cms.double(2.4),                                                                
+      max_refTau_absEta = cms.double(2.4),     
+      lumiScale = cms.double(1.),                                               
       dqmDirectory = cms.string("%sPairAnalyzer%s_wrtGenHadTaus" % (pfTauLabel, suffix))
     )
     setattr(process, moduleName_PFTauPairAnalyzer_wrtGenHadTaus, module_PFTauPairAnalyzer_wrtGenHadTaus)
@@ -208,6 +210,7 @@ for algorithm in [ "hps", "shrinking-cone" ]:
       srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix)),
       srcDenominator = cms.InputTag('selectedOfflinePFTaus'),
       typeDenominator = cms.string("offline"),  
+      lumiScale = cms.double(1.),   
       dqmDirectory = cms.string("%sAnalyzerSignal%s_wrtOfflineTaus" % (pfTauLabel, suffix))
     )
     setattr(process, moduleName_PFTauAnalyzerSignal_wrtOfflineTaus, modulePF_PFTauAnalyzerSignal_wrtOfflineTaus)
@@ -220,7 +223,8 @@ for algorithm in [ "hps", "shrinking-cone" ]:
       min_refTau_pt = cms.double(20.),
       max_refTau_pt = cms.double(1.e+3),                                                                
       min_refTau_absEta = cms.double(-1.),
-      max_refTau_absEta = cms.double(2.4),                                                                
+      max_refTau_absEta = cms.double(2.4),  
+      lumiScale = cms.double(1.),                                                              
       dqmDirectory = cms.string("%sPairAnalyzer%s_wrtOfflineTaus" % (pfTauLabel, suffix))
     )
     setattr(process, moduleName_PFTauPairAnalyzer_wrtOfflineTaus, module_PFTauPairAnalyzer_wrtOfflineTaus)
@@ -237,7 +241,8 @@ for algorithm in [ "hps", "shrinking-cone" ]:
       #inputFileName_rhoCorr = cms.string("HLTTrigger/TallinnHLTPFTauAnalyzer/data/rhoCorr.root"),
       #histogramName_rhoCorr = cms.string("DQMData/RhoCorrAnalyzer/neutralPFCandPt_vs_absEta"),
       inputFileName_rhoCorr = cms.string(""),
-      histogramName_rhoCorr = cms.string(""),                                                      
+      histogramName_rhoCorr = cms.string(""),     
+      lumiScale = cms.double(1.),                                              
       dqmDirectory = cms.string("%sIsolationAnalyzer%s" % (pfTauLabel, suffix))
     )
     setattr(process, moduleName_PFTauIsolationAnalyzer, module_PFTauIsolationAnalyzer)
@@ -247,7 +252,7 @@ for algorithm in [ "hps", "shrinking-cone" ]:
 process.load("DQMServices.Core.DQMStore_cfi")
 
 process.savePlots = cms.EDAnalyzer("DQMSimpleFileSaver",
-    outputFileName = cms.string('analyzePFTaus_signal_2020Jun17v2.root')
+    outputFileName = cms.string('analyzePFTaus_signal_2020Jun24.root')
 )
 
 process.p = cms.Path(process.analysisSequence + process.savePlots)
