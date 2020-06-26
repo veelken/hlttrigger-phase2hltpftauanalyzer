@@ -20,6 +20,18 @@ process.source = cms.Source("PoolSource",
     )
 )
 
+inputFilePath = '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_Christian_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre6_numCores8_maxMem16kMB_T2_EE_Estonia_blacklist/200612_212847/'
+
+#--------------------------------------------------------------------------------
+# set input files
+from HLTTrigger.TallinnHLTPFTauAnalyzer.tools import getInputFileNames
+print("Searching for input files in path = '%s'" % inputFilePath)
+inputFileNames = getInputFileNames.getInputFileNames(inputFilePath)
+print("Found %i input files." % len(inputFileNames))
+process.source.fileNames = cms.untracked.vstring(inputFileNames)
+#--------------------------------------------------------------------------------
+
+
 #--------------------------------------------------------------------------------
 # set input files
 
@@ -101,32 +113,69 @@ process.genVertex = cms.EDProducer("GenVertexProducer",
 ) 
 process.analysisSequence += process.genVertex
 
-process.analyzeVertices = cms.EDAnalyzer("RecoVertexAnalyzer",
+process.analyzeVertices1 = cms.EDAnalyzer("RecoVertexAnalyzer",
   srcGenVertex_z = cms.InputTag('genVertex:z0'),
-  srcHLTVertices = cms.InputTag('hltPhase2PixelVertices'),
-  #srcHLTVertices = cms.InputTag('offlinePrimaryVertices'),                        
-  srcOfflineVertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
-  dqmDirectory = cms.string("recoVertexAnalyzer")
+  srcRecVertices = cms.InputTag('offlinePrimaryVertices'), 
+  dqmDirectory = cms.string("recoVertexAnalyzer/offlinePrimaryVertices")
 )
-process.analysisSequence += process.analyzeVertices
+process.analysisSequence += process.analyzeVertices1
 
-# CV: reco::Track and reco::PFCandidate collections reconstructed offline and at HLT level not yet separately stored in ROOT file,
+process.analyzeVertices2 = process.analyzeVertices1.clone(
+  srcRecVertices = cms.InputTag('hltPhase2PixelVertices'), 
+  dqmDirectory = cms.string("recoVertexAnalyzer/hltPhase2PixelVertices")
+)
+process.analysisSequence += process.analyzeVertices2
+
+process.analyzeVertices3 = process.analyzeVertices1.clone(
+  srcRecVertices = cms.InputTag('hltPhase2TrimmedPixelVertices'), 
+  dqmDirectory = cms.string("recoVertexAnalyzer/hltPhase2TrimmedPixelVertices")
+)
+process.analysisSequence += process.analyzeVertices3
+
+# CV: select subset of reco::Track and reco::PFCandidate objects within dR < 0.8 cones around generator-level hadronic tau decays
+#     in order to reduce computing time
+process.generalTracksGenHadTauMatched = cms.EDProducer("RecoTrackAntiOverlapSelector",
+  src = cms.InputTag('generalTracks'),
+  srcNotToBeFiltered = cms.VInputTag('selectedGenHadTaus'),
+  dRmin = cms.double(0.8),
+  invert = cms.bool(True)
+)
+process.analysisSequence += process.generalTracksGenHadTauMatched
+
+process.packedPFCandidatesGenHadTauMatched = cms.EDFilter("PackedCandidateAntiOverlapSelector",
+  src = cms.InputTag('packedPFCandidates'),
+  srcNotToBeFiltered = cms.VInputTag('selectedGenHadTaus'),
+  dRmin = cms.double(0.8),
+  invert = cms.bool(True),
+  filter = cms.bool(False)
+)
+process.analysisSequence += process.packedPFCandidatesGenHadTauMatched
+
+process.particleFlowTmpGenHadTauMatched = cms.EDFilter("PFCandidateAntiOverlapSelector",
+  src = cms.InputTag('particleFlowTmp'),
+  srcNotToBeFiltered = cms.VInputTag('selectedGenHadTaus'),
+  dRmin = cms.double(0.8),
+  invert = cms.bool(True),
+  filter = cms.bool(False)
+)
+process.analysisSequence += process.particleFlowTmpGenHadTauMatched
+
+# CV: reco::Track collections reconstructed offline and at HLT level not yet separately stored in ROOT file,
 #     which is why the same collections are used for "Offline" and "HLT" inputs
-
 process.analyzeTracksWrtRecVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
   srcGenTaus = cms.InputTag('selectedGenHadTaus'),
   vtxMode = cms.string("recVtx"),
   srcOfflineVertices = cms.InputTag('offlineSlimmedPrimaryVertices'),                                       
-  srcOfflineTracks = cms.InputTag('generalTracks'),                                                     
-  srcOfflinePFCands = cms.InputTag('packedPFCandidates'),
-  srcHLTVertices = cms.InputTag('hltPhase2PixelVertices'),
-  #srcHLTVertices = cms.InputTag('offlinePrimaryVertices'),                                                  
-  srcHLTTracks = cms.InputTag('generalTracks'),
-  srcHLTPFCands = cms.InputTag('particleFlowTmp'),
+  srcOfflineTracks = cms.InputTag('generalTracksGenHadTauMatched'),                                                     
+  srcOfflinePFCands = cms.InputTag('packedPFCandidatesGenHadTauMatched'),
+  srcOnlineVertices = cms.InputTag('hltPhase2PixelVertices'),
+  #srcOnlineVertices = cms.InputTag('offlinePrimaryVertices'),                                                  
+  srcOnlineTracks = cms.InputTag('generalTracksGenHadTauMatched'),
+  srcOnlinePFCands = cms.InputTag('particleFlowTmpGenHadTauMatched'),
   dqmDirectory = cms.string("recoTrackAnalyzerWrtRecVertex"),
   debug = cms.bool(False)                                     
 )
-##process.analysisSequence += process.analyzeTracksWrtRecVertex
+process.analysisSequence += process.analyzeTracksWrtRecVertex
 
 process.genVertex = cms.EDProducer("GenVertexProducer",
   src = cms.InputTag('prunedGenParticles'),
@@ -138,16 +187,16 @@ process.analyzeTracksWrtGenVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
   srcGenTaus = cms.InputTag('selectedGenHadTaus'),
   vtxMode = cms.string("genVtx"),
   srcGenVertex_position = cms.InputTag('genVertex:position'),                                                   
-  srcOfflineTracks = cms.InputTag('generalTracks'),
-  srcOfflinePFCands = cms.InputTag('packedPFCandidates'),
-  srcHLTVertices = cms.InputTag('hltPhase2PixelVertices'),
-  #srcHLTVertices = cms.InputTag('offlinePrimaryVertices'),  
-  srcHLTTracks = cms.InputTag('generalTracks'),
-  srcHLTPFCands = cms.InputTag('particleFlowTmp'),
+  srcOfflineTracks = cms.InputTag('generalTracksGenHadTauMatched'),
+  srcOfflinePFCands = cms.InputTag('packedPFCandidatesGenHadTauMatched'),
+  srcOnlineVertices = cms.InputTag('hltPhase2PixelVertices'),
+  #srcOnlineVertices = cms.InputTag('offlinePrimaryVertices'),  
+  srcOnlineTracks = cms.InputTag('generalTracksGenHadTauMatched'),
+  srcOnlinePFCands = cms.InputTag('particleFlowTmpGenHadTauMatched'),
   dqmDirectory = cms.string("recoTrackAnalyzerWrtGenVertex"),
   debug = cms.bool(False)                                     
 )
-##process.analysisSequence += process.analyzeTracksWrtGenVertex
+process.analysisSequence += process.analyzeTracksWrtGenVertex
 
 for algorithm in [ "hps", "shrinking-cone" ]:
   pfTauLabel = None
@@ -252,7 +301,7 @@ for algorithm in [ "hps", "shrinking-cone" ]:
 process.load("DQMServices.Core.DQMStore_cfi")
 
 process.savePlots = cms.EDAnalyzer("DQMSimpleFileSaver",
-    outputFileName = cms.string('analyzePFTaus_signal_2020Jun24.root')
+    outputFileName = cms.string('analyzePFTaus_signal_2020Jun26.root')
 )
 
 process.p = cms.Path(process.analysisSequence + process.savePlots)
