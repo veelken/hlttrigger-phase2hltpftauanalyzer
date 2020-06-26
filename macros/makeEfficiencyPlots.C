@@ -446,10 +446,10 @@ void makeEfficiencyPlots()
 
   std::vector<std::string> absEtaRanges;
   absEtaRanges.push_back("absEtaLt1p40");
-  //absEtaRanges.push_back("absEta1p40to2p17");
-  absEtaRanges.push_back("absEta1p40to2p40");
-  //absEtaRanges.push_back("absEtaLt2p17");
-  absEtaRanges.push_back("absEtaLt2p40");
+  absEtaRanges.push_back("absEta1p40to2p17");
+  //absEtaRanges.push_back("absEta1p40to2p40");
+  absEtaRanges.push_back("absEtaLt2p17");
+  //absEtaRanges.push_back("absEtaLt2p40");
 
   std::vector<std::string> decayModes;
   decayModes.push_back("oneProng0Pi0");
@@ -581,9 +581,14 @@ void makeEfficiencyPlots()
                   min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
   	      string_to_TGraphMap1 graphs1 = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt];
 	      bool addFitFunctions1 = false;
+              double legendPosX = 0.71;
 	      if ( (*observable) == "pt" ) 
 	      {
 	        addFitFunctions1 = true;
+	      }
+              if ( (*observable) == "eta" ) 
+	      {
+                legendPosX = 0.43;
 	      }
 	      std::vector<std::string> labelTextLines1 = getLabelTextLines(*ptThreshold);
               std::string outputFileName1 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_%s.png", 
@@ -597,7 +602,7 @@ void makeEfficiencyPlots()
                          nullptr, "",
 		         addFitFunctions1,
 		         colors, markerStyles, lineStyles, 
-		         0.040, 0.71, 0.17, 0.23, 0.29, 
+		         0.040, legendPosX, 0.17, 0.23, 0.29, 
 		         labelTextLines1, 0.050,
 		         0.17, 0.85, 0.26, 0.05, 
 		         xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
@@ -609,9 +614,14 @@ void makeEfficiencyPlots()
 	          isolationWP != isolationWPs.end(); ++isolationWP ) {
               string_to_TGraphMap1 graphs2 = graphs_efficiency_vs_leadTrackPt[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*isolationWP];
 	      bool addFitFunctions2 = false;
+              double legendPosX = 0.61;
 	      if ( (*observable) == "pt" ) 
 	      {
 	        addFitFunctions2 = true;
+	      }
+              if ( (*observable) == "eta" ) 
+	      {
+                legendPosX = 0.38;
 	      }
 	      std::vector<std::string> labelTextLines2 = getLabelTextLines(*ptThreshold);
               std::string outputFileName2 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_%s.png", 
@@ -625,7 +635,7 @@ void makeEfficiencyPlots()
                          nullptr, "",
 		         addFitFunctions2,
 		         colors, markerStyles, lineStyles, 
-		         0.040, 0.61, 0.17, 0.33, 0.23, 
+		         0.040, legendPosX, 0.17, 0.33, 0.23, 
 		         labelTextLines2, 0.050,
 		         0.17, 0.85, 0.26, 0.05, 
 		         xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
@@ -685,9 +695,14 @@ void makeEfficiencyPlots()
             TGraph* graph_leadTrackPt  = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold]["leadTrackPtGt5"]["noIsolation"];
             TGraph* graph_isolation    = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold]["leadTrackPtGt5"]["relChargedIsoLt0p05"];
 	    bool addFitFunctions4 = false;
+            double legendPosX = 0.57;
 	    if ( (*observable) == "pt" ) 
 	    {
 	      addFitFunctions4 = true;
+	    }
+            if ( (*observable) == "eta" ) 
+	    {
+              legendPosX = 0.36;
 	    }
 	    std::vector<std::string> labelTextLines4 = getLabelTextLines(*ptThreshold);
             std::string outputFileName4 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_final.png", 
@@ -701,7 +716,7 @@ void makeEfficiencyPlots()
                        nullptr, "",
 		       addFitFunctions4,
 		       colors, markerStyles, lineStyles, 
-		       0.040, 0.61, 0.17, 0.33, 0.23, 
+		       0.040, legendPosX, 0.17, 0.33, 0.23, 
 		       labelTextLines4, 0.050,
 		       0.17, 0.85, 0.26, 0.05, 
 		       xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
