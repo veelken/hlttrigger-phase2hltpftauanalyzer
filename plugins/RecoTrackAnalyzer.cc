@@ -34,7 +34,7 @@ RecoTrackAnalyzer::RecoTrackAnalyzer(const edm::ParameterSet& cfg)
     src_offlineVertices_ = cfg.getParameter<edm::InputTag>("srcOfflineVertices");
     token_offlineVertices_ = consumes<reco::VertexCollection>(src_offlineVertices_);
 
-    src_hltVertices_ = cfg.getParameter<edm::InputTag>("srcHLTVertices");
+    src_hltVertices_ = cfg.getParameter<edm::InputTag>("srcOnlineVertices");
     token_hltVertices_ = consumes<reco::VertexCollection>(src_hltVertices_);
   }
   else
@@ -50,10 +50,10 @@ RecoTrackAnalyzer::RecoTrackAnalyzer(const edm::ParameterSet& cfg)
   //token_offlinePFCands_ = consumes<reco::PFCandidateCollection>(src_offlinePFCands_);
   token_offlinePFCands_ = consumes<pat::PackedCandidateCollection>(src_offlinePFCands_);
 
-  src_hltTracks_ = cfg.getParameter<edm::InputTag>("srcHLTTracks");
+  src_hltTracks_ = cfg.getParameter<edm::InputTag>("srcOnlineTracks");
   token_hltTracks_ = consumes<reco::TrackCollection>(src_hltTracks_);
 
-  src_hltPFCands_ = cfg.getParameter<edm::InputTag>("srcHLTPFCands");
+  src_hltPFCands_ = cfg.getParameter<edm::InputTag>("srcOnlinePFCands");
   token_hltPFCands_ = consumes<reco::PFCandidateCollection>(src_hltPFCands_);
 
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");

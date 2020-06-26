@@ -14,20 +14,15 @@ RecoVertexAnalyzer::RecoVertexAnalyzer(const edm::ParameterSet& cfg)
   src_genVertex_z_ = cfg.getParameter<edm::InputTag>("srcGenVertex_z");
   token_genVertex_z_ = consumes<float>(src_genVertex_z_);
 
-  src_hltVertices_ = cfg.getParameter<edm::InputTag>("srcHLTVertices");
-  token_hltVertices_ = consumes<reco::VertexCollection>(src_hltVertices_);
-
-  src_offlineVertices_ = cfg.getParameter<edm::InputTag>("srcOfflineVertices");
-  token_offlineVertices_ = consumes<reco::VertexCollection>(src_offlineVertices_);
+  src_recVertices_ = cfg.getParameter<edm::InputTag>("srcRecVertices");
+  token_recVertices_ = consumes<reco::VertexCollection>(src_recVertices_);
 
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }
 
 RecoVertexAnalyzer::~RecoVertexAnalyzer()
 {
-  delete hltVertexPlots_;
-
-  delete offlineVertexPlots_;
+  delete recVertexPlots_;
 }
 
 void RecoVertexAnalyzer::beginJob()
@@ -38,12 +33,9 @@ void RecoVertexAnalyzer::beginJob()
   }
 
   DQMStore& dqmStore = (*edm::Service<dqm::legacy::DQMStore>());
-  dqmStore.setCurrentFolder(Form("%s/%s", dqmDirectory_.data(), "hltVertex"));
-  hltVertexPlots_ = new vertexPlotEntryType();
-  hltVertexPlots_->bookHistograms(dqmStore); 
-  dqmStore.setCurrentFolder(Form("%s/%s", dqmDirectory_.data(), "offlineVertex"));
-  offlineVertexPlots_ = new vertexPlotEntryType();
-  offlineVertexPlots_->bookHistograms(dqmStore);
+  dqmStore.setCurrentFolder(dqmDirectory_.data());
+  recVertexPlots_ = new vertexPlotEntryType();
+  recVertexPlots_->bookHistograms(dqmStore); 
 }
 
 namespace
@@ -66,15 +58,10 @@ void RecoVertexAnalyzer::analyze(const edm::Event& evt, const edm::EventSetup& e
 
   const double evtWeight = 1.;
 
-  edm::Handle<reco::VertexCollection> hltVertices;
-  evt.getByToken(token_hltVertices_, hltVertices);
-  std::vector<double> hltVertices_z = get_recVertex_z(*hltVertices);
-  hltVertexPlots_->fillHistograms(*genVertex_z, hltVertices_z, evtWeight);
-
-  edm::Handle<reco::VertexCollection> offlineVertices;
-  evt.getByToken(token_offlineVertices_, offlineVertices);
-  std::vector<double> offlineVertices_z = get_recVertex_z(*offlineVertices);
-  offlineVertexPlots_->fillHistograms(*genVertex_z, offlineVertices_z, evtWeight);
+  edm::Handle<reco::VertexCollection> recVertices;
+  evt.getByToken(token_recVertices_, recVertices);
+  std::vector<double> recVertices_z = get_recVertex_z(*recVertices);
+  recVertexPlots_->fillHistograms(*genVertex_z, recVertices_z, evtWeight);
 }
 
 void RecoVertexAnalyzer::endJob()
