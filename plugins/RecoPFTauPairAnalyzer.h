@@ -24,7 +24,7 @@
 #include <string>    // std::string
 #include <algorithm> // std::sort
 
-using namespace dqm::legacy;
+using namespace dqm::implementation;
 
 class RecoPFTauPairAnalyzer : public edm::EDAnalyzer 
 {

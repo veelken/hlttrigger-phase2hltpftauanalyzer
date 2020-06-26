@@ -96,6 +96,7 @@ void RecoPFTauAnalyzerSignal::beginJob()
           efficiencyPlotEntryType* efficiencyPlots_noIsolation  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
             ptThreshold, min_leadTrackPt, -1.,   -1.); // no isolation cut applied
 	  efficiencyPlots_noIsolation->bookHistograms(dqmStore);
+          efficiencyPlots_.push_back(efficiencyPlots_noIsolation);
           efficiencyPlotEntryType* efficiencyPlots_vLoose  = new efficiencyPlotEntryType(45., 1.e+3, min_absEta, max_absEta, decayMode, 
             ptThreshold, min_leadTrackPt,  0.40, -1.); // vLoose
 	  efficiencyPlots_vLoose->bookHistograms(dqmStore);

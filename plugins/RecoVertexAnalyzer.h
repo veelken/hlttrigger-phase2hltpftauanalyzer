@@ -21,7 +21,7 @@
 #include <string>
 #include <algorithm> // std::sort
 
-using namespace dqm::legacy;
+using namespace dqm::implementation;
 
 class RecoVertexAnalyzer : public edm::EDAnalyzer 
 {
@@ -42,11 +42,8 @@ class RecoVertexAnalyzer : public edm::EDAnalyzer
   edm::InputTag src_genVertex_z_;
   edm::EDGetTokenT<float> token_genVertex_z_;
 
-  edm::InputTag src_hltVertices_;
-  edm::EDGetTokenT<reco::VertexCollection> token_hltVertices_;
-
-  edm::InputTag src_offlineVertices_;
-  edm::EDGetTokenT<reco::VertexCollection> token_offlineVertices_;
+  edm::InputTag src_recVertices_;
+  edm::EDGetTokenT<reco::VertexCollection> token_recVertices_;
 
   std::string dqmDirectory_;
 
@@ -136,9 +133,7 @@ class RecoVertexAnalyzer : public edm::EDAnalyzer
     TH1* histogram_numRecVertices_;    
   };
 
-  vertexPlotEntryType* hltVertexPlots_;
-
-  vertexPlotEntryType* offlineVertexPlots_;
+  vertexPlotEntryType* recVertexPlots_;
 };
 
 #endif   

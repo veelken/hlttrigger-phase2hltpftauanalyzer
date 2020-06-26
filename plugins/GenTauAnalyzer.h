@@ -20,7 +20,7 @@
 #include <vector>    // std::vector
 #include <string>    // std::string
 
-using namespace dqm::legacy;
+using namespace dqm::implementation;
 
 class GenTauAnalyzer : public edm::EDAnalyzer 
 {

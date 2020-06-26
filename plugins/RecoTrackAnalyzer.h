@@ -31,7 +31,7 @@
 #include <vector>
 #include <string>
 
-using namespace dqm::legacy;
+using namespace dqm::implementation;
 
 namespace 
 {

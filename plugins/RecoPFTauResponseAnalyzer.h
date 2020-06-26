@@ -25,7 +25,7 @@
 #include <vector>    // std::vector
 #include <string>    // std::string
 
-using namespace dqm::legacy;
+using namespace dqm::implementation;
 
 class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer 
 {

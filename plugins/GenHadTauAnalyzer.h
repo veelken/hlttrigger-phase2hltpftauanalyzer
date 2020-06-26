@@ -21,7 +21,7 @@
 #include <vector>    // std::vector
 #include <string>    // std::string
 
-using namespace dqm::legacy;
+using namespace dqm::implementation;
 
 class GenHadTauAnalyzer : public edm::EDAnalyzer 
 {
