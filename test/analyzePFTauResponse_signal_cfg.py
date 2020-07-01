@@ -20,28 +20,18 @@ process.source = cms.Source("PoolSource",
     )
 )
 
+inputFilePath = '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_offlineVtxCollection_HGCalFix_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_142633/'
+processName = "qqH_htt"
+srcVertices = 'offlinePrimaryVertices'
+#srcVertices = 'hltPhase2PixelVertices'
+outputFileName = "analyzePFTauResponse_signal_2020Jun30.root"
+
 #--------------------------------------------------------------------------------
 # set input files
-
-import os
-import re
-
-inputFilePaths = [
-    '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_Christian_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre6_numCores8_maxMem16kMB_T2_EE_Estonia_blacklist/200612_212847/0000/'
-]
-
-inputFile_regex = r"[a-zA-Z0-9_/:.-]*step3_RAW2DIGI_RECO_[a-zA-Z0-9-_]+.root"
-
-# check if name of inputFile matches regular expression
-inputFileNames = []
-for inputFilePath in inputFilePaths:
-    files = [ "".join([ "file:", inputFilePath, file ]) for file in os.listdir(inputFilePath) ]
-    for file in files:
-        inputFile_matcher = re.compile(inputFile_regex)
-        if inputFile_matcher.match(file):
-            inputFileNames.append(file)
-print "inputFileNames = %s" % inputFileNames 
-
+from HLTTrigger.TallinnHLTPFTauAnalyzer.tools import getInputFileNames
+print("Searching for input files in path = '%s'" % inputFilePath)
+inputFileNames = getInputFileNames.getInputFileNames(inputFilePath)
+print("Found %i input files." % len(inputFileNames))
 process.source.fileNames = cms.untracked.vstring(inputFileNames)
 #--------------------------------------------------------------------------------
 
@@ -102,6 +92,7 @@ process.genVertex = cms.EDProducer("GenVertexProducer",
 process.analysisSequence += process.genVertex
 
 for algorithm in [ "hps", "shrinking-cone" ]:
+
   pfTauLabel = None
   if algorithm == "shrinking-cone":
     pfTauLabel = "PFTau"
@@ -110,44 +101,53 @@ for algorithm in [ "hps", "shrinking-cone" ]:
   else:
     raise ValueError("Invalid parameter algorithm = '%s' !!" % algorithm)
 
-  for srcVertices in [ "offlinePrimaryVertices", "hltPhase2PixelVertices", "hltPhase2TrimmedPixelVertices" ]:
-    suffix = None
-    if srcVertices == "offlinePrimaryVertices":
-      suffix = "WithOfflineVertices"
-    elif srcVertices == "hltPhase2PixelVertices":
-      suffix = "WithOnlineVertices"
-    elif srcVertices == "hltPhase2TrimmedPixelVertices":
-      suffix = "WithOnlineVerticesTrimmed"
-    else:
-      raise ValueError("Invalid parameter srcVertices = '%s' !!" % srcVertices)
+  for isolation_maxDeltaZOption in [ "primaryVertex", "leadTrack" ]:
+    ##for isolation_minTrackHits in [ 3, 5, 8 ]:  
+    for isolation_minTrackHits in [ 8 ]: 
 
-    moduleName_wrtGenHadTaus = "analyze%sResponse%sWrtGenHadTaus" % (pfTauLabel, suffix)
-    module_wrtGenHadTaus = cms.EDAnalyzer("RecoPFTauResponseAnalyzer",
-      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (pfTauLabel, suffix)),
-      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix)),
-      srcRefTaus = cms.InputTag('offlineMatchedGenHadTaus'),
-      typeRefTaus = cms.string("gen"),                                                                            
-      dqmDirectory = cms.string("%sResponseAnalyzer%s_wrtGenHadTaus" % (pfTauLabel, suffix))
-    )
-    setattr(process, moduleName_wrtGenHadTaus, module_wrtGenHadTaus)
-    process.analysisSequence += module_wrtGenHadTaus
+      suffix = "%iHits" % isolation_minTrackHits
+      if isolation_maxDeltaZOption == "primaryVertex":
+        suffix += "MaxDeltaZ"
+      elif isolation_maxDeltaZOption == "leadTrack":
+        suffix += "MaxDeltaZToLeadTrack"
+      else:
+        raise ValueError("Invalid parameter isolation_maxDeltaZOption = '%s' !!" % isolation_maxDeltaZOption)
+      if srcVertices == "offlinePrimaryVertices":
+        suffix += "WithOfflineVertices"
+      elif srcVertices == "hltPhase2PixelVertices":
+        suffix += "WithOnlineVertices"
+      elif srcVertices == "hltPhase2TrimmedPixelVertices":
+        suffix += "WithOnlineVerticesTrimmed"
+      else:
+        raise ValueError("Invalid parameter srcVertices = '%s' !!" % srcVertices)  
 
-    moduleName_wrtOfflineTaus = "analyze%sResponse%sWrtOfflineTaus" % (pfTauLabel, suffix)
-    module_wrtOfflineTaus = cms.EDAnalyzer("RecoPFTauResponseAnalyzer",
-      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (pfTauLabel, suffix)),
-      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix)),
-      srcRefTaus = cms.InputTag('selectedOfflinePFTaus'),
-      typeRefTaus = cms.string("offline"),                                                                   
-      dqmDirectory = cms.string("%sResponseAnalyzer%s_wrtOfflineTaus" % (pfTauLabel, suffix))
-    )
-    setattr(process, moduleName_wrtOfflineTaus, module_wrtOfflineTaus)
-    process.analysisSequence += module_wrtOfflineTaus
+      moduleName_wrtGenHadTaus = "analyze%sResponse%sWrtGenHadTaus" % (pfTauLabel, suffix)
+      module_wrtGenHadTaus = cms.EDAnalyzer("RecoPFTauResponseAnalyzer",
+        srcPFTaus = cms.InputTag('hltSelected%ss%s' % (pfTauLabel, suffix)),
+        srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix)),
+        srcRefTaus = cms.InputTag('offlineMatchedGenHadTaus'),
+        typeRefTaus = cms.string("gen"),                                                                            
+        dqmDirectory = cms.string("%s/%sResponseAnalyzer%s_wrtGenHadTaus" % (srcVertices, pfTauLabel, suffix))
+      )
+      setattr(process, moduleName_wrtGenHadTaus, module_wrtGenHadTaus)
+      process.analysisSequence += module_wrtGenHadTaus
+
+      moduleName_wrtOfflineTaus = "analyze%sResponse%sWrtOfflineTaus" % (pfTauLabel, suffix)
+      module_wrtOfflineTaus = cms.EDAnalyzer("RecoPFTauResponseAnalyzer",
+        srcPFTaus = cms.InputTag('hltSelected%ss%s' % (pfTauLabel, suffix)),
+        srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix)),
+        srcRefTaus = cms.InputTag('selectedOfflinePFTaus'),
+        typeRefTaus = cms.string("offline"),                                                                   
+        dqmDirectory = cms.string("%s/%sResponseAnalyzer%s_wrtOfflineTaus" % (srcVertices, pfTauLabel, suffix))
+      )
+      setattr(process, moduleName_wrtOfflineTaus, module_wrtOfflineTaus)
+      process.analysisSequence += module_wrtOfflineTaus
 #--------------------------------------------------------------------------------
 
 process.load("DQMServices.Core.DQMStore_cfi")
 
 process.savePlots = cms.EDAnalyzer("DQMSimpleFileSaver",
-    outputFileName = cms.string('analyzePFTauResponse_signal_2020Jun18.root')
+    outputFileName = cms.string(outputFileName)
 )
 
 process.p = cms.Path(process.analysisSequence + process.savePlots)
