@@ -419,7 +419,7 @@ void makeEfficiencyPlots()
   gROOT->SetBatch(true);
 
   std::string inputFilePath = Form("%s/src/HLTTrigger/TallinnHLTPFTauAnalyzer/test/", gSystem->Getenv("CMSSW_BASE"));
-  std::string inputFileName = "analyzePFTaus_signal_2020Jun24.root";
+  std::string inputFileName = "analyzePFTaus_signal_qqH_htt_offlinePrimaryVertices_2020Jun30_all.root";
   std::string inputFileName_full = inputFilePath;
   if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
   inputFileName_full.append(inputFileName);
@@ -434,9 +434,26 @@ void makeEfficiencyPlots()
   pfAlgos.push_back("HpsPFTau");
 
   std::vector<std::string> vertexOptions;
-  vertexOptions.push_back("WithOfflineVertices");
+  vertexOptions.push_back("3HitsMaxDeltaZWithOfflineVertices");
+  vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  vertexOptions.push_back("5HitsMaxDeltaZWithOfflineVertices");
+  vertexOptions.push_back("5HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
+  vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
   //vertexOptions.push_back("WithOnlineVertices");
   //vertexOptions.push_back("WithOnlineVerticesTrimmed");
+
+  std::map<std::string, std::string> srcVertices; // key = vertexOption
+  srcVertices["3HitsMaxDeltaZWithOfflineVertices"]                    = "offlinePrimaryVertices";
+  srcVertices["3HitsMaxDeltaZToLeadTrackWithOfflineVertices"]         = "offlinePrimaryVertices";
+  srcVertices["5HitsMaxDeltaZWithOfflineVertices"]                    = "offlinePrimaryVertices";
+  srcVertices["5HitsMaxDeltaZToLeadTrackWithOfflineVertices"]         = "offlinePrimaryVertices";
+  srcVertices["8HitsMaxDeltaZWithOfflineVertices"]                    = "offlinePrimaryVertices";
+  srcVertices["8HitsMaxDeltaZToLeadTrackWithOfflineVertices"]         = "offlinePrimaryVertices";
+  //srcVertices["8HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
+  //srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
+  //srcVertices["8HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
+  //srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
 
   std::vector<std::string> observables;
   observables.push_back("pt");
@@ -447,16 +464,16 @@ void makeEfficiencyPlots()
   std::vector<std::string> absEtaRanges;
   absEtaRanges.push_back("absEtaLt1p40");
   absEtaRanges.push_back("absEta1p40to2p17");
-  //absEtaRanges.push_back("absEta1p40to2p40");
+  absEtaRanges.push_back("absEta1p40to2p40");
   absEtaRanges.push_back("absEtaLt2p17");
-  //absEtaRanges.push_back("absEtaLt2p40");
+  absEtaRanges.push_back("absEtaLt2p40");
 
   std::vector<std::string> decayModes;
-  decayModes.push_back("oneProng0Pi0");
-  decayModes.push_back("oneProng1Pi0");
-  decayModes.push_back("oneProng2Pi0");
-  decayModes.push_back("threeProng0Pi0");
-  decayModes.push_back("threeProng1Pi0");
+  //decayModes.push_back("oneProng0Pi0");
+  //decayModes.push_back("oneProng1Pi0");
+  //decayModes.push_back("oneProng2Pi0");
+  //decayModes.push_back("threeProng0Pi0");
+  //decayModes.push_back("threeProng1Pi0");
   decayModes.push_back("all");
 
   std::vector<std::string> ptThresholds;
@@ -515,7 +532,7 @@ void makeEfficiencyPlots()
   std::map<std::string, std::string> legendEntries_vs_leadTrackPt; // key = min_leadTrackPt
   legendEntries_vs_leadTrackPt["leadTrackPtGt1"] = "lead. Track p_{T} > 1 GeV";
   legendEntries_vs_leadTrackPt["leadTrackPtGt2"] = "lead. Track p_{T} > 2 GeV";
-  legendEntries_vs_leadTrackPt["leadTrackPtGt5"] = "lead. Track p_{T} > 3 GeV";
+  legendEntries_vs_leadTrackPt["leadTrackPtGt5"] = "lead. Track p_{T} > 5 GeV";
 
   std::map<std::string, std::string> legendEntries_vs_decayModes; // key = decayMode
   legendEntries_vs_decayModes["oneProng0Pi0"]   = "h^{#pm}";
@@ -557,18 +574,18 @@ void makeEfficiencyPlots()
                   min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
               for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
 	            isolationWP != isolationWPs.end(); ++isolationWP ) {
-                //std::string histogramName_numerator = Form((dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
-                //  pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
-                //  observable->data(),absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	        std::string histogramName_numerator = Form((dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
-                  pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
+                //std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
+                //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
+                //  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+	        std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
+                  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
                   observable->data(),absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                 TH1* histogram_numerator = loadHistogram(inputFile, histogramName_numerator);
-	        //std::string histogramName_denominator = Form((dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
-                //  pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
-                //  observable->data(),absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	        std::string histogramName_denominator = Form((dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
-                  pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
+	        //std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
+                //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
+                //  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+	        std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
+                  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
                   observable->data(),absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                 TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
 	        TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
@@ -602,7 +619,7 @@ void makeEfficiencyPlots()
                          nullptr, "",
 		         addFitFunctions1,
 		         colors, markerStyles, lineStyles, 
-		         0.040, legendPosX, 0.17, 0.23, 0.29, 
+		         0.040, legendPosX, 0.17, 0.23, 0.28, 
 		         labelTextLines1, 0.050,
 		         0.17, 0.85, 0.26, 0.05, 
 		         xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
@@ -629,13 +646,13 @@ void makeEfficiencyPlots()
 	      showGraphs(1150, 850,
                          graphs2["leadTrackPtGt1"], legendEntries_vs_leadTrackPt["leadTrackPtGt1"],
 		         graphs2["leadTrackPtGt2"], legendEntries_vs_leadTrackPt["leadTrackPtGt2"],
-		         graphs2["leadTrackPtGt4"], legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
+		         graphs2["leadTrackPtGt5"], legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
                          nullptr, "",
                          nullptr, "",
                          nullptr, "",
 		         addFitFunctions2,
 		         colors, markerStyles, lineStyles, 
-		         0.040, legendPosX, 0.17, 0.33, 0.23, 
+		         0.040, legendPosX, 0.17, 0.33, 0.14, 
 		         labelTextLines2, 0.050,
 		         0.17, 0.85, 0.26, 0.05, 
 		         xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
@@ -680,7 +697,7 @@ void makeEfficiencyPlots()
 		           0, "",
 		           false,
 		           colors, markerStyles, lineStyles, 
-		           0.045, 0.69, 0.17, 0.23, 0.26, 
+		           0.045, 0.69, 0.17, 0.23, 0.28, 
 		           labelTextLines3, 0.045,
 		           0.17, 0.85, 0.26, 0.05, 
 		           xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
@@ -709,14 +726,14 @@ void makeEfficiencyPlots()
               pfAlgo->data(), vertexOption->data(), observable->data(), absEtaRange->data(), ptThreshold->data());
 	    showGraphs(1150, 850,
                        graph_trackFinding, "Track finding",
-                       graph_leadTrackPt, legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
-                       graph_isolation, legendEntries_vs_isolationWPs["relChargedIsoLt0p05"],
+                       graph_leadTrackPt,  legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
+                       graph_isolation,    legendEntries_vs_isolationWPs["relChargedIsoLt0p05"],
                        nullptr, "",
                        nullptr, "",
                        nullptr, "",
 		       addFitFunctions4,
 		       colors, markerStyles, lineStyles, 
-		       0.040, legendPosX, 0.17, 0.33, 0.23, 
+		       0.040, legendPosX, 0.17, 0.33, 0.16, 
 		       labelTextLines4, 0.050,
 		       0.17, 0.85, 0.26, 0.05, 
 		       xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 

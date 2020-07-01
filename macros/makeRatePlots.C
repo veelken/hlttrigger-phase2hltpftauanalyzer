@@ -44,9 +44,12 @@ double compRate(TH2* histogram2d, int idxBinX, int minNumTaus)
     if ( numTaus < minNumTaus ) integral_failed += binContent;
   }
   double integral_passed = integral - integral_failed;
-  //double rate = 2.8e+7; // bunch-crossing frequency of colliding bunches = 28 MHz
-  //rate *= (integral_passed/integral);
-  double rate = integral_passed/integral;
+  double max_rate = 2.8e+7; // bunch-crossing frequency of colliding bunches = 28 MHz
+  //rate = max_rate*(integral_passed/integral);
+  double rate = integral_passed;
+  // CV: temporary fudge factor to account for numJobs run in parallel to process minbias MC sample
+  rate /= 32.;
+  if ( rate > max_rate ) rate = max_rate;
   return rate;
 }
 
@@ -237,7 +240,7 @@ void makeRatePlots()
   gROOT->SetBatch(true);
 
   std::string inputFilePath = Form("%s/src/HLTTrigger/TallinnHLTPFTauAnalyzer/test/", gSystem->Getenv("CMSSW_BASE"));
-  std::string inputFileName = "analyzePFTaus_background_2020Jun16.root";
+  std::string inputFileName = "analyzePFTaus_background_all_2020Jun29.root";
   std::string inputFileName_full = inputFilePath;
   if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
   inputFileName_full.append(inputFileName);
@@ -249,24 +252,35 @@ void makeRatePlots()
 
   std::vector<std::string> processes;
   processes.push_back("minbias");
-  processes.push_back("QCD");
-  processes.push_back("DY");
-  processes.push_back("W");
+  //processes.push_back("QCD");
+  //processes.push_back("DY");
+  //processes.push_back("W");
 
   std::vector<std::string> pfAlgos;
   //pfAlgos.push_back("PFTau");
   pfAlgos.push_back("HpsPFTau");
 
   std::vector<std::string> vertexOptions;
-  vertexOptions.push_back("WithOfflineVertices");
-  //vertexOptions.push_back("WithOnlineVertices");
-  //vertexOptions.push_back("WithOnlineVerticesTrimmed");
+  vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
+  vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVerticesTrimmed");
+  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
+
+  std::map<std::string, std::string> srcVertices; // key = vertexOption
+  srcVertices["8HitsMaxDeltaZWithOfflineVertices"]                  = "offlinePrimaryVertices";
+  srcVertices["8HitsMaxDeltaZToLeadTrackWithOfflineVertices"]       = "offlinePrimaryVertices";
+  srcVertices["8HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
+  srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
+  srcVertices["8HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
+  srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
 
   std::vector<std::string> absEtaRanges;
   absEtaRanges.push_back("absEtaLt1p40");
-  //absEtaRanges.push_back("absEta1p40to2p17");
+  absEtaRanges.push_back("absEta1p40to2p17");
   absEtaRanges.push_back("absEta1p40to2p40");
-  //absEtaRanges.push_back("absEtaLt2p17");
+  absEtaRanges.push_back("absEtaLt2p17");
   absEtaRanges.push_back("absEtaLt2p40");
 
   std::vector<std::string> min_leadTrackPtValues;
@@ -294,8 +308,8 @@ void makeRatePlots()
 
   std::map<std::string, std::string> legendEntries_vs_leadTrackPt; // key = min_leadTrackPt
   legendEntries_vs_leadTrackPt["leadTrackPtGt1"] = "lead. Track p_{T} > 1 GeV";
-  legendEntries_vs_leadTrackPt["leadTrackPtGt2"] = "lead. Track p_{T} > 1 GeV";
-  legendEntries_vs_leadTrackPt["leadTrackPtGt5"] = "lead. Track p_{T} > 1 GeV";
+  legendEntries_vs_leadTrackPt["leadTrackPtGt2"] = "lead. Track p_{T} > 2 GeV";
+  legendEntries_vs_leadTrackPt["leadTrackPtGt5"] = "lead. Track p_{T} > 5 GeV";
 
   std::map<std::string, std::string> legendEntries_vs_processes; // key = process
   legendEntries_vs_processes["minbias"] = "Minimum Bias";
@@ -335,8 +349,8 @@ void makeRatePlots()
 	        isolationWP != isolationWPs.end(); ++isolationWP ) {
             for ( std::vector<std::string>::const_iterator process = processes.begin();
 	          process != processes.end(); ++process ) {
-              std::string histogram2dName = Form(("%s/" + dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s_%s").data(), 
-                process->data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
+              std::string histogram2dName = Form(("%s/%s/" + dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s_%s").data(), 
+                process->data(), srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
               TH2* histogram2d = loadHistogram2d(inputFile, histogram2dName);
 
               TH1* histogram_rateSingleTau = makeRateHistogram(histogram2d, 1);
@@ -390,7 +404,7 @@ void makeRatePlots()
 		         labelTextLines, 0.050,
 		         0.63, 0.66, 0.26, 0.07, 
 		         -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		         true, 1.e+1, 1.e+7, "Double #tau Trigger Rate [Hz]", 1.4, 
+		         true, 1.e+1, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
 		         outputFileName2);
         }
 
@@ -407,11 +421,11 @@ void makeRatePlots()
 		         nullptr, "",
 		         nullptr, "",
 		         colors, lineStyles, 
-		         0.040, 0.66, 0.66, 0.23, 0.28,
+		         0.040, 0.48, 0.79, 0.41, 0.14,
 		         labelTextLines, 0.050,
 		         0.63, 0.66, 0.26, 0.07, 
 		         -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		         true, 1.e0, 1.e+6, "Single #tau Trigger Rate [Hz]", 1.4, 
+		         true, 1.e+1, 1.e+8, "Single #tau Trigger Rate [Hz]", 1.4, 
 		         outputFileName3);
 
           string_to_TH1Map1 histograms4 = histograms_rateDoubleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*absEtaRange][*isolationWP];
@@ -425,11 +439,11 @@ void makeRatePlots()
 		         nullptr, "",
 		         nullptr, "",
 		         colors, lineStyles, 
-		         0.040, 0.66, 0.66, 0.23, 0.28,
+		         0.040, 0.48, 0.79, 0.41, 0.14,
 		         labelTextLines, 0.050,
 		         0.63, 0.66, 0.26, 0.07, 
 		         -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		         true, 1.e+1, 1.e+7, "Double #tau Trigger Rate [Hz]", 1.4, 
+		         true, 1.e+1, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
 		         outputFileName4);
         }       
 
@@ -453,7 +467,7 @@ void makeRatePlots()
 		           labelTextLines, 0.050,
 		           0.63, 0.66, 0.26, 0.07, 
 		           -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		           true, 1.e0, 1.e+6, "Single #tau Trigger Rate [Hz]", 1.4, 
+		           true, 1.e+1, 1.e+8, "Single #tau Trigger Rate [Hz]", 1.4, 
 		           outputFileName5);
 
             string_to_TH1Map1 histograms6 = histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*absEtaRange][*min_leadTrackPt][*isolationWP];
@@ -471,7 +485,7 @@ void makeRatePlots()
 		           labelTextLines, 0.050,
 		           0.63, 0.66, 0.26, 0.07, 
 		           -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		           true, 1.e+1, 1.e+7, "Double #tau Trigger Rate [Hz]", 1.4, 
+		           true, 1.e+1, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
 		           outputFileName6);
           }
         }
