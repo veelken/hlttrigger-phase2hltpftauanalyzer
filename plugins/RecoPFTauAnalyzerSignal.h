@@ -193,16 +193,16 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
         size_t numPFTaus = pfTaus->size();
         for ( size_t idxPFTau = 0; idxPFTau < numPFTaus; ++idxPFTau ) 
         {  
-          reco::PFTauRef pfTauRef(pfTaus, idxPFTau);
-          double sumChargedIso = pfTauSumChargedIso[pfTauRef];
-  	  if ( (ptThreshold_       < 0. || pfTauRef->pt() >=  ptThreshold_                            ) &&
-               (                           pfTauRef->leadPFChargedHadrCand().isNonnull()              &&   
-                                           pfTauRef->leadPFChargedHadrCand()->bestTrack()             ) && 
-               (min_leadTrackPt_   < 0. || pfTauRef->leadPFChargedHadrCand()->pt() >= min_leadTrackPt_) &&
-               (max_relChargedIso_ < 0. || sumChargedIso  <= (max_relChargedIso_*pfTauRef->pt())      ) &&
-	       (max_absChargedIso_ < 0. || sumChargedIso  <=  max_absChargedIso_                      ) )
+          reco::PFTauRef pfTau(pfTaus, idxPFTau);
+          double sumChargedIso = pfTauSumChargedIso[pfTau];
+          if ( (ptThreshold_       < 0. || pfTau->pt()                                       >=  ptThreshold_                   ) &&
+               (                           pfTau->leadPFChargedHadrCand().isNonnull()                                           &&   
+                                           pfTau->leadPFChargedHadrCand()->bestTrack()                                          ) && 
+               (min_leadTrackPt_   < 0. || pfTau->leadPFChargedHadrCand()->bestTrack()->pt() >=  min_leadTrackPt_               ) &&
+               (max_relChargedIso_ < 0. || sumChargedIso                                     <= (max_relChargedIso_*pfTau->pt())) &&
+	       (max_absChargedIso_ < 0. || sumChargedIso                                     <=  max_absChargedIso_             ) )
 	  {
-	    double dR = reco::deltaR(denominatorTau.eta(), denominatorTau.phi(), pfTauRef->eta(), pfTauRef->phi());
+	    double dR = reco::deltaR(denominatorTau.eta(), denominatorTau.phi(), pfTau->eta(), pfTau->phi());
 	    if ( dR < dRmatch_ ) isMatched = true;
 	  }
 	}
@@ -258,15 +258,16 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
         size_t numPFTaus = pfTaus->size();
         for ( size_t idxPFTau = 0; idxPFTau < numPFTaus; ++idxPFTau ) 
         {  
-          reco::PFTauRef pfTauRef(pfTaus, idxPFTau);
-          double sumChargedIso = pfTauSumChargedIso[pfTauRef];
-  	  if ( (ptThreshold_       < 0. || pfTauRef->pt() >=  ptThreshold_                      ) &&
-               (                           pfTauRef->leadPFChargedHadrCand().isNonnull()        &&   
-                                           pfTauRef->leadPFChargedHadrCand()->bestTrack()       ) && 
-               (max_relChargedIso_ < 0. || sumChargedIso  <= (max_relChargedIso_*pfTauRef->pt())) &&
-	       (max_absChargedIso_ < 0. || sumChargedIso  <=  max_absChargedIso_                ) )
+          reco::PFTauRef pfTau(pfTaus, idxPFTau);
+          double sumChargedIso = pfTauSumChargedIso[pfTau];
+  	  if ( (ptThreshold_       < 0. || pfTau->pt()                                       >=  ptThreshold_                   ) &&
+               (                           pfTau->leadPFChargedHadrCand().isNonnull()                                           &&   
+                                           pfTau->leadPFChargedHadrCand()->bestTrack()                                          ) && 
+               (min_leadTrackPt_   < 0. || pfTau->leadPFChargedHadrCand()->bestTrack()->pt() >=  min_leadTrackPt_               ) &&
+               (max_relChargedIso_ < 0. || sumChargedIso                                     <= (max_relChargedIso_*pfTau->pt())) &&
+	       (max_absChargedIso_ < 0. || sumChargedIso                                     <=  max_absChargedIso_             ) )
 	  {
-	    double dR = reco::deltaR(denominatorTau.eta(), denominatorTau.phi(), pfTauRef->eta(), pfTauRef->phi());
+	    double dR = reco::deltaR(denominatorTau.eta(), denominatorTau.phi(), pfTau->eta(), pfTau->phi());
 	    if ( dR < dRmatch_ ) isMatched = true;
 	  }
 	}

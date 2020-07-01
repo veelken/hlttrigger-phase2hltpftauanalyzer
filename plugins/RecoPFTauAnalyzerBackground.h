@@ -56,6 +56,9 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
   edm::InputTag srcPFTauSumChargedIso_;
   edm::EDGetTokenT<reco::PFTauDiscriminator> tokenPFTauSumChargedIso_;
 
+  double min_pt_;
+  double max_absEta_;
+
   double lumiScale_;
 
   std::string dqmDirectory_;
@@ -140,29 +143,20 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
       histogram_numPFTausPtGt50_ = me_numPFTausPtGt50_->getTH1();
       assert(histogram_numPFTausPtGt50_);
     }
-    void fillHistograms(const edm::Handle<reco::PFTauCollection>& pfTaus, const reco::PFTauDiscriminator& pfTauSumChargedIso, double evtWeight)
+    void fillHistograms(const std::vector<std::pair<const reco::PFTau*, double>>& pfTaus_wChargedIso, double evtWeight)
     {
-      std::vector<std::pair<const reco::PFTau*, double>> pfTaus_wChargedIso_sorted;
-      size_t numPFTaus = pfTaus->size();
-      for ( size_t idxPFTau = 0; idxPFTau < numPFTaus; ++idxPFTau ) 
-      { 
-        reco::PFTauRef pfTauRef(pfTaus, idxPFTau);
-        double sumChargedIso = pfTauSumChargedIso[pfTauRef];
-        pfTaus_wChargedIso_sorted.push_back(std::pair<const reco::PFTau*, double>(pfTauRef.get(), sumChargedIso));
-      }
-      // CV: sort PFTaus by decreasing pT
-      std::sort(pfTaus_wChargedIso_sorted.begin(), pfTaus_wChargedIso_sorted.end(), isHigherPt);
-
       std::vector<const reco::PFTau*> pfTaus_passingAbsEta;
-      for ( std::vector<std::pair<const reco::PFTau*, double>>::const_iterator pfTau_wChargedIso = pfTaus_wChargedIso_sorted.begin();
-            pfTau_wChargedIso != pfTaus_wChargedIso_sorted.end(); ++pfTau_wChargedIso ) {
-        double pfTau_absEta = TMath::Abs(pfTau_wChargedIso->first->eta());
-        double leadTrackPt = pfTau_wChargedIso->first->leadPFChargedHadrCand()->pt();
-        if ( (min_absEta_        < 0. || pfTau_absEta              >=  min_absEta_                                       ) &&
-	     (max_absEta_        < 0. || pfTau_absEta              <=  max_absEta_                                       ) &&
-             (min_leadTrackPt_   < 0. || leadTrackPt               >=  min_leadTrackPt_                                  ) &&
-	     (max_relChargedIso_ < 0. || pfTau_wChargedIso->second <= (max_relChargedIso_*pfTau_wChargedIso->first->pt())) &&
-	     (max_absChargedIso_ < 0. || pfTau_wChargedIso->second <=  max_absChargedIso_                                ) )
+      for ( std::vector<std::pair<const reco::PFTau*, double>>::const_iterator pfTau_wChargedIso = pfTaus_wChargedIso.begin();
+            pfTau_wChargedIso != pfTaus_wChargedIso.end(); ++pfTau_wChargedIso ) {
+        const reco::PFTau* pfTau = pfTau_wChargedIso->first;
+        double pfTau_absEta = TMath::Abs(pfTau->eta());
+        if ( (min_absEta_        < 0. || pfTau_absEta                                      >=  min_absEta_                    ) &&
+	     (max_absEta_        < 0. || pfTau_absEta                                      <=  max_absEta_                    ) &&
+             (                           pfTau->leadPFChargedHadrCand().isNonnull()                                           &&   
+                                         pfTau->leadPFChargedHadrCand()->bestTrack()                                          ) && 
+             (min_leadTrackPt_   < 0. || pfTau->leadPFChargedHadrCand()->bestTrack()->pt() >=  min_leadTrackPt_               ) && 
+	     (max_relChargedIso_ < 0. || pfTau_wChargedIso->second                         <= (max_relChargedIso_*pfTau->pt())) &&
+	     (max_absChargedIso_ < 0. || pfTau_wChargedIso->second                         <=  max_absChargedIso_             ) )
 	{
 	  pfTaus_passingAbsEta.push_back(pfTau_wChargedIso->first);
 	}

@@ -17,6 +17,9 @@ RecoPFTauAnalyzerBackground::RecoPFTauAnalyzerBackground(const edm::ParameterSet
   srcPFTauSumChargedIso_ = cfg.getParameter<edm::InputTag>("srcPFTauSumChargedIso");
   tokenPFTauSumChargedIso_ = consumes<reco::PFTauDiscriminator>(srcPFTauSumChargedIso_);
 
+  min_pt_ = cfg.getParameter<double>("min_pt");
+  max_absEta_ = cfg.getParameter<double>("max_absEta");
+
   lumiScale_ = cfg.getParameter<double>("lumiScale");
 
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
@@ -77,9 +80,23 @@ void RecoPFTauAnalyzerBackground::analyze(const edm::Event& evt, const edm::Even
   
   const double evtWeight = lumiScale_;
 
+  std::vector<std::pair<const reco::PFTau*, double>> pfTaus_wChargedIso;
+  size_t numPFTaus = pfTaus->size();
+  for ( size_t idxPFTau = 0; idxPFTau < numPFTaus; ++idxPFTau ) 
+  { 
+    reco::PFTauRef pfTauRef(pfTaus, idxPFTau);
+    if ( (min_pt_     < 0. || pfTauRef->pt()             >= min_pt_    ) &&
+         (max_absEta_ < 0. || std::fabs(pfTauRef->eta()) <= max_absEta_) )
+    {
+      double sumChargedIso = (*pfTauSumChargedIso)[pfTauRef];
+      pfTaus_wChargedIso.push_back(std::pair<const reco::PFTau*, double>(pfTauRef.get(), sumChargedIso));
+    }
+    // CV: sort PFTaus by decreasing pT
+    std::sort(pfTaus_wChargedIso.begin(), pfTaus_wChargedIso.end(), isHigherPt);
+  }
   for ( auto ratePlot : ratePlots_ ) 
   {
-    ratePlot->fillHistograms(pfTaus, *pfTauSumChargedIso, evtWeight);
+    ratePlot->fillHistograms(pfTaus_wChargedIso, evtWeight);
   }
 
   ++numEvents_processed_;
