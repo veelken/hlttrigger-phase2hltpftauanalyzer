@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
+import getpass
 import os
 
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools import getInputFileNames
+from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames, build_sbatchManagerFile, build_Makefile
 
 # CV: define instantaneous luminosity for HL-LHC running period taken from the twiki
 #       https://twiki.cern.ch/twiki/bin/viewauth/CMS/HighLevelTriggerPhase2#Rate_calculations
@@ -18,10 +19,10 @@ background_samples = {
   #    (assuming that 70% of all bunches are colliding, i.e. collision frequence of 28 MHz)
   'minbias' : {
     'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_w_offlineVtxCollection_HGCalFix_MINBIAS_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_142511/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_w_onlineVtxCollection_HGCalFix_MINBIAS_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_135114/'  
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_w_offlineVtxCollection_HGCalFix_MINBIAS_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix/200630_131646/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_w_onlineVtxCollection_HGCalFix_MINBIAS_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix/200630_131531/'  
     },
-    'numJobs' : 32, 
+    'numJobs' : 10, 
     'crossSection' : 75.0e+9/200, # pb
     'process' : "minbias"
   },
@@ -84,15 +85,33 @@ background_samples = {
 ##  },
 }
 
-version = "2020Jun31"
+run_algorithms = [ "hps" ]
+run_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
+run_isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
+run_isolation_minTrackHits = [ 3, 5, 8 ]
 
-def runCommand(command):
+version = "2020Jul01"
+
+configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
+outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)
+workingDir = os.getcwd()
+cmsswDir   = os.getenv('CMSSW_BASE')
+
+def run_command(command):
   #print("executing command = '%s'" % command)
   os.system(command)
 
-def buildConfigFile(cfgFile_original, cfgFile_modified, inputFileNames, process, lumiScale, srcVertices, outputFileName):
-  rmCommand   = 'rm -f %s' % cfgFile_modified
-  runCommand(rmCommand)
+run_command('mkdir -p %s' % configDir)
+run_command('mkdir -p %s' % outputDir)
+
+def build_cfgFile(cfgFileName_original, cfgFileName_modified, 
+                  inputFileNames, process, lumiScale, 
+                  srcVertices, algorithm, isolation_maxDeltaZOption, isolation_minTrackHits, 
+                  outputFileName):
+  print("Building configFile = '%s'" % cfgFileName_modified)
+
+  rmCommand   = 'rm -f %s' % cfgFileName_modified
+  run_command(rmCommand)
  
   sedCommand  = 'sed'
   sedCommand += ' "s/##inputFilePath/inputFilePath/; s/\$inputFilePath/None/;'
@@ -100,18 +119,20 @@ def buildConfigFile(cfgFile_original, cfgFile_modified, inputFileNames, process,
   sedCommand += '  s/##processName/processName/; s/\$processName/%s/;' % process
   sedCommand += '  s/##lumiScale/lumiScale/; s/\$lumiScale/%s/;' % lumiScale
   sedCommand += '  s/##srcVertices/srcVertices/; s/\$srcVertices/%s/;' % srcVertices
+  sedCommand += '  s/##algorithms/algorithms/; s/\$algorithm/%s/;' % algorithm
+  sedCommand += '  s/##isolation_maxDeltaZOptions/isolation_maxDeltaZOptions/; s/\$isolation_maxDeltaZOption/%s/;' % isolation_maxDeltaZOption
+  sedCommand += '  s/##isolation_minTrackHits/isolation_minTrackHits/; s/\$isolation_minTrackHits/%s/;' % isolation_minTrackHits
   sedCommand += '  s/##outputFileName/outputFileName/; s/\$outputFileName/%s/"' % outputFileName
-  sedCommand += ' %s > %s' % (cfgFile_original, cfgFile_modified)
-  runCommand(sedCommand)
- 
-makeCommands = []
-outputFileNames = []
+  sedCommand += ' %s > %s' % (cfgFileName_original, cfgFileName_modified)
+  run_command(sedCommand)
+
+jobOptions = {} # key = process + algorithm + isolation_maxDeltaZOption + isolation_minTrackHits (all separated by underscore)
 for sampleName, sample in background_samples.items(): 
-  for srcVertices in [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]:
+  for srcVertices in run_srcVertices:
     print("processing sample = '%s': srcVertices = '%s'" % (sampleName, srcVertices)) 
     inputFilePath = sample['inputFilePath'][srcVertices]
     print(" inputFilePath = '%s'" % inputFilePath)
-    inputFileNames = getInputFileNames.getInputFileNames(inputFilePath)
+    inputFileNames = getInputFileNames(inputFilePath)
     numInputFiles = len(inputFileNames)
     print("Found %i input files." % numInputFiles)
     numJobs = sample['numJobs']
@@ -124,36 +145,64 @@ for sampleName, sample in background_samples.items():
       idxLastFile = (jobId + 1)*numInputFiles/numJobs - 1
       inputFileNames_job = inputFileNames[idxFirstFile:idxLastFile + 1]
       #print("job #%i: inputFiles = %s" % (jobId, inputFileNames_job))
-      cfgFileName_modified = "analyzePFTaus_background_%s_%s_%i_cfg.py" % (sampleName, srcVertices, jobId)
-      outputFileName = "analyzePFTaus_background_%s_%s_%s_%i.root" % (sampleName, srcVertices, version, jobId)
-      outputFileNames.append(outputFileName)
-      buildConfigFile("analyzePFTaus_background_cfg.py", cfgFileName_modified, inputFileNames_job, sample['process'], lumiScale, srcVertices, outputFileName)
-      logFileName = cfgFileName_modified.replace("_cfg.py", ".log")
-      makeCommands.append("%s:" % outputFileName)
-      rmCommand = 'rm -f %s' % logFileName
-      makeCommands.append("\t%s" % rmCommand)
-      cmsRunCommand = 'cmsRun %s >& %s' % (cfgFileName_modified, logFileName)
-      makeCommands.append("\t%s" % cmsRunCommand)
+      for algorithm in run_algorithms:
+        for isolation_maxDeltaZOption in run_isolation_maxDeltaZOptions:
+          for isolation_minTrackHits in run_isolation_minTrackHits:
+            job_key = '%s_%s_%s_%s_%iHits' % (sample['process'], algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits)
+            if not job_key in jobOptions.keys():
+              jobOptions[job_key] = []        
+            cfgFileName_modified = os.path.join(configDir, "analyzePFTaus_background_%s_%s_%s_dz_wrt_%s_%iHits_%i_cfg.py" % \
+              (sampleName, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits, jobId))
+            outputFileName = "analyzePFTaus_background_%s_%s_%s_dz_wrt_%s_%iHits_%i.root" % \
+              (sampleName, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits, jobId)
+            build_cfgFile(
+              "analyzePFTaus_background_cfg.py", cfgFileName_modified, 
+              inputFileNames_job, sample['process'], lumiScale, 
+              srcVertices, algorithm, isolation_maxDeltaZOption, isolation_minTrackHits, 
+              outputFileName)
+            logFileName = cfgFileName_modified.replace("_cfg.py", ".log")
+            jobOptions[job_key].append({
+              'inputFileNames' : inputFileNames_job,
+              'cfgFileName'    : cfgFileName_modified,
+              'outputFilePath' : outputDir,
+              'outputFileName' : outputFileName,
+              'logFileName'    : logFileName,
+            })
 
-outputFileName_hadd = "analyzePFTaus_background_all_%s.root" % version
-makeCommands.append("%s: %s" % (outputFileName_hadd, " ".join(outputFileNames)))
-rmCommand = 'rm -f %s' % outputFileName_hadd
-makeCommands.append("\t%s" % rmCommand)
-if len(outputFileNames) >= 2:
-  haddCommand = 'hadd %s %s' % (outputFileName_hadd, " ".join(outputFileNames))
-  makeCommands.append("\t%s" % haddCommand)
-elif len(outputFileNames) == 1:
-  cpCommand = 'cp %s %s' % (outputFileNames[0], outputFileName_hadd)
-  makeCommands.append("\t%s" % cpCommand)
-else:
-  raise ValueError("No samples defined, so there is nothing to do !!")
+sbatchManagerFileName = os.path.join(configDir, "sbatch_analyzePFTaus_background.py")
+jobOptions_sbatchManager = []
+for job_key, jobs in jobOptions.items():
+  jobOptions_sbatchManager.extend(jobs)
+build_sbatchManagerFile(sbatchManagerFileName, jobOptions_sbatchManager, workingDir, cmsswDir, version)
 
-print("Building Makefile: version = '%s'" % version)
-makeFileName = "Makefile_runJobs_rate"
-makeFile = open(makeFileName, "w") 
-makeFile.write("all: %s\n" % outputFileName_hadd)
-for makeCommand in makeCommands:
-    makeFile.write("%s\n" % makeCommand)
-makeFile.close()
+jobOptions_Makefile_sbatch = []
+jobOptions_Makefile_sbatch.append({
+  'target'          : "phony",
+  'dependencies'    : [],
+  'commands'        : [ 'python %s' % sbatchManagerFileName ],
+  'outputFileNames' : [ os.path.join(job['outputFilePath'], job['outputFileName']) for job in jobOptions_sbatchManager ],
+})
+makeFileName_sbatch = os.path.join(configDir, "Makefile_sbatch")
+build_Makefile(makeFileName_sbatch, jobOptions_Makefile_sbatch)
 
-print("Finished building config files. Now execute 'make -j 16 -f %s'." % makeFileName)
+jobOptions_Makefile_hadd = []
+for job_key, jobs in jobOptions.items():
+  inputFileNames = [ os.path.join(job['outputFilePath'], job['outputFileName']) for job in jobs ]
+  outputFileName = "hadd_%s.root" % job_key
+  commands = []
+  commands.append('rm -f %s' % outputFileName)
+  commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
+  commands.append('mv %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
+  jobOptions_Makefile_hadd.append({
+    'target'          : os.path.join(outputDir, outputFileName),
+    'dependencies'    : inputFileNames,
+    'commands'        : commands,
+    'outputFileNames' : [ os.path.join(outputDir, outputFileName) ],
+  })
+makeFileName_hadd = os.path.join(configDir, "Makefile_hadd")
+build_Makefile(makeFileName_hadd, jobOptions_Makefile_hadd)
+
+message  = "Finished building config files."
+message += " Now execute 'make -f %s' to submit the jobs to the batch system." % makeFileName_sbatch
+message += " Once all batch jobs have finished processing, execute 'make -j 4 -f %s' to merge the output files." % makeFileName_hadd
+print(message)

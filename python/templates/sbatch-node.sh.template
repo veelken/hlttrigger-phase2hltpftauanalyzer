@@ -1,0 +1,238 @@
+#!/bin/bash
+# File: sbatch-node.sh.template
+# Version: 0.2
+
+# unset JAVA_HOME, because hadoop commands might not work
+# this is especially true if one has sourced necessary files for the GRID proxy
+echo 'Unsetting JAVA_HOME=$JAVA_HOME'
+unset JAVA_HOME
+
+# This value is provided by sbatchManager.py that creates sbatch scripts based this template
+echo 'Running script {{ script_file }} (created from template {{ job_template_file }})'
+
+RUNNING_COMMAND="{{ RUNNING_COMMAND }}"
+export JOB_DIR="{{ job_dir }}/$SLURM_JOBID"
+
+# Runs executable, wrapped into failure wrapper
+
+main() {
+    run_failure_wrapped_executable &> "{{ wrapper_log_file }}"
+    EXIT_CODE=$?
+    return $EXIT_CODE
+}
+
+# Executed on node, checks that CVMFS is mounted to this cluster node, or redirects task
+
+run_failure_wrapped_executable() {
+    TRY_COUNT=$[TRY_COUNT+1]
+    echo "Started (Try $TRY_COUNT)"
+    EXIT_CODE=1
+
+    if [[ -f /cvmfs/cms.cern.ch/cmsset_default.sh ]]; then
+        echo "Network drive mounted, started running on $HOSTNAME"
+        run_wrapped_executable
+        EXIT_CODE=$?
+    else
+        echo "Unable to use node $HOSTNAME, will mark node offline: sudo scontrol update nodename=$HOSTNAME state=drain reason=Testing"
+        sudo scontrol update nodename=$HOSTNAME state=drain reason=Testing
+
+        if [[ $TRY_COUNT -lt 3 ]]; then
+            echo "Will resubmit job to other node: TRY_COUNT=$TRY_COUNT $RUNNING_COMMAND"
+            TRY_COUNT=$TRY_COUNT $RUNNING_COMMAND
+            EXIT_CODE=$?
+        else
+            echo "Maximum tries reached, will not try to resubmit any more. GL & HF"
+        fi
+    fi
+
+    echo "Delete job directory: rm -rf $JOB_DIR"
+    rm -rf $JOB_DIR
+
+    return $EXIT_CODE
+}
+
+cleanup() {
+    if [ ! -z "$1" ]; then
+        echo "Deleting directory: rm -r $1"
+        rm -r "$1";
+    fi
+}
+
+# Creates scratch dir on cluster node or a directory under $HOME and runs the executable
+
+run_wrapped_executable() {
+    EXECUTABLE_LOG_FILE="{{ executable_log_file }}"
+    EXECUTABLE_LOG_DIR="`dirname $EXECUTABLE_LOG_FILE`"
+    RANDOM_SLEEP={{ random_sleep }}
+
+    echo "Time is: `date`"
+    echo "Hostname: `hostname`"
+    echo "Current directory: `pwd`"
+
+    echo "Sleeping for $RANDOM_SLEEP seconds"
+    sleep $RANDOM_SLEEP
+
+    OUTPUT_DIR="{{ outputDir }}"
+    cp_cmd=cp;
+    st_cmd="stat --printf='%s'"
+    ls_cmd="ls -l"
+    ls_cmd_mult="ls -d -1"
+    ls_cmd_sfx="*"
+    cp_cmd="$cp_cmd -f"
+
+    # if all output files already exist, quit the job and return 0
+    INPUT_FILES="{{ inputFiles }}"
+    OUTPUT_FILES="{{ outputFiles }}"
+    OUTPUT_FILES_EXIST=true
+    if [ $(echo "$OUTPUT_FILES" | wc -w) -ge 1 ]; then
+      OUTPUT_DIR_FILES=$($ls_cmd_mult $OUTPUT_DIR/$ls_cmd_sfx | grep $OUTPUT_DIR | awk '{print $NF}')
+
+      for OUTPUT_FILE in $OUTPUT_FILES; do
+        OUTPUT_FILE_FULLPATH=${OUTPUT_DIR}/${OUTPUT_FILE}
+        OUTPUT_FILE_GREP=$(echo "$OUTPUT_DIR_FILES" | grep $OUTPUT_FILE_FULLPATH | wc -l)
+        if [ $OUTPUT_FILE_GREP -ne 1 ]; then
+          echo "File $OUTPUT_FILE_FULLPATH does not exists -> running the job";
+          OUTPUT_FILES_EXIST=false;
+          break;
+        else
+          echo "File $OUTPUT_FILE_FULLPATH exists";
+        fi
+      done
+    else
+      OUTPUT_FILE=$OUTPUT_FILES
+      OUTPUT_FILE_FULLPATH=${OUTPUT_DIR}/${OUTPUT_FILE}
+      OUTPUT_FILE_GREP=$($ls_cmd $OUTPUT_FILE_FULLPATH | grep $OUTPUT_FILE_FULLPATH | wc -l)
+      if [ $OUTPUT_FILE_GREP -ne 1 ]; then
+        echo "File $OUTPUT_FILE_FULLPATH does not exists -> running the job";
+        OUTPUT_FILES_EXIST=false;
+      else
+        echo "File $OUTPUT_FILE_FULLPATH exists";
+      fi
+    fi
+
+    if [ $OUTPUT_FILES_EXIST = true ]; then
+      IS_OUTPUT_FILE_NEWEST=true;
+      for INPUT_FILE in $INPUT_FILES; do
+        for OUTPUT_FILE in $OUTPUT_FILES; do
+          OUTPUT_FILE_FULLPATH=${OUTPUT_DIR}/${OUTPUT_FILE}
+          if [ $INPUT_FILE -nt $OUTPUT_FILE_FULLPATH ]; then
+            echo -n "Input file $INPUT_FILE is newer than output $OUTPUT_FILE_FULLPATH -> ";
+            echo    "deleting the output file $OUTPUT_FILE_FULLPATH and running the job";
+            rm -f $OUTPUT_FILE_FULLPATH;
+            IS_OUTPUT_FILE_NEWEST=false;
+            break;
+          fi
+        done
+      done
+      if [ $IS_OUTPUT_FILE_NEWEST = true ]; then
+        EXIT_CODE=0
+        return $EXIT_CODE;
+      fi
+    fi
+
+    echo "Create job directory: mkdir -p $JOB_DIR"
+    mkdir -p $JOB_DIR
+
+    echo "Create final log directory: mkdir -p $EXECUTABLE_LOG_DIR"
+    mkdir -p $EXECUTABLE_LOG_DIR
+
+    cd $JOB_DIR
+    echo "Current directory: $PWD"
+    echo "Contents of current directory:"
+    ls -l $PWD
+
+    echo "Time is: `date`"
+
+    CMSSW_SEARCH_PATH="$JOB_DIR:{{ cmssw_base_dir }}/src"
+
+    # Path to the new CMSSW area
+    NEW_CMSSW_BASE="{{ cmssw_base_dir }}"
+
+    echo "Initializing new CMSSW workspace to: '$NEW_CMSSW_BASE/src'"
+    cd "$NEW_CMSSW_BASE/src"
+    eval $(scramv1 runtime -sh) # same as cmsenv
+    echo "Switched to scram architecture: $SCRAM_ARCH"
+    echo "New \$CMSSW_BASE = $CMSSW_BASE"
+
+    echo "Execute command: /usr/bin/time --verbose {{ exec_name }} {{ command_line_parameter }} &> $EXECUTABLE_LOG_FILE"
+    /usr/bin/time --verbose {{ exec_name }} {{ command_line_parameter }} &> $EXECUTABLE_LOG_FILE
+    EXIT_CODE=$?
+    echo "Command /usr/bin/time --verbose {{ exec_name }} exited with code $EXIT_CODE"
+
+    IO_GREP=$(grep "SysError in <TFile::ReadBuffer>" $EXECUTABLE_LOG_FILE | grep "(Input/output error)" | wc -l)
+    MISSING_FILE_GREP=$(grep "Error in <TFile::TFile>" $EXECUTABLE_LOG_FILE | grep "does not exist" | wc -l)
+    if [[ $IO_GREP -ne 0 ]]; then
+      echo "Encountered I/O error; setting the exit code accordingly";
+      EXIT_CODE=3;
+    fi
+    if [[ $MISSING_FILE_GREP -ne 0 ]]; then
+      echo "Encountered missing file error; setting the exit code accordingly";
+      EXIT_CODE=4;
+    fi
+
+    # Fail early
+    if [[ $EXIT_CODE -ne 0 ]]; then
+        cleanup "$JOB_DIR";
+        return $EXIT_CODE;
+    fi
+
+    echo "Time is: `date`"
+
+    echo "Listing of current directory:"
+    ls -l
+
+    echo "Copying output files: {{ outputFiles }}"
+    for OUTPUT_FILE in $OUTPUT_FILES; do
+      OUTPUT_FILE_SIZE=$(stat -c '%s' $OUTPUT_FILE)
+      if [ -n "$OUTPUT_FILE_SIZE" ] && [ $OUTPUT_FILE_SIZE -ge 1000 ]; then
+        echo "$cp_cmd $OUTPUT_FILE $OUTPUT_DIR/$OUTPUT_FILE"
+
+        CP_RETRIES=0
+        COPIED=false
+        while [ $CP_RETRIES -lt 3 ]; do
+          CP_RETRIES=$[CP_RETRIES + 1];
+          $cp_cmd $OUTPUT_FILE $OUTPUT_DIR/$OUTPUT_FILE
+
+          # add a small delay before stat'ing the file
+          sleep 5s
+
+          REMOTE_SIZE=$($st_cmd $OUTPUT_DIR/$OUTPUT_FILE)
+          if [ "$REMOTE_SIZE" == "$OUTPUT_FILE_SIZE" ]; then
+            COPIED=true
+            break;
+          else
+            continue;
+          fi
+        done
+
+        if [ ! $COPIED ]; then
+          EXIT_CODE=5;
+        fi
+
+      else
+        echo "$OUTPUT_FILE is broken, will exit with code 1."
+        rm $OUTPUT_FILE;
+        EXIT_CODE=1;
+      fi
+    done
+
+    cleanup "$JOB_DIR"
+
+    echo "End time is: `date`"
+
+    echo "Waiting for 10 seconds before returning"
+    sleep 10
+
+    return $EXIT_CODE
+}
+
+
+# Calls main method
+
+main
+
+EXIT_CODE=$?
+echo "Final exit code is: $EXIT_CODE"
+exit $EXIT_CODE
+
+# End of file
