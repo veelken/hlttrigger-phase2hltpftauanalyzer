@@ -208,7 +208,7 @@ void makeResponsePlots()
   gROOT->SetBatch(true);
 
   std::string inputFilePath = Form("%s/src/HLTTrigger/TallinnHLTPFTauAnalyzer/test/", gSystem->Getenv("CMSSW_BASE"));
-  std::string inputFileName = "analyzePFTauResponse_signal_2020Jun18.root";
+  std::string inputFileName = "analyzePFTauResponse_signal_2020Jun30.root";
   TFile* inputFile = openFile(inputFilePath, inputFileName);
 
   std::vector<std::string> pfAlgos;
@@ -216,9 +216,20 @@ void makeResponsePlots()
   pfAlgos.push_back("HpsPFTau");
 
   std::vector<std::string> vertexOptions;
-  vertexOptions.push_back("WithOfflineVertices");
-  vertexOptions.push_back("WithOnlineVertices");
-  vertexOptions.push_back("WithOnlineVerticesTrimmed");
+  vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
+  vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVerticesTrimmed");
+  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
+
+  std::map<std::string, std::string> srcVertices; // key = vertexOption
+  srcVertices["8HitsMaxDeltaZWithOfflineVertices"]                    = "offlinePrimaryVertices";
+  srcVertices["8HitsMaxDeltaZToLeadTrackWithOfflineVertices"]         = "offlinePrimaryVertices";
+  //srcVertices["8HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
+  //srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
+  //srcVertices["8HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
+  //srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
   
   std::vector<std::string> refTauTypes;
   refTauTypes.push_back("GenHadTaus");
@@ -274,11 +285,10 @@ void makeResponsePlots()
 
   std::string dqmDirectory = "%sResponseAnalyzer%s";
   
-  int colors[6] = { 1, 2, 8, 4, 6, 7 };
-  int lineStyles[6] = { 1, 1, 1, 1, 1, 1 };
+  int colors[6]       = {  1,  2,  8,  4,  6,  7 };
+  int lineStyles[6]   = {  1,  1,  1,  1,  1,  1 };
   int markerStyles[6] = { 22, 32, 20, 24, 21, 25 };
 
-  // TallinnL1PFTaus 
   for ( std::vector<std::string>::const_iterator pfAlgo = pfAlgos.begin();
 	pfAlgo != pfAlgos.end(); ++pfAlgo ) {
     for ( std::vector<std::string>::const_iterator vertexOption = vertexOptions.begin();
@@ -296,8 +306,8 @@ void makeResponsePlots()
 	  	    refTauType != refTauTypes.end(); ++refTauType ) {
 	        for ( std::vector<std::string>::const_iterator decayMode = decayModes.begin();
 		      decayMode != decayModes.end(); ++decayMode ) {
-	          std::string histogramName = Form((dqmDirectory + "_wrt%s/%s/%s/%s/%s_%s_%s_%s_%s").data(), 
-                    pfAlgo->data(), vertexOption->data(), refTauType->data(), ptRange->data(), absEtaRange->data(), decayMode->data(), 
+	          std::string histogramName = Form(("%s/" + dqmDirectory + "_wrt%s/%s/%s/%s/%s_%s_%s_%s_%s").data(), 
+                    srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), refTauType->data(), ptRange->data(), absEtaRange->data(), decayMode->data(), 
                     observable->data(), decayMode->data(), ptRange->data(), absEtaRange->data(), isolationWP->data());
 		  TH1* histogram = loadHistogram(inputFile, histogramName);
 		  histograms[*refTauType][*decayMode] = histogram;
@@ -314,11 +324,11 @@ void makeResponsePlots()
                   pfAlgo->data(), vertexOption->data(), refTauType->data(), observable->data(), ptRange->data(), absEtaRange->data(), isolationWP->data());
 	        showHistograms(1150, 850,
 		  	       histogram, "",
-			       0, "",
-			       0, "",	     
-			       0, "",
-			       0, "",
-			       0, "",
+			       nullptr, "",
+			       nullptr, "",	     
+			       nullptr, "",
+			       nullptr, "",
+			       nullptr, "",
 			       colors, lineStyles, 
 			       0.050, 0.70, 0.74, 0.23, 0.18, 
 			       labelTextLines, 0.050,
@@ -344,7 +354,7 @@ void makeResponsePlots()
 			       histogram_oneProng2Pi0,   "h^{#pm}#pi^{0}#pi^{0}",
 			       histogram_threeProng0Pi0, "h^{#pm}h^{#mp}h^{#pm}",
 			       histogram_threeProng1Pi0, "h^{#pm}h^{#mp}h^{#pm}#pi^{0}",
-			       0, "",
+			       nullptr, "",
 			       colors, lineStyles, 
 			       0.050, 0.73, 0.67, 0.20, 0.26, 
 			       labelTextLines, 0.050,
