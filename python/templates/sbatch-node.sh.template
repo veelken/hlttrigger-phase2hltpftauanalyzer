@@ -2,6 +2,12 @@
 # File: sbatch-node.sh.template
 # Version: 0.2
 
+#----------------------------------------------------------------------------------------------------
+# CV: The code in this file has been copied from 
+#       https://github.com/HEP-KBFI/tth-htt/blob/master/python/templates/sbatch-node.sh.template
+#     with minor modifications
+#----------------------------------------------------------------------------------------------------
+
 # unset JAVA_HOME, because hadoop commands might not work
 # this is especially true if one has sourced necessary files for the GRID proxy
 echo 'Unsetting JAVA_HOME=$JAVA_HOME'
@@ -142,8 +148,6 @@ run_wrapped_executable() {
     ls -l $PWD
 
     echo "Time is: `date`"
-
-    CMSSW_SEARCH_PATH="$JOB_DIR:{{ cmssw_base_dir }}/src"
 
     # Path to the new CMSSW area
     NEW_CMSSW_BASE="{{ cmssw_base_dir }}"

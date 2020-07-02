@@ -1,8 +1,11 @@
 #----------------------------------------------------------------------------------------------------
-# CV: copied from tthAnalysis/HiggsToTauTau/python/sbatchManager.py
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import run_cmd, get_log_version
+# CV: The code in this file has been copied from 
+#       https://github.com/HEP-KBFI/tth-htt/blob/master/python/sbatchManager.py
+#     with minor modifications
+#----------------------------------------------------------------------------------------------------
+
 from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.sbatchManagerTools import is_file_ok
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.common import logging
+from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.tthAnalysisTools import get_log_version, logging, run_cmd
 
 import codecs
 import getpass
