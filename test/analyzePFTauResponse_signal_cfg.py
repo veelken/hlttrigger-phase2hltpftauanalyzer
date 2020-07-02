@@ -24,13 +24,13 @@ inputFilePath = '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_py
 processName = "qqH_htt"
 srcVertices = 'offlinePrimaryVertices'
 #srcVertices = 'hltPhase2PixelVertices'
-outputFileName = "analyzePFTauResponse_signal_2020Jun30.root"
+outputFileName = "analyzePFTauResponse_signal_2020Jul01v2.root"
 
 #--------------------------------------------------------------------------------
 # set input files
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools import getInputFileNames
+from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames
 print("Searching for input files in path = '%s'" % inputFilePath)
-inputFileNames = getInputFileNames.getInputFileNames(inputFilePath)
+inputFileNames = getInputFileNames(inputFilePath)
 print("Found %i input files." % len(inputFileNames))
 process.source.fileNames = cms.untracked.vstring(inputFileNames)
 #--------------------------------------------------------------------------------

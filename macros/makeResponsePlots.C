@@ -208,7 +208,7 @@ void makeResponsePlots()
   gROOT->SetBatch(true);
 
   std::string inputFilePath = Form("%s/src/HLTTrigger/TallinnHLTPFTauAnalyzer/test/", gSystem->Getenv("CMSSW_BASE"));
-  std::string inputFileName = "analyzePFTauResponse_signal_2020Jun30.root";
+  std::string inputFileName = "analyzePFTauResponse_signal_2020Jul01.root";
   TFile* inputFile = openFile(inputFilePath, inputFileName);
 
   std::vector<std::string> pfAlgos;
@@ -259,10 +259,15 @@ void makeResponsePlots()
   //decayModes.push_back("threeProng1Pi0");
   decayModes.push_back("all");
 
+  std::vector<std::string> min_leadTrackPtValues;
+  min_leadTrackPtValues.push_back("leadTrackPtGt1");
+  min_leadTrackPtValues.push_back("leadTrackPtGt2");
+  min_leadTrackPtValues.push_back("leadTrackPtGt5");
+
   std::vector<std::string> isolationWPs;
-  //isolationWPs.push_back("relChargedIsoLt0p40");
-  //isolationWPs.push_back("relChargedIsoLt0p20");
-  //isolationWPs.push_back("relChargedIsoLt0p10");
+  isolationWPs.push_back("relChargedIsoLt0p40");
+  isolationWPs.push_back("relChargedIsoLt0p20");
+  isolationWPs.push_back("relChargedIsoLt0p10");
   isolationWPs.push_back("relChargedIsoLt0p05");
   //isolationWPs.push_back("relChargedIsoLt0p02");
   //isolationWPs.push_back("relChargedIsoLt0p01");
@@ -283,6 +288,28 @@ void makeResponsePlots()
   xAxisTitles["GenHadTaus"]["response"]  = "p_{T}^{online} / p_{T}^{gen}";
   xAxisTitles["OfflineTaus"]["response"] = "p_{T}^{online} / p_{T}^{offline}";
 
+  std::map<std::string, std::string> legendEntries_vs_isolationWPs; // key = isolationWP
+  legendEntries_vs_isolationWPs["noIsolation"]         = "No Isolation";
+  legendEntries_vs_isolationWPs["relChargedIsoLt0p40"] = "I_{ch} < 0.40*p_{T}";
+  legendEntries_vs_isolationWPs["relChargedIsoLt0p20"] = "I_{ch} < 0.20*p_{T}";
+  legendEntries_vs_isolationWPs["relChargedIsoLt0p10"] = "I_{ch} < 0.10*p_{T}";
+  legendEntries_vs_isolationWPs["relChargedIsoLt0p05"] = "I_{ch} < 0.05*p_{T}";
+  legendEntries_vs_isolationWPs["relChargedIsoLt0p02"] = "I_{ch} < 0.02*p_{T}";
+  legendEntries_vs_isolationWPs["relChargedIsoLt0p01"] = "I_{ch} < 0.01*p_{T}";
+
+  std::map<std::string, std::string> legendEntries_vs_leadTrackPt; // key = min_leadTrackPt
+  legendEntries_vs_leadTrackPt["leadTrackPtGt1"] = "lead. Track p_{T} > 1 GeV";
+  legendEntries_vs_leadTrackPt["leadTrackPtGt2"] = "lead. Track p_{T} > 2 GeV";
+  legendEntries_vs_leadTrackPt["leadTrackPtGt5"] = "lead. Track p_{T} > 5 GeV";
+
+  std::map<std::string, std::string> legendEntries_vs_decayModes; // key = decayMode
+  legendEntries_vs_decayModes["oneProng0Pi0"]   = "h^{#pm}";
+  legendEntries_vs_decayModes["oneProng1Pi0"]   = "h^{#pm}#pi^{0}";
+  legendEntries_vs_decayModes["oneProng2Pi0"]   = "h^{#pm}#pi^{0}#pi^{0}";
+  legendEntries_vs_decayModes["threeProng0Pi0"] = "h^{#pm}h^{#mp}h^{#pm}";
+  legendEntries_vs_decayModes["threeProng1Pi0"] = "h^{#pm}h^{#mp}h^{#pm}#pi^{0}";
+  legendEntries_vs_decayModes["all"]            = "all";
+
   std::string dqmDirectory = "%sResponseAnalyzer%s";
   
   int colors[6]       = {  1,  2,  8,  4,  6,  7 };
@@ -299,69 +326,121 @@ void makeResponsePlots()
 	      ptRange != ptRanges.end(); ++ptRange ) {
           for ( std::vector<std::string>::const_iterator absEtaRange = absEtaRanges.begin();
 	        absEtaRange != absEtaRanges.end(); ++absEtaRange ) {
-  	    for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
-	          isolationWP != isolationWPs.end(); ++isolationWP ) {	    
-	      std::map<std::string, std::map<std::string, TH1*>> histograms; // keys = refTauType, decayMode
-	      for ( std::vector<std::string>::const_iterator refTauType = refTauTypes.begin();
-	  	    refTauType != refTauTypes.end(); ++refTauType ) {
-	        for ( std::vector<std::string>::const_iterator decayMode = decayModes.begin();
-		      decayMode != decayModes.end(); ++decayMode ) {
-	          std::string histogramName = Form(("%s/" + dqmDirectory + "_wrt%s/%s/%s/%s/%s_%s_%s_%s_%s").data(), 
-                    srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), refTauType->data(), ptRange->data(), absEtaRange->data(), decayMode->data(), 
-                    observable->data(), decayMode->data(), ptRange->data(), absEtaRange->data(), isolationWP->data());
-		  TH1* histogram = loadHistogram(inputFile, histogramName);
-		  histograms[*refTauType][*decayMode] = histogram;
+            for ( std::vector<std::string>::const_iterator refTauType = refTauTypes.begin();
+	  	  refTauType != refTauTypes.end(); ++refTauType ) {
+              std::map<std::string, std::map<std::string, std::map<std::string, TH1*>>> histograms_vs_isolationWPs; // keys = decayMode, min_leadTrackPt, isolationWP
+              std::map<std::string, std::map<std::string, std::map<std::string, TH1*>>> histograms_vs_leadTrackPt;  // keys = decayMode, isolationWP, min_leadTrackPt
+              std::map<std::string, std::map<std::string, std::map<std::string, TH1*>>> histograms_vs_decayModes;   // keys = min_leadTrackPt, isolationWP, decayMode
+              for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
+                    min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
+  	        for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
+	              isolationWP != isolationWPs.end(); ++isolationWP ) {	    
+	          for ( std::vector<std::string>::const_iterator decayMode = decayModes.begin();
+		        decayMode != decayModes.end(); ++decayMode ) {
+  	            std::string histogramName = Form(("%s/" + dqmDirectory + "_wrt%s/%s/%s/%s/%s_%s_%s_%s_%s_%s").data(), 
+                      srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), refTauType->data(), ptRange->data(), absEtaRange->data(), decayMode->data(), 
+                      observable->data(), decayMode->data(), ptRange->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
+		    TH1* histogram = loadHistogram(inputFile, histogramName);
+		    histograms_vs_isolationWPs[*decayMode][*min_leadTrackPt][*isolationWP] = histogram;
+                    histograms_vs_leadTrackPt[*decayMode][*isolationWP][*min_leadTrackPt] = histogram;
+                    histograms_vs_decayModes[*min_leadTrackPt][*isolationWP][*decayMode] = histogram;
+	          }
 	        }
-	      }
+              }
+              for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
+                    min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
+                for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
+	              isolationWP != isolationWPs.end(); ++isolationWP ) {
+                  TH1* histogram1 = histograms_vs_isolationWPs["all"][*min_leadTrackPt][*isolationWP];
+                  std::vector<std::string> labelTextLines1;
+                  labelTextLines1.push_back(Form("Mean = %1.3f", histogram1->GetMean()));
+	          labelTextLines1.push_back(Form("RMS = %1.3f", histogram1->GetRMS()));
+                  std::string outputFileName1 = Form("makeResponsePlots_%s%s_wrt%s_%s_%s_%s_%s_%s.png", 
+                    pfAlgo->data(), vertexOption->data(), refTauType->data(), observable->data(), ptRange->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
+ 	          showHistograms(1150, 850,
+                                 histogram1, "",
+			         nullptr, "",
+			         nullptr, "",	     
+			         nullptr, "",
+			         nullptr, "",
+			         nullptr, "",
+			         colors, lineStyles, 
+			         0.050, 0.70, 0.74, 0.23, 0.18, 
+			         labelTextLines1, 0.050,
+			         0.71, 0.76, 0.23, 0.15, 
+			         xMin[*observable], xMax[*observable], xAxisTitles[*refTauType][*observable], 1.2, 
+			         true, 1.e-4, 1.99, "Events", 1.4, 
+			         outputFileName1);
 
-	      for ( std::vector<std::string>::const_iterator refTauType = refTauTypes.begin();
-		    refTauType != refTauTypes.end(); ++refTauType ) {
-	        TH1* histogram = histograms[*refTauType]["all"]; 
-	        std::vector<std::string> labelTextLines;
-	        labelTextLines.push_back(Form("Mean = %1.3f", histogram->GetMean()));
-	        labelTextLines.push_back(Form("RMS = %1.3f", histogram->GetRMS()));
-	        std::string outputFileName = Form("makeResponsePlots_%s%s_wrt%s_%s_%s_%s_%s.png", 
-                  pfAlgo->data(), vertexOption->data(), refTauType->data(), observable->data(), ptRange->data(), absEtaRange->data(), isolationWP->data());
-	        showHistograms(1150, 850,
-		  	       histogram, "",
-			       nullptr, "",
-			       nullptr, "",	     
-			       nullptr, "",
+		  	         
+                }
+	      }
+              for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
+                    min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
+                std::map<std::string, TH1*> histograms2 = histograms_vs_isolationWPs["all"][*min_leadTrackPt];
+                std::vector<std::string> labelTextLines2;
+                std::string outputFileName2 = Form("makeResponsePlots_%s%s_wrt%s_%s_%s_%s_%s.png", 
+                  pfAlgo->data(), vertexOption->data(), refTauType->data(), observable->data(), ptRange->data(), absEtaRange->data(), min_leadTrackPt->data());
+ 	        showHistograms(1150, 850,
+			       histograms2["relChargedIsoLt0p40"], legendEntries_vs_isolationWPs["relChargedIsoLt0p40"],
+		  	       histograms2["relChargedIsoLt0p20"], legendEntries_vs_isolationWPs["relChargedIsoLt0p20"],
+		  	       histograms2["relChargedIsoLt0p10"], legendEntries_vs_isolationWPs["relChargedIsoLt0p10"],
+		  	       histograms2["relChargedIsoLt0p05"], legendEntries_vs_isolationWPs["relChargedIsoLt0p05"],
 			       nullptr, "",
 			       nullptr, "",
 			       colors, lineStyles, 
-			       0.050, 0.70, 0.74, 0.23, 0.18, 
-			       labelTextLines, 0.050,
+			       0.040, 0.70, 0.76, 0.23, 0.17, 
+			       labelTextLines2, 0.050,
 			       0.71, 0.76, 0.23, 0.15, 
 			       xMin[*observable], xMax[*observable], xAxisTitles[*refTauType][*observable], 1.2, 
 			       true, 1.e-4, 1.99, "Events", 1.4, 
-			       outputFileName);
-	      }
-/*
-	      for ( std::vector<std::string>::const_iterator refTauType = refTauTypes.begin();
-		    refTauType != refTauTypes.end(); ++refTauType ) {
-	        TH1* histogram_oneProng0Pi0   = histograms[*refTauType]["oneProng0Pi0"];
-	        TH1* histogram_oneProng1Pi0   = histograms[*refTauType]["oneProng1Pi0"];
-	        TH1* histogram_oneProng2Pi0   = histograms[*refTauType]["oneProng2Pi0"];
-	        TH1* histogram_threeProng0Pi0 = histograms[*refTauType]["threeProng0Pi0"];
-	        TH1* histogram_threeProng1Pi0 = histograms[*refTauType]["threeProng1Pi0"];
-	        std::vector<std::string> labelTextLines;
-	        std::string outputFileName = Form("makeResponsePlots_%s%s_wrt%s_vs_decayModes_%s_%s_%s_%s.png", 
+			       outputFileName2);
+              }
+              for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
+	            isolationWP != isolationWPs.end(); ++isolationWP ) {
+                std::map<std::string, TH1*> histograms3 = histograms_vs_leadTrackPt["all"][*isolationWP];
+                std::vector<std::string> labelTextLines3;
+                std::string outputFileName3 = Form("makeResponsePlots_%s%s_wrt%s_%s_%s_%s_%s.png", 
                   pfAlgo->data(), vertexOption->data(), refTauType->data(), observable->data(), ptRange->data(), absEtaRange->data(), isolationWP->data());
-	        showHistograms(1150, 850,
-		  	       histogram_oneProng0Pi0,   "h^{#pm}",
-			       histogram_oneProng1Pi0,   "h^{#pm}#pi^{0}",
-			       histogram_oneProng2Pi0,   "h^{#pm}#pi^{0}#pi^{0}",
-			       histogram_threeProng0Pi0, "h^{#pm}h^{#mp}h^{#pm}",
-			       histogram_threeProng1Pi0, "h^{#pm}h^{#mp}h^{#pm}#pi^{0}",
+ 	        showHistograms(1150, 850,
+			       histograms3["leadTrackPtGt1"], legendEntries_vs_leadTrackPt["leadTrackPtGt1"],
+		  	       histograms3["leadTrackPtGt2"], legendEntries_vs_leadTrackPt["leadTrackPtGt2"],
+		  	       histograms3["leadTrackPtGt5"], legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
+			       nullptr, "",
+			       nullptr, "",
 			       nullptr, "",
 			       colors, lineStyles, 
-			       0.050, 0.73, 0.67, 0.20, 0.26, 
-			       labelTextLines, 0.050,
-			       0.70, 0.62, 0.23, 0.06, 
+			       0.040, 0.61, 0.79, 0.33, 0.14, 
+			       labelTextLines3, 0.050,
+			       0.71, 0.76, 0.23, 0.15, 
 			       xMin[*observable], xMax[*observable], xAxisTitles[*refTauType][*observable], 1.2, 
 			       true, 1.e-4, 1.99, "Events", 1.4, 
-			       outputFileName);
+			       outputFileName3);
+              }
+/*              
+              for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
+                    min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
+                for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
+	              isolationWP != isolationWPs.end(); ++isolationWP ) {
+                  std::map<std::string, TH1*> histograms4 = histograms_vs_decayModes[*min_leadTrackPt][*isolationWP];
+                  std::vector<std::string> labelTextLines4;
+	          std::string outputFileName4 = Form("makeResponsePlots_%s%s_wrt%s_vs_decayModes_%s_%s_%s_%s.png", 
+                    pfAlgo->data(), vertexOption->data(), refTauType->data(), observable->data(), ptRange->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
+	          showHistograms(1150, 850,
+                                 histograms4["oneProng0Pi0"],   legendEntries_vs_decayModes["oneProng0Pi0"],
+                                 histograms4["oneProng1Pi0"],   legendEntries_vs_decayModes["oneProng1Pi0"],
+                                 histograms4["oneProng2Pi0"],   legendEntries_vs_decayModes["oneProng2Pi0"],
+                                 histograms4["threeProng0Pi0"], legendEntries_vs_decayModes["threeProng0Pi0"],
+                                 histograms4["threeProng1Pi0"], legendEntries_vs_decayModes["threeProng1Pi0"],
+  			         nullptr, "",
+			         colors, lineStyles, 
+			         0.050, 0.73, 0.72, 0.20, 0.21, 
+			         labelTextLines4, 0.050,
+			         0.70, 0.62, 0.23, 0.06, 
+			         xMin[*observable], xMax[*observable], xAxisTitles[*refTauType][*observable], 1.2, 
+			         true, 1.e-4, 1.99, "Events", 1.4, 
+			         outputFileName4);
+                }
               }
  */
 	    }

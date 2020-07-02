@@ -39,8 +39,8 @@ void RecoPFChargedCandAnalyzer::beginJob()
   std::vector<double> max_absEtaValues = {  1.4,  2.172, 2.4,  2.172,  2.4 };
   assert(min_absEtaValues.size() == max_absEtaValues.size());
   size_t numAbsEtaRanges = min_absEtaValues.size();
-  std::vector<double> min_ptValues = {  -1., 1., 2.,  5., 10., 20. };
-  std::vector<double> max_ptValues = {   1., 2., 5., 10., 20., -1. };
+  std::vector<double> min_ptValues = { -1., 1., 2.,  5., 10., 20.,  1.,  2.,  5., 10., -1. };
+  std::vector<double> max_ptValues = {  1., 2., 5., 10., 20., -1., -1., -1., -1., -1., -1. };
   assert(min_ptValues.size() == max_ptValues.size());
   size_t numPtRanges = min_ptValues.size();
   for ( size_t idxAbsEtaRange = 0; idxAbsEtaRange < numAbsEtaRanges; ++idxAbsEtaRange )
@@ -75,6 +75,10 @@ void RecoPFChargedCandAnalyzer::beginJob()
       else if ( max_pt > 0. ) 
       {
         dqmDirectory.Append(Form("/ptLt%1.0f", max_pt));
+      }
+      else
+      {
+        dqmDirectory.Append("/all");
       }
       dqmDirectory = dqmDirectory.ReplaceAll(".", "p");
           

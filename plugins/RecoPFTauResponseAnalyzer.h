@@ -57,7 +57,8 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
 
   struct responsePlotEntryType
   {
-    responsePlotEntryType(double min_pt, double max_pt, double min_absEta, double max_absEta, const std::string& decayMode, double max_relChargedIso, double max_absChargedIso)
+    responsePlotEntryType(double min_pt, double max_pt, double min_absEta, double max_absEta, const std::string& decayMode, 
+                          double min_leadTrackPt, double max_relChargedIso, double max_absChargedIso)
       : me_response_(nullptr)
       , histogram_response_(nullptr)
       , min_pt_(min_pt)
@@ -65,6 +66,7 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
       , min_absEta_(min_absEta)
       , max_absEta_(max_absEta)
       , decayMode_(decayMode)
+      , min_leadTrackPt_(min_leadTrackPt)
       , max_relChargedIso_(max_relChargedIso)
       , max_absChargedIso_(max_absChargedIso)
       , dRmatch_(0.3)
@@ -80,6 +82,7 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
       if      ( min_absEta_ >= 0. && max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEta%1.2fto%1.2f", min_absEta_, max_absEta_));
       else if ( min_absEta_ >= 0.                     ) histogramName_suffix.Append(Form("_absEtaGt%1.2f", min_absEta_));
       else if (                      max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEtaLt%1.2f", max_absEta_));      
+      if ( min_leadTrackPt_   > 0. ) histogramName_suffix.Append(Form("_leadTrackPtGt%1.0f", min_leadTrackPt_));
       if ( max_relChargedIso_ > 0. ) histogramName_suffix.Append(Form("_relChargedIsoLt%1.2f", max_relChargedIso_));
       if ( max_absChargedIso_ > 0. ) histogramName_suffix.Append(Form("_absChargedIsoLt%1.2f", max_absChargedIso_));
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
@@ -97,11 +100,11 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
       { 
         reco::PFTauRef pfTau(pfTaus, idxPFTau);
         double sumChargedIso = pfTauSumChargedIso[pfTau];
-
-        if ( (                           pfTau->leadPFChargedHadrCand().isNonnull()         &&   
-                                         pfTau->leadPFChargedHadrCand()->bestTrack()      ) && 
-             (max_relChargedIso_ < 0. || sumChargedIso <= (max_relChargedIso_*pfTau->pt())) &&
-             (max_absChargedIso_ < 0. || sumChargedIso <=  max_absChargedIso_             ) )
+        if ( (                           pfTau->leadPFChargedHadrCand().isNonnull()                                           &&   
+                                         pfTau->leadPFChargedHadrCand()->bestTrack()                                          ) && 
+             (min_leadTrackPt_   < 0. || pfTau->leadPFChargedHadrCand()->bestTrack()->pt() >=  min_leadTrackPt_               ) &&
+             (max_relChargedIso_ < 0. || sumChargedIso                                     <= (max_relChargedIso_*pfTau->pt())) &&
+             (max_absChargedIso_ < 0. || sumChargedIso                                     <=  max_absChargedIso_             ) )
         {
           for ( auto refTau : refTaus )
           {
@@ -129,13 +132,13 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
       size_t numPFTaus = pfTaus->size();
       for ( size_t idxPFTau = 0; idxPFTau < numPFTaus; ++idxPFTau ) 
       { 
-        reco::PFTauRef pfTauRef(pfTaus, idxPFTau);
-        double sumChargedIso = pfTauSumChargedIso[pfTauRef];
-
-        if ( (                           pfTauRef->leadPFChargedHadrCand().isNonnull()       &&   
-                                         pfTauRef->leadPFChargedHadrCand()->bestTrack()      ) && 
-             (max_relChargedIso_ < 0. || sumChargedIso <= (max_relChargedIso_*pfTauRef->pt())) &&
-             (max_absChargedIso_ < 0. || sumChargedIso <=  max_absChargedIso_                ) )
+        reco::PFTauRef pfTau(pfTaus, idxPFTau);
+        double sumChargedIso = pfTauSumChargedIso[pfTau];
+        if ( (                           pfTau->leadPFChargedHadrCand().isNonnull()                                           &&   
+                                         pfTau->leadPFChargedHadrCand()->bestTrack()                                          ) && 
+             (min_leadTrackPt_   < 0. || pfTau->leadPFChargedHadrCand()->bestTrack()->pt() >=  min_leadTrackPt_               ) &&
+             (max_relChargedIso_ < 0. || sumChargedIso                                     <= (max_relChargedIso_*pfTau->pt())) &&
+             (max_absChargedIso_ < 0. || sumChargedIso                                     <=  max_absChargedIso_             ) )
         {
           for ( auto refTau : refTaus )
           {
@@ -150,10 +153,10 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
                    (decayMode_ == "threeProng0Pi0" && refTau.decayMode() != reco::PFTau::kThreeProng0PiZero) ||
                    (decayMode_ == "threeProng1Pi0" && refTau.decayMode() != reco::PFTau::kThreeProng1PiZero) ) continue;	       
 
-  	      double dR = reco::deltaR(refTau.eta(), refTau.phi(), pfTauRef->eta(), pfTauRef->phi());
+  	      double dR = reco::deltaR(refTau.eta(), refTau.phi(), pfTau->eta(), pfTau->phi());
 	      if ( dR < dRmatch_ ) 
 	      {
-  	        histogram_response_->Fill(pfTauRef->pt()/TMath::Max(1., refTau.pt()), evtWeight);
+  	        histogram_response_->Fill(pfTau->pt()/TMath::Max(1., refTau.pt()), evtWeight);
 	      }
             }
 	  }
@@ -168,10 +171,11 @@ class RecoPFTauResponseAnalyzer : public edm::EDAnalyzer
     double min_absEta_;
     double max_absEta_;
     std::string decayMode_;
-    // cuts applied to L1 trigger taus
+    // cuts applied to HLT trigger taus
+    double min_leadTrackPt_;
     double max_relChargedIso_;
     double max_absChargedIso_;
-    // matching between L1 trigger taus and either offline or generator-level taus
+    // matching between HLT trigger taus and either offline or generator-level taus
     double dRmatch_; 
   };
   std::vector<responsePlotEntryType*> responsePlots_;

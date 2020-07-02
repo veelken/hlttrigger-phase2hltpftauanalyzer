@@ -67,7 +67,7 @@ TH1* loadHistogram(TFile* inputFile, const std::string& histogramName)
     double binEdgeLo =  xAxis->GetBinLowEdge(idxBin);
     double binEdgeHi =  xAxis->GetBinUpEdge(idxBin);
     double binWidth = binEdgeHi - binEdgeLo;
-    std::cout << "bin #" << idxBin (x = " << binEdgeLo << ".." << binEdgeHi << "): " << binContent << " +/- " << binError << std::endl;
+    std::cout << "bin #" << idxBin << " (x = " << binEdgeLo << ".." << binEdgeHi << "): " << binContent << " +/- " << binError << std::endl;
     assert(binWidth > 0.);
     histogram->SetBinContent(idxBin, binContent/binWidth);
     histogram->SetBinError(idxBin, binError/binWidth);
@@ -222,7 +222,7 @@ void makePFChargedCandPlots()
   gROOT->SetBatch(true);
 
   std::string inputFilePath = Form("%s/src/HLTTrigger/TallinnHLTPFTauAnalyzer/test/", gSystem->Getenv("CMSSW_BASE"));
-  std::string inputFileName = "analyzePFChargedCands_backgrounds_2020Jul01.root";
+  std::string inputFileName = "analyzePFChargedCands_background_2020Jul01.root";
   TFile* inputFile = openFile(inputFilePath, inputFileName);
 
   std::vector<std::string> ptRanges;
@@ -231,7 +231,12 @@ void makePFChargedCandPlots()
   ptRanges.push_back("pt2to5");
   ptRanges.push_back("pt5to10");
   ptRanges.push_back("pt10to20");
+  ptRanges.push_back("ptGt1");
+  ptRanges.push_back("ptGt2");
+  ptRanges.push_back("ptGt5");
+  ptRanges.push_back("ptGt10");
   ptRanges.push_back("ptGt20");
+  ptRanges.push_back("all");
 
   std::vector<std::string> absEtaRanges;
   absEtaRanges.push_back("absEtaLt1p40");
@@ -244,13 +249,11 @@ void makePFChargedCandPlots()
   particleTypes.push_back("e");
   particleTypes.push_back("mu");
   particleTypes.push_back("h");
-  particleTypes.push_back("other");
 
   std::map<std::string, std::string> legendEntries; // key = particleType
   legendEntries["e"]     = "e";
   legendEntries["mu"]    = "#mu";
   legendEntries["h"]     = "h^{#pm}";
-  legendEntries[othere"] = "Other";
 
   std::vector<std::string> observables;
   observables.push_back("pfCandPt");
@@ -294,17 +297,18 @@ void makePFChargedCandPlots()
           ptRange != ptRanges.end(); ++ptRange ) {
       for ( std::vector<std::string>::const_iterator absEtaRange = absEtaRanges.begin();
             absEtaRange != absEtaRanges.end(); ++absEtaRange ) {
+        if ( (*observable) != "trackPt_div_pfCandPt" && (*ptRange) != "all" ) continue;
+        std::map<std::string, TH1*> histograms; // key = particleType
         for ( std::vector<std::string>::const_iterator particleType = particleTypes.begin();
 	      particleType != particleTypes.end(); ++particleType ) {	    
-	  std::map<std::string, TH1*> histograms; // key = particleType
-	  std::string histogramName = Form("%s/%s_%s_%s_%s", dqmDirectory.data()
-            observable->data(), particleType->data(), ptRange->data(), absEtaRange->data());
+	  std::string histogramName = Form("%s/%s/%s/%s_%s_%s_%s", dqmDirectory.data(), absEtaRange->data(), ptRange->data(),
+            observable->data(), particleType->data(), absEtaRange->data(), ptRange->data());
           TH1* histogram = loadHistogram(inputFile, histogramName);
           histograms[*particleType] = histogram;
 	}
         for ( std::vector<std::string>::const_iterator particleType = particleTypes.begin();
 	      particleType != particleTypes.end(); ++particleType ) {	  
-          const TH1* histogram = histograms[*particleType];
+          TH1* histogram = histograms[*particleType];
 	  std::vector<std::string> labelTextLines1;
 	  labelTextLines1.push_back(Form("Mean = %1.3f", histogram->GetMean()));
 	  labelTextLines1.push_back(Form("RMS = %1.3f", histogram->GetRMS()));
@@ -322,22 +326,17 @@ void makePFChargedCandPlots()
 			 labelTextLines1, 0.050,
 			 0.71, 0.76, 0.23, 0.15, 
 			 xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
-			 true, 1.e-4, 1.99, yAxisTitles[*observable], 1.4, 
+			 true, 1.e-4, 1.99e+2, yAxisTitles[*observable], 1.4, 
 			 outputFileName1);
-	  }
         }
-        const TH1* histogram_e     = histograms["e"];
-        const TH1* histogram_mu    = histograms["mu"];
-        const TH1* histogram_h     = histograms["h"];
-        const TH1* histogram_other = histograms["other"];
         std::vector<std::string> labelTextLines2;
 	std::string outputFileName2 = Form("makePFChargedCandPlots_%s_all_%s_%s.png", 
           observable->data(), ptRange->data(), absEtaRange->data());
 	showHistograms(1150, 850,
-                       histogram_e,     legendEntry["e"],
-                       histogram_mu,    legendEntry["mu"],
-                       histogram_h,     legendEntry["h"],
-                       histogram_other, legendEntry["other"],
+                       histograms["e"],  legendEntries["e"],
+                       histograms["mu"], legendEntries["mu"],
+                       histograms["h"],  legendEntries["h"],
+                       nullptr, "",
                        nullptr, "",
 		       nullptr, "",
                        colors, lineStyles,
@@ -345,7 +344,7 @@ void makePFChargedCandPlots()
                        labelTextLines2, 0.050,
                        0.71, 0.76, 0.23, 0.15, 
                        xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
-                       true, 1.e-4, 1.99, yAxisTitles[*observable], 1.4, 
+                       true, 1.e-4, 1.99e+2, yAxisTitles[*observable], 1.4, 
                        outputFileName2);
       }
     }

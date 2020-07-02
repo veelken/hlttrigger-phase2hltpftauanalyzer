@@ -68,20 +68,6 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
     ratePlotEntryType(double min_absEta, double max_absEta, double min_leadTrackPt, double max_relChargedIso, double max_absChargedIso, double max_dz)
       : me_numPFTaus_vs_ptThreshold_(nullptr)
       , histogram_numPFTaus_vs_ptThreshold_(nullptr)
-      , me_numPFTausPtGt20_(nullptr)
-      , histogram_numPFTausPtGt20_(nullptr)
-      , me_numPFTausPtGt25_(nullptr)
-      , histogram_numPFTausPtGt25_(nullptr)
-      , me_numPFTausPtGt30_(nullptr)
-      , histogram_numPFTausPtGt30_(nullptr)
-      , me_numPFTausPtGt35_(nullptr)
-      , histogram_numPFTausPtGt35_(nullptr)
-      , me_numPFTausPtGt40_(nullptr)
-      , histogram_numPFTausPtGt40_(nullptr)
-      , me_numPFTausPtGt45_(nullptr)
-      , histogram_numPFTausPtGt45_(nullptr)
-      , me_numPFTausPtGt50_(nullptr)
-      , histogram_numPFTausPtGt50_(nullptr)
       , min_absEta_(min_absEta)
       , max_absEta_(max_absEta)
       , min_leadTrackPt_(min_leadTrackPt)
@@ -113,35 +99,6 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
       me_numPFTaus_vs_ptThreshold_ = dqmStore.book2D(histogramName_numPFTaus_vs_ptThreshold.Data(), histogramName_numPFTaus_vs_ptThreshold.Data(), 251, -0.5, 250.5, 11, -0.5, +10.5);
       histogram_numPFTaus_vs_ptThreshold_ = dynamic_cast<TH2*>(me_numPFTaus_vs_ptThreshold_->getTH1());
       assert(histogram_numPFTaus_vs_ptThreshold_);
-
-      TString histogramName_numPFTausPtGt20 = Form("numPFTausPtGt20%s", histogramName_suffix.Data());
-      me_numPFTausPtGt20_ = dqmStore.book1D(histogramName_numPFTausPtGt20.Data(), histogramName_numPFTausPtGt20.Data(), 21, -0.5, +20.5);
-      histogram_numPFTausPtGt20_ = me_numPFTausPtGt20_->getTH1();
-      assert(histogram_numPFTausPtGt20_);
-      TString histogramName_numPFTausPtGt25 = Form("numPFTausPtGt25%s", histogramName_suffix.Data());
-      me_numPFTausPtGt25_ = dqmStore.book1D(histogramName_numPFTausPtGt25.Data(), histogramName_numPFTausPtGt25.Data(), 21, -0.5, +20.5);
-      histogram_numPFTausPtGt25_ = me_numPFTausPtGt25_->getTH1();
-      assert(histogram_numPFTausPtGt25_);
-      TString histogramName_numPFTausPtGt30 = Form("numPFTausPtGt30%s", histogramName_suffix.Data());
-      me_numPFTausPtGt30_ = dqmStore.book1D(histogramName_numPFTausPtGt30.Data(), histogramName_numPFTausPtGt30.Data(), 21, -0.5, +20.5);
-      histogram_numPFTausPtGt30_ = me_numPFTausPtGt30_->getTH1();
-      assert(histogram_numPFTausPtGt30_);
-      TString histogramName_numPFTausPtGt35 = Form("numPFTausPtGt35%s", histogramName_suffix.Data());
-      me_numPFTausPtGt35_ = dqmStore.book1D(histogramName_numPFTausPtGt35.Data(), histogramName_numPFTausPtGt35.Data(), 21, -0.5, +20.5);
-      histogram_numPFTausPtGt35_ = me_numPFTausPtGt35_->getTH1();
-      assert(histogram_numPFTausPtGt35_);
-      TString histogramName_numPFTausPtGt40 = Form("numPFTausPtGt40%s", histogramName_suffix.Data());
-      me_numPFTausPtGt40_ = dqmStore.book1D(histogramName_numPFTausPtGt40.Data(), histogramName_numPFTausPtGt40.Data(), 21, -0.5, +20.5);
-      histogram_numPFTausPtGt40_ = me_numPFTausPtGt40_->getTH1();
-      assert(histogram_numPFTausPtGt40_);
-      TString histogramName_numPFTausPtGt45 = Form("numPFTausPtGt45%s", histogramName_suffix.Data());
-      me_numPFTausPtGt45_ = dqmStore.book1D(histogramName_numPFTausPtGt45.Data(), histogramName_numPFTausPtGt45.Data(), 21, -0.5, +20.5);
-      histogram_numPFTausPtGt45_ = me_numPFTausPtGt45_->getTH1();
-      assert(histogram_numPFTausPtGt45_);
-      TString histogramName_numPFTausPtGt50 = Form("numPFTausPtGt50%s", histogramName_suffix.Data());
-      me_numPFTausPtGt50_ = dqmStore.book1D(histogramName_numPFTausPtGt50.Data(), histogramName_numPFTausPtGt50.Data(), 21, -0.5, +20.5);
-      histogram_numPFTausPtGt50_ = me_numPFTausPtGt50_->getTH1();
-      assert(histogram_numPFTausPtGt50_);
     }
     void fillHistograms(const std::vector<std::pair<const reco::PFTau*, double>>& pfTaus_wChargedIso, double evtWeight)
     {
@@ -161,31 +118,6 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
 	  pfTaus_passingAbsEta.push_back(pfTau_wChargedIso->first);
 	}
       }
-
-      int numPFTausPtGt20 = 0;
-      int numPFTausPtGt25 = 0;
-      int numPFTausPtGt30 = 0;
-      int numPFTausPtGt35 = 0;
-      int numPFTausPtGt40 = 0;
-      int numPFTausPtGt45 = 0;
-      int numPFTausPtGt50 = 0;
-      for ( std::vector<const reco::PFTau*>::const_iterator pfTau = pfTaus_passingAbsEta.begin();
-	    pfTau != pfTaus_passingAbsEta.end(); ++pfTau ) {
-	if ( (*pfTau)->pt() > 20. ) ++numPFTausPtGt20;
-	if ( (*pfTau)->pt() > 25. ) ++numPFTausPtGt25;
-	if ( (*pfTau)->pt() > 30. ) ++numPFTausPtGt30;
-	if ( (*pfTau)->pt() > 35. ) ++numPFTausPtGt35;
-	if ( (*pfTau)->pt() > 40. ) ++numPFTausPtGt40;
-	if ( (*pfTau)->pt() > 45. ) ++numPFTausPtGt45;
-	if ( (*pfTau)->pt() > 50. ) ++numPFTausPtGt50;
-      }
-      fillWithOverFlow(histogram_numPFTausPtGt20_, numPFTausPtGt20, evtWeight);
-      fillWithOverFlow(histogram_numPFTausPtGt25_, numPFTausPtGt25, evtWeight);
-      fillWithOverFlow(histogram_numPFTausPtGt30_, numPFTausPtGt30, evtWeight);
-      fillWithOverFlow(histogram_numPFTausPtGt35_, numPFTausPtGt35, evtWeight);
-      fillWithOverFlow(histogram_numPFTausPtGt40_, numPFTausPtGt40, evtWeight);
-      fillWithOverFlow(histogram_numPFTausPtGt45_, numPFTausPtGt45, evtWeight);
-      fillWithOverFlow(histogram_numPFTausPtGt50_, numPFTausPtGt50, evtWeight);
 
       TAxis* xAxis = histogram_numPFTaus_vs_ptThreshold_->GetXaxis();
       TAxis* yAxis = histogram_numPFTaus_vs_ptThreshold_->GetYaxis();
@@ -236,30 +168,9 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
     void scaleHistograms(double sf)
     {
       histogram_numPFTaus_vs_ptThreshold_->Scale(sf);
-      histogram_numPFTausPtGt20_->Scale(sf);
-      histogram_numPFTausPtGt25_->Scale(sf);
-      histogram_numPFTausPtGt30_->Scale(sf);
-      histogram_numPFTausPtGt35_->Scale(sf);
-      histogram_numPFTausPtGt40_->Scale(sf);   
-      histogram_numPFTausPtGt45_->Scale(sf);
-      histogram_numPFTausPtGt50_->Scale(sf);  
     }
     MonitorElement* me_numPFTaus_vs_ptThreshold_;
     TH2* histogram_numPFTaus_vs_ptThreshold_;
-    MonitorElement* me_numPFTausPtGt20_;
-    TH1* histogram_numPFTausPtGt20_;
-    MonitorElement* me_numPFTausPtGt25_;
-    TH1* histogram_numPFTausPtGt25_;
-    MonitorElement* me_numPFTausPtGt30_;
-    TH1* histogram_numPFTausPtGt30_;
-    MonitorElement* me_numPFTausPtGt35_;
-    TH1* histogram_numPFTausPtGt35_;
-    MonitorElement* me_numPFTausPtGt40_;
-    TH1* histogram_numPFTausPtGt40_;   
-    MonitorElement* me_numPFTausPtGt45_;
-    TH1* histogram_numPFTausPtGt45_;
-    MonitorElement* me_numPFTausPtGt50_;
-    TH1* histogram_numPFTausPtGt50_;  
     double min_absEta_;    
     double max_absEta_;    
     double min_leadTrackPt_;

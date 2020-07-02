@@ -82,16 +82,17 @@ run_wrapped_executable() {
     cp_cmd=cp;
     st_cmd="stat --printf='%s'"
     ls_cmd="ls -l"
-    ls_cmd_mult="ls -d -1"
-    ls_cmd_sfx="*"
+    ls_cmd_multi="ls -d -1"
+    ls_cmd_suffix="*"
     cp_cmd="$cp_cmd -f"
+    rm_cmd="rm -f"
 
     # if all output files already exist, quit the job and return 0
     INPUT_FILES="{{ inputFiles }}"
     OUTPUT_FILES="{{ outputFiles }}"
     OUTPUT_FILES_EXIST=true
     if [ $(echo "$OUTPUT_FILES" | wc -w) -ge 1 ]; then
-      OUTPUT_DIR_FILES=$($ls_cmd_mult $OUTPUT_DIR/$ls_cmd_sfx | grep $OUTPUT_DIR | awk '{print $NF}')
+      OUTPUT_DIR_FILES=$($ls_cmd_multi $OUTPUT_DIR/$ls_cmd_suffix | grep $OUTPUT_DIR | awk '{print $NF}')
 
       for OUTPUT_FILE in $OUTPUT_FILES; do
         OUTPUT_FILE_FULLPATH=${OUTPUT_DIR}/${OUTPUT_FILE}
@@ -203,6 +204,7 @@ run_wrapped_executable() {
           REMOTE_SIZE=$($st_cmd $OUTPUT_DIR/$OUTPUT_FILE)
           if [ "$REMOTE_SIZE" == "$OUTPUT_FILE_SIZE" ]; then
             COPIED=true
+            $rm_cmd $OUTPUT_FILE
             break;
           else
             continue;

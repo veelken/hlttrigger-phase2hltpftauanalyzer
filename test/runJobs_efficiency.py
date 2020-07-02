@@ -58,6 +58,7 @@ def build_cfgFile(cfgFile_original, cfgFile_modified,
  
 jobOptions = {} # key = process + algorithm + isolation_maxDeltaZOption + isolation_minTrackHits (all separated by underscore)
 for sampleName, sample in signal_samples.items():
+  process = sample['process']
   for srcVertices in run_srcVertices:
     print("processing sample = '%s': srcVertices = '%s'" % (sampleName, srcVertices)) 
     inputFilePath = sample['inputFilePath'][srcVertices]
@@ -74,7 +75,7 @@ for sampleName, sample in signal_samples.items():
       for algorithm in run_algorithms:
         for isolation_maxDeltaZOption in run_isolation_maxDeltaZOptions:
           for isolation_minTrackHits in run_isolation_minTrackHits:
-            job_key = '%s_%s_%s_%s_%iHits' % (sample['process'], algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits)
+            job_key = '%s_%s_%s_%s_%iHits' % (process, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits)
             if not job_key in jobOptions.keys():
               jobOptions[job_key] = []        
             cfgFileName_modified = os.path.join(configDir, "analyzePFTaus_signal_%s_%s_%s_dz_wrt_%s_%iHits_%i_cfg.py" % \
@@ -119,6 +120,26 @@ for job_key, jobs in jobOptions.items():
   commands.append('rm -f %s' % outputFileName)
   commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
   commands.append('mv %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
+  jobOptions_Makefile_hadd.append({
+    'target'          : os.path.join(outputDir, outputFileName),
+    'dependencies'    : inputFileNames,
+    'commands'        : commands,
+    'outputFileNames' : [ os.path.join(outputDir, outputFileName) ],
+  })
+for sampleName, sample in signal_samples.items(): 
+  process = sample['process']
+  inputFileNames = []
+  for job in jobOptions_Makefile_hadd:
+    for outputFileName_job in job['outputFileNames']:
+      if outputFileName_job.find(sampleName) != -1:
+        inputFileNames.append(outputFileName_job)
+  outputFileName = "hadd_%s_all.root" % process
+  commands = []
+  commands.append('rm -f %s' % outputFileName)
+  commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
+  commands.append('cp -f %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
+  commands.append('sleep 5s')
+  commands.append('rm -f %s' % outputFileName)
   jobOptions_Makefile_hadd.append({
     'target'          : os.path.join(outputDir, outputFileName),
     'dependencies'    : inputFileNames,

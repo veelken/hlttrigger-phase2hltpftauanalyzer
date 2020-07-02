@@ -82,9 +82,11 @@ class RecoPFChargedCandAnalyzer : public edm::EDAnalyzer
       if      ( min_absEta_ >= 0. && max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEta%1.2fto%1.2f", min_absEta_, max_absEta_));
       else if ( min_absEta_ >= 0.                     ) histogramName_suffix.Append(Form("_absEtaGt%1.2f", min_absEta_));
       else if (                      max_absEta_ > 0. ) histogramName_suffix.Append(Form("_absEtaLt%1.2f", max_absEta_));
+      else assert(0);
       if      ( min_pt_     >= 0. && max_pt_     > 0. ) histogramName_suffix.Append(Form("_pt%1.0fto%1.0f", min_pt_, max_pt_));
       else if ( min_pt_     >= 0.                     ) histogramName_suffix.Append(Form("_ptGt%1.0f", min_pt_));
       else if (                      max_pt_     > 0. ) histogramName_suffix.Append(Form("_ptLt%1.0f", max_pt_));
+      else                                              histogramName_suffix.Append("_all");
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
 
       const int numBins_pt = 19;
@@ -101,7 +103,7 @@ class RecoPFChargedCandAnalyzer : public edm::EDAnalyzer
       histogram_trackPt_e_ = me_trackPt_e_->getTH1();
       assert(histogram_trackPt_e_);
       TString histogramName_trackPt_div_pfCandPt_e = Form("trackPt_div_pfCandPt_e%s", histogramName_suffix.Data());
-      me_trackPt_div_pfCandPt_e_ = dqmStore.book1D(histogramName_trackPt_div_pfCandPt_e.Data(), histogramName_trackPt_div_pfCandPt_e.Data(), 40, 0., 2.);
+      me_trackPt_div_pfCandPt_e_ = dqmStore.book1D(histogramName_trackPt_div_pfCandPt_e.Data(), histogramName_trackPt_div_pfCandPt_e.Data(), 200, 0., 2.);
       histogram_trackPt_div_pfCandPt_e_ = me_trackPt_div_pfCandPt_e_->getTH1();
       assert(histogram_trackPt_div_pfCandPt_e_);
 
@@ -114,7 +116,7 @@ class RecoPFChargedCandAnalyzer : public edm::EDAnalyzer
       histogram_trackPt_mu_ = me_trackPt_mu_->getTH1();
       assert(histogram_trackPt_mu_);
       TString histogramName_trackPt_div_pfCandPt_mu = Form("trackPt_div_pfCandPt_mu%s", histogramName_suffix.Data());
-      me_trackPt_div_pfCandPt_mu_ = dqmStore.book1D(histogramName_trackPt_div_pfCandPt_mu.Data(), histogramName_trackPt_div_pfCandPt_mu.Data(), 40, 0., 2.);
+      me_trackPt_div_pfCandPt_mu_ = dqmStore.book1D(histogramName_trackPt_div_pfCandPt_mu.Data(), histogramName_trackPt_div_pfCandPt_mu.Data(), 200, 0., 2.);
       histogram_trackPt_div_pfCandPt_mu_ = me_trackPt_div_pfCandPt_mu_->getTH1();
       assert(histogram_trackPt_div_pfCandPt_mu_);
 
@@ -127,7 +129,7 @@ class RecoPFChargedCandAnalyzer : public edm::EDAnalyzer
       histogram_trackPt_h_ = me_trackPt_h_->getTH1();
       assert(histogram_trackPt_h_);
       TString histogramName_trackPt_div_pfCandPt_h = Form("trackPt_div_pfCandPt_h%s", histogramName_suffix.Data());
-      me_trackPt_div_pfCandPt_h_ = dqmStore.book1D(histogramName_trackPt_div_pfCandPt_h.Data(), histogramName_trackPt_div_pfCandPt_h.Data(), 40, 0., 2.);
+      me_trackPt_div_pfCandPt_h_ = dqmStore.book1D(histogramName_trackPt_div_pfCandPt_h.Data(), histogramName_trackPt_div_pfCandPt_h.Data(), 200, 0., 2.);
       histogram_trackPt_div_pfCandPt_h_ = me_trackPt_div_pfCandPt_h_->getTH1();
       assert(histogram_trackPt_div_pfCandPt_h_);
 
@@ -140,7 +142,7 @@ class RecoPFChargedCandAnalyzer : public edm::EDAnalyzer
       histogram_trackPt_other_ = me_trackPt_other_->getTH1();
       assert(histogram_trackPt_other_);
       TString histogramName_trackPt_div_pfCandPt_other = Form("trackPt_div_pfCandPt_other%s", histogramName_suffix.Data());
-      me_trackPt_div_pfCandPt_other_ = dqmStore.book1D(histogramName_trackPt_div_pfCandPt_other.Data(), histogramName_trackPt_div_pfCandPt_other.Data(), 40, 0., 2.);
+      me_trackPt_div_pfCandPt_other_ = dqmStore.book1D(histogramName_trackPt_div_pfCandPt_other.Data(), histogramName_trackPt_div_pfCandPt_other.Data(), 200, 0., 2.);
       histogram_trackPt_div_pfCandPt_other_ = me_trackPt_div_pfCandPt_other_->getTH1();
       assert(histogram_trackPt_div_pfCandPt_other_);
     }
