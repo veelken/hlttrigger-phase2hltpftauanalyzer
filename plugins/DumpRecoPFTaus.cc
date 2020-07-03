@@ -30,12 +30,12 @@ namespace
   bool isSelected(const reco::PFTau& tau, double sumChargedIso, const std::map<std::string, double>& discriminator_values, bool debug)
   {
     const double min_PFTau_pt                   = 20.;
-    const double max_PFTau_absEta               =  2.1;
+    const double max_PFTau_absEta               =  2.4;
     const double min_leadPFChargedHadron_pt     =  5.;
-    const double max_leadPFChargedHadron_absEta =  2.1;
+    const double max_leadPFChargedHadron_absEta =  2.4;
     const double max_leadPFChargedHadron_dz     =  0.2;
     const double max_chargedIso                 = 1.e+3;
-    const double max_chargedRelIso              = 1.0;
+    const double max_chargedRelIso              = 0.05;
     bool retVal = true;
     if ( !(tau.pt() > min_PFTau_pt) )
     {
@@ -130,6 +130,27 @@ void DumpRecoPFTaus::analyze(const edm::Event& evt, const edm::EventSetup& es)
     double sumChargedIso_value = (*sumChargedIso)[tauRef];
     std::cout << "PFTau #" << idxTau << ": " << " pT = " << tauRef->pt() << ", eta = " << tauRef->eta() << ", phi = " << tauRef->phi() << ","
               << " decayMode = " << tauRef->decayMode() << ", mass = " << tauRef->mass() << ", chargedIso = " << sumChargedIso_value << std::endl;
+    std::cout << "lead. ChargedPFCand:";
+    if ( tauRef->leadPFChargedHadrCand().isNonnull() )
+    {
+      std::cout << " pT = " << tauRef->leadPFChargedHadrCand()->pt() << ", eta = " << tauRef->leadPFChargedHadrCand()->eta() << ", phi = " << tauRef->leadPFChargedHadrCand()->phi();
+    }
+    else 
+    {
+      std::cout << " N/A";
+    }
+    std::cout << std::endl;
+    std::cout << "lead. Track:";
+    if ( tauRef->leadPFChargedHadrCand().isNonnull() && tauRef->leadPFChargedHadrCand()->bestTrack() ) 
+    {
+      const reco::Track* leadingTrack = tauRef->leadPFChargedHadrCand()->bestTrack();
+      std::cout << " pT = " << leadingTrack->pt() << ", eta = " << leadingTrack->eta() << ", phi = " << leadingTrack->phi();
+    }
+    else 
+    {
+      std::cout << " N/A";
+    }
+    std::cout << std::endl;
     std::map<std::string, double> discriminator_values;
     size_t numDiscriminators = token_discriminators_.size();
     for ( size_t idxDiscriminator = 0; idxDiscriminator < numDiscriminators; ++idxDiscriminator ) 

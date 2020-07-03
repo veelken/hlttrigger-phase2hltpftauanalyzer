@@ -186,7 +186,7 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
       for ( auto denominatorTau : denominatorTaus )
       {
 	std::string denominatorTau_decayMode = JetMCTagUtils::genTauDecayMode(denominatorTau);
-	if ( decayMode_ != "all" && denominatorTau_decayMode != decayMode_ ) continue;
+	if ( !(decayMode_ == "all" || denominatorTau_decayMode == decayMode_) ) continue;
 
         bool isMatched = false;
 
@@ -247,11 +247,12 @@ class RecoPFTauAnalyzerSignal : public edm::EDAnalyzer
 
       for ( auto denominatorTau : denominatorTaus )
       {
-	if ( (decayMode_ == "oneProng0Pi0"   && denominatorTau.decayMode() != reco::PFTau::kOneProng0PiZero)   ||
-	     (decayMode_ == "oneProng1Pi0"   && denominatorTau.decayMode() != reco::PFTau::kOneProng1PiZero)   ||
-	     (decayMode_ == "oneProng1Pi0"   && denominatorTau.decayMode() != reco::PFTau::kOneProng2PiZero)   ||
-	     (decayMode_ == "threeProng0Pi0" && denominatorTau.decayMode() != reco::PFTau::kThreeProng0PiZero) ||
-	     (decayMode_ == "threeProng1Pi0" && denominatorTau.decayMode() != reco::PFTau::kThreeProng1PiZero) ) continue;	       
+	if ( !((decayMode_ == "all"                                                                            )  ||
+               (decayMode_ == "oneProng0Pi0"   && denominatorTau.decayMode() == reco::PFTau::kOneProng0PiZero  )  ||
+	       (decayMode_ == "oneProng1Pi0"   && denominatorTau.decayMode() == reco::PFTau::kOneProng1PiZero  )  ||
+	       (decayMode_ == "oneProng2Pi0"   && denominatorTau.decayMode() == reco::PFTau::kOneProng2PiZero  )  ||
+	       (decayMode_ == "threeProng0Pi0" && denominatorTau.decayMode() == reco::PFTau::kThreeProng0PiZero)  ||
+	       (decayMode_ == "threeProng1Pi0" && denominatorTau.decayMode() == reco::PFTau::kThreeProng1PiZero)) ) continue;	       
 
         bool isMatched = false;
 

@@ -27,26 +27,35 @@ void DumpRecoPFCandidates::analyze(const edm::Event& evt, const edm::EventSetup&
   edm::Handle<reco::PFCandidateCollection> pfCands;
   evt.getByToken(token_, pfCands);
   
+  reco::Candidate::LorentzVector sumP4;
+
   size_t numPFCands = pfCands->size();
   for ( size_t idxPFCand = 0; idxPFCand < numPFCands; ++idxPFCand ) 
   {
     const reco::PFCandidate& pfCand = pfCands->at(idxPFCand);
-    if ( !(pfCand.pt() > minPt_) ) continue;
-    std::string type_string;
-    if      ( pfCand.particleId() == reco::PFCandidate::h     ) type_string = "PFChargedHadron";
-    else if ( pfCand.particleId() == reco::PFCandidate::e     ) type_string = "PFElectron";
-    else if ( pfCand.particleId() == reco::PFCandidate::h0    ) type_string = "PFNeutralHadron";
-    else if ( pfCand.particleId() == reco::PFCandidate::gamma ) type_string = "PFPhoton";
-    else if ( pfCand.particleId() == reco::PFCandidate::mu    ) type_string = "PFMuon";
-    else                                                        type_string = "N/A";
-    std::cout << "PFCandidate #" << idxPFCand << " (type = " << type_string << "):" 
-	      << " pT = " << pfCand.pt() << ", eta = " << pfCand.eta() << ", phi = " << pfCand.phi() << std::endl;
-    if ( pfCand.bestTrack() )
+    if ( (minPt_ < 0. || pfCand.pt() > minPt_) && (maxAbsEta_ < 0. || std::fabs(pfCand.eta()) < maxAbsEta_) )
     {
-      std::cout << " bestTrack: pT = " << pfCand.bestTrack()->pt() << ", eta = " << pfCand.bestTrack()->eta() << ", phi = " << pfCand.bestTrack()->phi() << std::endl;
+      std::string type_string;
+      if      ( pfCand.particleId() == reco::PFCandidate::h     ) type_string = "PFChargedHadron";
+      else if ( pfCand.particleId() == reco::PFCandidate::e     ) type_string = "PFElectron";
+      else if ( pfCand.particleId() == reco::PFCandidate::h0    ) type_string = "PFNeutralHadron";
+      else if ( pfCand.particleId() == reco::PFCandidate::gamma ) type_string = "PFPhoton";
+      else if ( pfCand.particleId() == reco::PFCandidate::mu    ) type_string = "PFMuon";
+      else                                                        type_string = "N/A";
+      std::cout << "PFCandidate #" << idxPFCand << " (type = " << type_string << "):" 
+	        << " pT = " << pfCand.pt() << ", eta = " << pfCand.eta() << ", phi = " << pfCand.phi() << std::endl;
+      std::cout << " vertex: x = " << pfCand.vertex().x() << ", y = " << pfCand.vertex().y() << ", z = " << pfCand.vertex().z() << std::endl;
+      if ( pfCand.bestTrack() )
+      {
+        const reco::Track* bestTrack = pfCand.bestTrack();
+        std::cout << " bestTrack: pT = " << bestTrack->pt() << ", eta = " << bestTrack->eta() << ", phi = " << bestTrack->phi() << std::endl;
+        std::cout << " vertex: x = " << bestTrack->vertex().x() << ", y = " << bestTrack->vertex().y() << ", z = " << bestTrack->vertex().z() << std::endl;
+      }
+      std::cout << " calorimeter energy: ECAL = " << pfCand.ecalEnergy() << ", HCAL = " << pfCand.hcalEnergy() << std::endl;
     }
-    std::cout << " calorimeter energy: ECAL = " << pfCand.ecalEnergy() << ", HCAL = " << pfCand.hcalEnergy() << std::endl;
+    sumP4 += pfCand.p4();
   }
+  std::cout << "(sum: E = " << sumP4.energy() << ", pT = " << sumP4.pt() << ", eta = " << sumP4.eta() << ", phi = " << sumP4.phi() << ")" << std::endl;
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

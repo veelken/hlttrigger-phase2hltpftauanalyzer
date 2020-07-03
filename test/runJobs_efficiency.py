@@ -8,8 +8,8 @@ from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames,
 signal_samples = {
   'qqH_htt' : {
     'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_offlineVtxCollection_HGCalFix_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_142633/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_onlineVtxCollection_HGCalFix_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_141415/'  
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_offlineVtxCollection_woHGCal_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix/200701_141943/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_onlineVtxCollection_woHGCal_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix/200701_142038/'  
     },
     'numJobs' : 10,
     'process' : "qqH_htt"
@@ -21,7 +21,7 @@ run_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
 run_isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
 run_isolation_minTrackHits = [ 3, 5, 8 ]
 
-version = "2020Jul01"
+version = "2020Jul02"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/efficiency", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/efficiency", version)

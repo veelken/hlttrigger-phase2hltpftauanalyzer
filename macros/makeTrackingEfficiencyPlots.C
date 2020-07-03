@@ -222,8 +222,8 @@ void makeTrackingEfficiencyPlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = Form("%s/src/HLTTrigger/TallinnHLTPFTauAnalyzer/test/", gSystem->Getenv("CMSSW_BASE"));
-  std::string inputFileName = "analyzePFTaus_signal_2020Jun24.root";
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/efficiency/2020Jul01/";
+  std::string inputFileName = "hadd_qqH_htt_all.root";
   std::string inputFileName_full = inputFilePath;
   if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
   inputFileName_full.append(inputFileName);
@@ -250,22 +250,22 @@ void makeTrackingEfficiencyPlots()
   std::vector<std::string> observables;
   observables.push_back("pt");
   observables.push_back("eta");
-  observables.push_back("phi");
-  observables.push_back("minDeltaR");
+  //observables.push_back("phi");
+  //observables.push_back("minDeltaR");
 
   std::vector<std::string> absEtaRanges;
   absEtaRanges.push_back("absEtaLt1p40");
-  absEtaRanges.push_back("absEta1p40to2p17");
-  //absEtaRanges.push_back("absEta1p40to2p40");
-  absEtaRanges.push_back("absEtaLt2p17");
-  //absEtaRanges.push_back("absEtaLt2p40");
+  //absEtaRanges.push_back("absEta1p40to2p17");
+  absEtaRanges.push_back("absEta1p40to2p40");
+  //absEtaRanges.push_back("absEtaLt2p17");
+  absEtaRanges.push_back("absEtaLt2p40");
 
   std::vector<std::string> decayModes;
-  //decayModes.push_back("oneProng0Pi0");
-  //decayModes.push_back("oneProng1Pi0");
-  //decayModes.push_back("oneProng2Pi0");
-  //decayModes.push_back("threeProng0Pi0");
-  //decayModes.push_back("threeProng1Pi0");
+  decayModes.push_back("oneProng0Pi0");
+  decayModes.push_back("oneProng1Pi0");
+  decayModes.push_back("oneProng2Pi0");
+  decayModes.push_back("threeProng0Pi0");
+  decayModes.push_back("threeProng1Pi0");
   decayModes.push_back("all");
 
   std::map<std::string, double> xMin; // key = observable
@@ -306,8 +306,8 @@ void makeTrackingEfficiencyPlots()
 
   std::string dqmDirectory = "recoTrackAnalyzer";
 
-  int colors[6] = { 1, 2, 8, 4, 6, 7 };
-  int lineStyles[6] = { 1, 1, 1, 1, 1, 1 };
+  int colors[6]       = {  1,  2,  8,  4,  6,  7 };
+  int lineStyles[6]   = {  1,  1,  1,  1,  1,  1 };
   int markerStyles[6] = { 22, 32, 20, 24, 21, 25 };
 
   typedef std::map<std::string, TGraph*>               string_to_graph_map_1;
@@ -388,7 +388,7 @@ void makeTrackingEfficiencyPlots()
 		     0, "",
 		     0, "",
 		     colors, markerStyles, lineStyles, 
-		     0.045, legendPosX, legendPosY, 0.25, 0.26, 
+		     0.040, legendPosX, legendPosY, 0.25, 0.19, 
 		     labelTextLines, 0.050,
 		     0.63, 0.65, 0.26, 0.07, 
 		     xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
@@ -413,7 +413,7 @@ void makeTrackingEfficiencyPlots()
 	  TGraph* graph_wQualityCuts = graphs_efficiency[*recTrack_type]["wQualityCuts"][*vtxMode][*observable][*absEtaRange]["all"];
 	  assert(graph_wQualityCuts);
 	
-  	  double legendPosX = 0.68;
+  	  double legendPosX = 0.57;
           double legendPosY = 0.17;
           if ( (*observable) == "minDeltaR" ) {
     	    legendPosX = 0.18;
@@ -430,7 +430,7 @@ void makeTrackingEfficiencyPlots()
 		     0, "",
 		     0, "",
 		     colors, markerStyles, lineStyles, 
-		     0.045, legendPosX, legendPosY, 0.32, 0.13, 
+		     0.040, legendPosX, legendPosY, 0.37, 0.10, 
 		     labelTextLines, 0.050,
 		     0.63, 0.65, 0.26, 0.07, 
 		     xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
@@ -440,7 +440,7 @@ void makeTrackingEfficiencyPlots()
       }
     }
   }
-/*
+
   // 3rd set of plots: comparing efficiencies for different generator-level tau decay modes
   for ( std::vector<std::string>::const_iterator vtxMode = vtxModes.begin();
 	vtxMode != vtxModes.end(); ++vtxMode ) {
@@ -485,7 +485,6 @@ void makeTrackingEfficiencyPlots()
       }
     }
   }
- */
 
   delete inputFile;
 }

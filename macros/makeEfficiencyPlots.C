@@ -418,8 +418,8 @@ void makeEfficiencyPlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = Form("%s/src/HLTTrigger/TallinnHLTPFTauAnalyzer/test/", gSystem->Getenv("CMSSW_BASE"));
-  std::string inputFileName = "analyzePFTaus_signal_qqH_htt_offlinePrimaryVertices_2020Jun30_all.root";
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/efficiency/2020Jul01/";
+  std::string inputFileName = "hadd_qqH_htt_all.root";
   std::string inputFileName_full = inputFilePath;
   if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
   inputFileName_full.append(inputFileName);
@@ -434,46 +434,66 @@ void makeEfficiencyPlots()
   pfAlgos.push_back("HpsPFTau");
 
   std::vector<std::string> vertexOptions;
-  vertexOptions.push_back("3HitsMaxDeltaZWithOfflineVertices");
-  vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVerticesTrimmed");
+  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
+/*
   vertexOptions.push_back("5HitsMaxDeltaZWithOfflineVertices");
   vertexOptions.push_back("5HitsMaxDeltaZToLeadTrackWithOfflineVertices");
-  vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
-  vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
-  //vertexOptions.push_back("WithOnlineVertices");
-  //vertexOptions.push_back("WithOnlineVerticesTrimmed");
+  vertexOptions.push_back("5HitsMaxDeltaZWithOnlineVertices");
+  vertexOptions.push_back("5HitsMaxDeltaZToLeadTrackWithOnlineVertices");
+  //vertexOptions.push_back("5HitsMaxDeltaZWithOnlineVerticesTrimmed");
+  //vertexOptions.push_back("5HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
+  vertexOptions.push_back("3HitsMaxDeltaZWithOfflineVertices");
+  vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  vertexOptions.push_back("3HitsMaxDeltaZWithOnlineVertices");
+  vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOnlineVertices");
+  //vertexOptions.push_back("3HitsMaxDeltaZWithOnlineVerticesTrimmed");
+  //vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
+ */
 
   std::map<std::string, std::string> srcVertices; // key = vertexOption
-  srcVertices["3HitsMaxDeltaZWithOfflineVertices"]                    = "offlinePrimaryVertices";
-  srcVertices["3HitsMaxDeltaZToLeadTrackWithOfflineVertices"]         = "offlinePrimaryVertices";
-  srcVertices["5HitsMaxDeltaZWithOfflineVertices"]                    = "offlinePrimaryVertices";
-  srcVertices["5HitsMaxDeltaZToLeadTrackWithOfflineVertices"]         = "offlinePrimaryVertices";
-  srcVertices["8HitsMaxDeltaZWithOfflineVertices"]                    = "offlinePrimaryVertices";
-  srcVertices["8HitsMaxDeltaZToLeadTrackWithOfflineVertices"]         = "offlinePrimaryVertices";
-  //srcVertices["8HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
-  //srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
-  //srcVertices["8HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
-  //srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
+  srcVertices["8HitsMaxDeltaZWithOfflineVertices"]                  = "offlinePrimaryVertices";
+  srcVertices["8HitsMaxDeltaZToLeadTrackWithOfflineVertices"]       = "offlinePrimaryVertices";
+  srcVertices["8HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
+  srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
+  srcVertices["8HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
+  srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
+  srcVertices["5HitsMaxDeltaZWithOfflineVertices"]                  = "offlinePrimaryVertices";
+  srcVertices["5HitsMaxDeltaZToLeadTrackWithOfflineVertices"]       = "offlinePrimaryVertices";
+  srcVertices["5HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
+  srcVertices["5HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
+  srcVertices["5HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
+  srcVertices["5HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
+  srcVertices["3HitsMaxDeltaZWithOfflineVertices"]                  = "offlinePrimaryVertices";
+  srcVertices["3HitsMaxDeltaZToLeadTrackWithOfflineVertices"]       = "offlinePrimaryVertices";
+  srcVertices["3HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
+  srcVertices["3HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
+  srcVertices["3HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
+  srcVertices["3HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
 
   std::vector<std::string> observables;
-  observables.push_back("pt");
+  //observables.push_back("pt");
   observables.push_back("eta");
   //observables.push_back("phi");
   //observables.push_back("minDeltaR");
 
   std::vector<std::string> absEtaRanges;
-  absEtaRanges.push_back("absEtaLt1p40");
-  absEtaRanges.push_back("absEta1p40to2p17");
-  absEtaRanges.push_back("absEta1p40to2p40");
-  absEtaRanges.push_back("absEtaLt2p17");
+  //absEtaRanges.push_back("absEtaLt1p40");
+  //absEtaRanges.push_back("absEta1p40to2p17");
+  //absEtaRanges.push_back("absEta1p40to2p40");
+  //absEtaRanges.push_back("absEtaLt2p17");
   absEtaRanges.push_back("absEtaLt2p40");
 
   std::vector<std::string> decayModes;
-  //decayModes.push_back("oneProng0Pi0");
-  //decayModes.push_back("oneProng1Pi0");
-  //decayModes.push_back("oneProng2Pi0");
-  //decayModes.push_back("threeProng0Pi0");
-  //decayModes.push_back("threeProng1Pi0");
+  decayModes.push_back("oneProng0Pi0");
+  decayModes.push_back("oneProng1Pi0");
+  decayModes.push_back("oneProng2Pi0");
+  decayModes.push_back("threeProng0Pi0");
+  decayModes.push_back("threeProng1Pi0");
   decayModes.push_back("all");
 
   std::vector<std::string> ptThresholds;
@@ -544,8 +564,8 @@ void makeEfficiencyPlots()
 
   std::string dqmDirectory = "%sAnalyzerSignal%s";
 
-  int colors[6] = { 1, 2, 8, 4, 6, 7 };
-  int lineStyles[6] = { 1, 1, 1, 1, 1, 1 };
+  int colors[6]       = {  1,  2,  8,  4,  6,  7 };
+  int lineStyles[6]   = {  1,  1,  1,  1,  1,  1 };
   int markerStyles[6] = { 22, 32, 20, 24, 21, 25 };
 
   typedef std::map<std::string, TGraph*>              string_to_TGraphMap1;
@@ -579,14 +599,14 @@ void makeEfficiencyPlots()
                 //  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
 	        std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
                   srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
-                  observable->data(),absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+                  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                 TH1* histogram_numerator = loadHistogram(inputFile, histogramName_numerator);
 	        //std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
                 //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
                 //  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
 	        std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
                   srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
-                  observable->data(),absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+                  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                 TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
 	        TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
 	        graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt][*isolationWP] = graph_efficiency;
@@ -659,25 +679,25 @@ void makeEfficiencyPlots()
 		         false, 0., 1.09, "Efficiency", 1.4, 
 		         outputFileName2);
             }
-/*
+
             for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
                   min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
     	      for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
 	            isolationWP != isolationWPs.end(); ++isolationWP ) {  
 	        for ( std::vector<std::string>::const_iterator decayMode = decayModes.begin();
 	  	      decayMode != decayModes.end(); ++decayMode ) {
-  	          //std::string histogramName_numerator = Form((dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
-	          //  pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
-                  // observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	          std::string histogramName_numerator = Form((dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
-	            pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
+                  //std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
+                  //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
+                  //  observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+	          std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
+                    srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
                     observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                   TH1* histogram_numerator = loadHistogram(inputFile, histogramName_numerator);
-	          //std::string histogramName_denominator = Form((dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
-                  //  pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
+	          //std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
+                  //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
                   //  observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	          std::string histogramName_denominator = Form((dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
-                    pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
+	          std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
+                    srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
                     observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                   TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
 	          TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
@@ -686,7 +706,7 @@ void makeEfficiencyPlots()
 
 	        string_to_TGraphMap1 graphs3 = graphs_efficiency_vs_decayModes[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt][*isolationWP];
 	        std::vector<std::string> labelTextLines3 = getLabelTextLines(*ptThreshold);
-	        std::string outputFileName3 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_%s_%s.png", 
+	        std::string outputFileName3 = Form("makeEfficiencyPlots_%s%s_vs_decayMode_and_%s_%s_%s_%s_%s.png", 
                   pfAlgo->data(), vertexOption->data(), observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
 	        showGraphs(1150, 850,
   		           graphs3["oneProng0Pi0"],   legendEntries_vs_decayModes["oneProng0Pi0"],
@@ -705,7 +725,6 @@ void makeEfficiencyPlots()
 		           outputFileName3);
               }
             }
- */
 
             // CV: make final plot that shows trigger efficiency in steps
             TGraph* graph_trackFinding = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold]["leadTrackPtGt1"]["noIsolation"];

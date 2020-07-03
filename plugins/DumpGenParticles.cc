@@ -40,6 +40,8 @@ void DumpGenParticles::analyze(const edm::Event& evt, const edm::EventSetup& es)
   reco::GenParticleCollection genParticles_sorted = *genParticles;
   std::sort(genParticles_sorted.begin(), genParticles_sorted.end(), isHigherPt);
   
+  reco::Candidate::LorentzVector sumP4;
+
   size_t numParticles = genParticles_sorted.size();
   for ( size_t idxParticle = 0; idxParticle < numParticles; ++idxParticle ) 
   {
@@ -48,7 +50,9 @@ void DumpGenParticles::analyze(const edm::Event& evt, const edm::EventSetup& es)
 	      << " pT = " << genParticle.pt() << ", eta = " << genParticle.eta() << ", phi = " << genParticle.phi() 
 	      << " pdgId = " << genParticle.pdgId() << std::endl;
     std::cout << " vertex: x = " << genParticle.vertex().x() << ", y = " << genParticle.vertex().y() << ", z = " << genParticle.vertex().z() << std::endl;
+    sumP4 += genParticle.p4();
   }
+  std::cout << "(sum: E = " << sumP4.energy() << ", pT = " << sumP4.pt() << ", eta = " << sumP4.eta() << ", phi = " << sumP4.phi() << ")" << std::endl;
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
