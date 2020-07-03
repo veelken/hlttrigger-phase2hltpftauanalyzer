@@ -3,6 +3,11 @@
 #       https://github.com/HEP-KBFI/tth-htt/tree/master/python
 #----------------------------------------------------------------------------------------------------
 
+import logging
+import os
+import subprocess
+import sys
+
 #--------------------------------------------------------------------------------
 # CV: copied from tthAnalysis/HiggsToTauTau/python/analysisTools.py
 def createFile(fileName, lines, nofNewLines = 2):
@@ -17,9 +22,6 @@ def createFile(fileName, lines, nofNewLines = 2):
 
 #----------------------------------------------------------------------------------------------------
 # CV: copied from tthAnalysis/HiggsToTauTau/python/common.py
-import sys
-import logging
-
 logging.basicConfig(
   stream = sys.stdout,
   level  = logging.INFO,
