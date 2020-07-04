@@ -418,7 +418,7 @@ void makeEfficiencyPlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/efficiency/2020Jul01/";
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/efficiency/2020Jul02/";
   std::string inputFileName = "hadd_qqH_htt_all.root";
   std::string inputFileName_full = inputFilePath;
   if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
@@ -476,15 +476,15 @@ void makeEfficiencyPlots()
   srcVertices["3HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
 
   std::vector<std::string> observables;
-  //observables.push_back("pt");
+  observables.push_back("pt");
   observables.push_back("eta");
   //observables.push_back("phi");
   //observables.push_back("minDeltaR");
 
   std::vector<std::string> absEtaRanges;
-  //absEtaRanges.push_back("absEtaLt1p40");
+  absEtaRanges.push_back("absEtaLt1p40");
   //absEtaRanges.push_back("absEta1p40to2p17");
-  //absEtaRanges.push_back("absEta1p40to2p40");
+  absEtaRanges.push_back("absEta1p40to2p40");
   //absEtaRanges.push_back("absEtaLt2p17");
   absEtaRanges.push_back("absEtaLt2p40");
 
