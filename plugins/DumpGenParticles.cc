@@ -47,8 +47,8 @@ void DumpGenParticles::analyze(const edm::Event& evt, const edm::EventSetup& es)
   {
     const reco::GenParticle& genParticle = genParticles_sorted.at(idxParticle);
     std::cout << "genParticle #" << idxParticle  << ":" 
-	      << " pT = " << genParticle.pt() << ", eta = " << genParticle.eta() << ", phi = " << genParticle.phi() 
-	      << " pdgId = " << genParticle.pdgId() << std::endl;
+	      << " pT = " << genParticle.pt() << ", eta = " << genParticle.eta() << ", phi = " << genParticle.phi() << ","
+	      << " pdgId = " << genParticle.pdgId() << " (status = " << genParticle.status() << ")" << std::endl;
     std::cout << " vertex: x = " << genParticle.vertex().x() << ", y = " << genParticle.vertex().y() << ", z = " << genParticle.vertex().z() << std::endl;
     sumP4 += genParticle.p4();
   }
