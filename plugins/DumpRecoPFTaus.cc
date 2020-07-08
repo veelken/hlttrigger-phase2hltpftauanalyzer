@@ -124,7 +124,7 @@ void DumpRecoPFTaus::analyze(const edm::Event& evt, const edm::EventSetup& es)
   evt.getByToken(token_sumChargedIso_, sumChargedIso);
 
   size_t numTaus = taus->size();
-  std::cout << " numTaus = " << numTaus << std::endl;
+  //std::cout << " numTaus = " << numTaus << std::endl;
   for ( size_t idxTau = 0; idxTau < numTaus; ++idxTau ) 
   {
     reco::PFTauRef tauRef(taus, idxTau);
