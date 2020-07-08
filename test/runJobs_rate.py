@@ -214,7 +214,7 @@ for sampleName, sample in background_samples.items():
   commands.append('rm -f %s' % outputFileName)
   commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
   commands.append('cp -f %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
-  commands.append('sleep 5s')
+  commands.append('sleep 30s')
   commands.append('rm -f %s' % outputFileName)
   jobOptions_Makefile_hadd.append({
     'target'          : os.path.join(outputDir, outputFileName),

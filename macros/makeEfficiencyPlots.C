@@ -418,7 +418,7 @@ void makeEfficiencyPlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/efficiency/2020Jul02/";
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/efficiency/2020Jul07/";
   std::string inputFileName = "hadd_qqH_htt_all.root";
   std::string inputFileName_full = inputFilePath;
   if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
@@ -594,19 +594,19 @@ void makeEfficiencyPlots()
                   min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
               for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
 	            isolationWP != isolationWPs.end(); ++isolationWP ) {
-                //std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
-                //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
-                //  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	        std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
+                std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
                   srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
                   observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+	        //std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
+                //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
+                //  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                 TH1* histogram_numerator = loadHistogram(inputFile, histogramName_numerator);
-	        //std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
-                //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
-                //  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	        std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
+	        std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
                   srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
                   observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+	        //std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
+                //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
+                //  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                 TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
 	        TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
 	        graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt][*isolationWP] = graph_efficiency;
@@ -686,19 +686,19 @@ void makeEfficiencyPlots()
 	            isolationWP != isolationWPs.end(); ++isolationWP ) {  
 	        for ( std::vector<std::string>::const_iterator decayMode = decayModes.begin();
 	  	      decayMode != decayModes.end(); ++decayMode ) {
-                  //std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
-                  //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
-                  //  observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	          std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
+                  std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
                     srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
                     observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+	          //std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
+                  //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
+                  //  observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                   TH1* histogram_numerator = loadHistogram(inputFile, histogramName_numerator);
-	          //std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
-                  //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
-                  //  observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	          std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
+	          std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
                     srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
                     observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+	          //std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
+                  //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
+                  //  observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
                   TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
 	          TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
 	          graphs_efficiency_vs_decayModes[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt][*isolationWP][*decayMode] = graph_efficiency;

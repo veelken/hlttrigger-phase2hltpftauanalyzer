@@ -8,8 +8,8 @@ from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames,
 signal_samples = {
   'qqH_htt' : {
     'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_offlineVtxCollection_woHGCal_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix/200701_141943/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_onlineVtxCollection_woHGCal_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix/200701_142038/'  
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_offlineVtxCollection_woHGCal_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix2/200707_101538/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_onlineVtxCollection_woHGCal_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix2/200707_101602/'
     },
     'numJobs' : 10,
     'process' : "qqH_htt"
@@ -21,7 +21,7 @@ run_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
 run_isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
 run_isolation_minTrackHits = [ 3, 5, 8 ]
 
-version = "2020Jul02"
+version = "2020Jul07"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/efficiency", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/efficiency", version)
@@ -138,7 +138,7 @@ for sampleName, sample in signal_samples.items():
   commands.append('rm -f %s' % outputFileName)
   commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
   commands.append('cp -f %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
-  commands.append('sleep 5s')
+  commands.append('sleep 30s')
   commands.append('rm -f %s' % outputFileName)
   jobOptions_Makefile_hadd.append({
     'target'          : os.path.join(outputDir, outputFileName),

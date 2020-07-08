@@ -21,8 +21,8 @@ process.source = cms.Source("PoolSource",
 )
 
 ##inputFilePath = '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_offlineVtxCollection_HGCalFix_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_142633/' # with HGCal energy regression
-inputFilePath = '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_offlineVtxCollection_woHGCal_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix/200701_141943/' # without HGCal energy regression
-outputFileName = "analyzePFCandConeEnResponse_signal_2020Jul04.root"
+inputFilePath = '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_offlineVtxCollection_woHGCal_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix2/200707_101538/' # without HGCal energy regression
+outputFileName = "analyzePFCandConeEnResponse_signal_2020Jul07.root"
 
 #--------------------------------------------------------------------------------
 # set input files
@@ -30,7 +30,7 @@ from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames
 print("Searching for input files in path = '%s'" % inputFilePath)
 inputFileNames = getInputFileNames(inputFilePath)
 print("Found %i input files." % len(inputFileNames))
-#process.source.fileNames = cms.untracked.vstring(inputFileNames)
+process.source.fileNames = cms.untracked.vstring(inputFileNames)
 #--------------------------------------------------------------------------------
 
 from Configuration.AlCa.GlobalTag import GlobalTag
