@@ -40,6 +40,9 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 
 process.analysisSequence = cms.Sequence()
 
+#--------------------------------------------------------------------------------
+# CV: select generator-level hadronic tau decays passing pT and eta cuts
+
 process.load("PhysicsTools.HepMCCandAlgos.genParticles_cfi")
 process.analysisSequence += process.genParticles
 
@@ -56,7 +59,10 @@ process.selectedGenHadTaus = cms.EDFilter("GenJetSelector",
   filter = cms.bool(False)
 )
 process.analysisSequence += process.selectedGenHadTaus
+#--------------------------------------------------------------------------------
 
+#--------------------------------------------------------------------------------
+# CV: select taus reconstructed at HLT level that match generator-level hadronic tau decays
 process.hltPFTausByROI = cms.EDFilter("PFTauAntiOverlapSelector",
   src = cms.InputTag('hltSelectedHpsPFTaus8HitsMaxDeltaZWithOfflineVertices'),
   srcNotToBeFiltered = cms.VInputTag('selectedGenHadTaus'),
@@ -119,7 +125,11 @@ process.hltPFTauChargedIsoPtSumByROI = cms.EDProducer("PFRecoTauDiscriminationBy
   verbosity = cms.int32(0)
 )
 process.analysisSequence += process.hltPFTauChargedIsoPtSumByROI
+#--------------------------------------------------------------------------------
 
+#--------------------------------------------------------------------------------
+# CV: select taus reconstructed at HLT level that match generator-level hadronic tau decays,
+#     but fail either the pT, eta, leadingTrackPt, or charged isolation cuts applied on HLT level
 process.hltPFTausFailingTrigger = cms.EDProducer("MyPFTauSelector",
   src = cms.InputTag('hltPFTausByROI'),
   src_sumChargedIso = cms.InputTag('hltPFTauChargedIsoPtSumByROI'),
@@ -143,7 +153,10 @@ process.hltPFTausFailingTriggerFilter = cms.EDFilter("CandViewCountFilter",
   minNumber = cms.uint32(1)
 )
 process.analysisSequence += process.hltPFTausFailingTriggerFilter
+#--------------------------------------------------------------------------------
 
+#--------------------------------------------------------------------------------
+# CV: print debugging information for generator-level hadronic tau decays
 process.genTaus = cms.EDFilter("GenParticleSelector",
   src = cms.InputTag('genParticles'),
   cut = cms.string('abs(pdgId) = 15 & status = 2 & pt > 20. & abs(eta) > 2.0 & abs(eta) < 2.4'),
@@ -179,21 +192,20 @@ process.dumpGenHadTaus = cms.EDAnalyzer("DumpGenTaus",
   src = cms.InputTag('genHadTausByROI')
 )
 process.analysisSequence += process.dumpGenHadTaus
+#--------------------------------------------------------------------------------
 
+#--------------------------------------------------------------------------------
+# CV: print debugging information for taus reconstructed at HLT level
 process.dumpOnlinePFTaus = cms.EDAnalyzer("DumpRecoPFTaus",
   src = cms.InputTag('hltPFTausByROI'),
   src_sumChargedIso = cms.InputTag('hltPFTauChargedIsoPtSumByROI'),
   src_discriminators = cms.VInputTag()
 )
 process.analysisSequence += process.dumpOnlinePFTaus
+#--------------------------------------------------------------------------------
 
-##process.dumpOnlinePFTaus2 = cms.EDAnalyzer("DumpRecoPFTaus",
-##  src = cms.InputTag('hltSelectedHpsPFTaus8HitsMaxDeltaZWithOfflineVertices'),
-##  src_sumChargedIso = cms.InputTag('hltPFTauChargedIsoPtSum8HitsMaxDeltaZWithOfflineVertices'),
-##  src_discriminators = cms.VInputTag()
-##)
-##process.analysisSequence += process.dumpOnlinePFTaus2
-
+#--------------------------------------------------------------------------------
+# CV: additional debug print-out
 process.stableGenParticles = cms.EDFilter("GenParticleSelector",
   src = cms.InputTag('genParticles'),
   cut = cms.string('status = 1 & abs(pdgId) != 12 & abs(pdgId) != 14 & abs(pdgId) != 16'),
@@ -251,12 +263,17 @@ process.dumpRho = cms.EDAnalyzer("DumpDouble",
   src = cms.InputTag('hltKT6PFJets:rho')
 )
 process.analysisSequence += process.dumpRho
+#--------------------------------------------------------------------------------
 
+#--------------------------------------------------------------------------------
+# CV: write ASCII file with run:ls:event numbers of the events containing a generator-level matched tau
+#     that fails either the pT, eta, leadingTrackPt, or charged isolation cuts applied on HLT level
 process.runLumiSectionEventNumberAnalyzer = cms.EDAnalyzer("RunLumiSectionEventNumberAnalyzer",
   output = cms.string(outputFileName),
   separator = cms.string(":")
 )
 process.analysisSequence += process.runLumiSectionEventNumberAnalyzer
+#--------------------------------------------------------------------------------
 
 process.p = cms.Path(process.analysisSequence)
 
