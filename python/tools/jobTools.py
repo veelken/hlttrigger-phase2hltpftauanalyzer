@@ -52,18 +52,23 @@ def build_Makefile(makeFileName, jobOptions):
 
   lines_Makefile = []
   lines_Makefile.append(".DEFAULT_GOAL := all")
+  lines_Makefile.append("")
   lines_Makefile.append("SHELL := /bin/bash")
+  lines_Makefile.append("")
   lines_Makefile.append("all: %s" % " ".join([ job['target'] for job in jobOptions ]))
+  lines_Makefile.append("")
   for job in jobOptions:
     lines_Makefile.append("%s: %s" % (job['target'], " ".join(job['dependencies'])))
     for command in job['commands']:
       lines_Makefile.append("\t%s" % command)
+    lines_Makefile.append("")
   lines_Makefile.append("clean:")
   outputFileNames = []
   for job in jobOptions:
     outputFileNames.extend(job['outputFileNames'])
   for outputFileName in outputFileNames:
     lines_Makefile.append("\trm -f %s" % outputFileName)
+  lines_Makefile.append("")
 
   makeFile = open(makeFileName, "w") 
   for line in lines_Makefile:

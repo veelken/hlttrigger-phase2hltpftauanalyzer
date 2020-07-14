@@ -8,8 +8,8 @@ from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames,
 signal_samples = {
   'qqH_htt' : {
     'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_offlineVtxCollection_woHGCal_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix2/200707_101538/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_onlineVtxCollection_woHGCal_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix2/200707_101602/'
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx/200711_090732/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOnlineVtx/200711_090837/'
     },
     'numJobs' : 10,
     'process' : "qqH_htt"
@@ -19,9 +19,10 @@ signal_samples = {
 run_algorithms = [ "hps" ]
 run_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
 run_isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
-run_isolation_minTrackHits = [ 3, 5, 8 ]
+##run_isolation_minTrackHits = [ 3, 5, 8 ]
+run_isolation_minTrackHits = [ 8 ]
 
-version = "2020Jul07"
+version = "2020Jul12"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/efficiency", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/efficiency", version)

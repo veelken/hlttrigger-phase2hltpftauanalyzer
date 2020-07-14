@@ -171,7 +171,7 @@ def build_cfgFile(cfgFileName_original, cfgFileName_modified,
   sedCommand += ' %s > %s' % (cfgFileName_original, cfgFileName_modified)
   run_command(sedCommand)
 
-jobOptions = {} # key = process + algorithm + isolation_maxDeltaZOption + isolation_minTrackHits (all separated by underscore)
+jobOptions = {} # key = sampleName + algorithm + isolation_maxDeltaZOption + isolation_minTrackHits (all separated by underscore)
 for sampleName, sample in background_samples.items(): 
   process = sample['process']
   for srcVertices in run_srcVertices:
@@ -194,13 +194,13 @@ for sampleName, sample in background_samples.items():
       for algorithm in run_algorithms:
         for isolation_maxDeltaZOption in run_isolation_maxDeltaZOptions:
           for isolation_minTrackHits in run_isolation_minTrackHits:
-            job_key = '%s_%s_%s_%s_%iHits' % (process, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits)
+            job_key = '%s_%s_%s_dz_wrt_%s_%iHits' % (sampleName, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits)
             if not job_key in jobOptions.keys():
               jobOptions[job_key] = []        
-            cfgFileName_modified = os.path.join(configDir, "analyzePFTaus_background_%s_%s_%s_dz_wrt_%s_%iHits_%i_cfg.py" % \
-              (sampleName, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits, jobId))
-            outputFileName = "analyzePFTaus_background_%s_%s_%s_dz_wrt_%s_%iHits_%i.root" % \
-              (sampleName, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits, jobId)
+            cfgFileName_modified = os.path.join(configDir, "analyzePFTaus_background_%s_%i_cfg.py" % \
+              (job_key, jobId))
+            outputFileName = "analyzePFTaus_background_%s_%i.root" % \
+              (job_key, jobId)
             build_cfgFile(
               "analyzePFTaus_background_cfg.py", cfgFileName_modified, 
               inputFileNames_job, sample['process'], lumiScale, 
@@ -231,53 +231,86 @@ jobOptions_Makefile_sbatch.append({
 makeFileName_sbatch = os.path.join(configDir, "Makefile_sbatch")
 build_Makefile(makeFileName_sbatch, jobOptions_Makefile_sbatch)
 
-jobOptions_Makefile_hadd_stage1 = []
-for job_key, jobs in jobOptions.items():
-  inputFileNames = [ os.path.join(job['outputFilePath'], job['outputFileName']) for job in jobs ]
-  outputFileName = "hadd_%s.root" % job_key
-  commands = []
-  commands.append('rm -f %s' % outputFileName)
-  commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
-  commands.append('cp -f %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
-  commands.append('sleep 5s')
-  commands.append('rm -f %s' % outputFileName)
-  jobOptions_Makefile_hadd_stage1.append({
-    'target'          : os.path.join(outputDir, outputFileName),
-    'dependencies'    : inputFileNames,
-    'commands'        : commands,
-    'outputFileNames' : [ os.path.join(outputDir, outputFileName) ],
-  })
-jobOptions_Makefile_hadd_stage2 = []
+jobOptions_Makefile_hadd_stage1 = {} # key = outputFileName
+for sampleName, sample in background_samples.items(): 
+  for job_key, jobs in jobOptions.items():
+    if job_key.find(sampleName) != -1:
+      inputFileNames = [ os.path.join(job['outputFilePath'], job['outputFileName']) for job in jobs ]
+      outputFileName = "hadd_stage1_%s.root" % job_key
+      if not outputFileName in jobOptions_Makefile_hadd_stage1.keys():
+        commands = []
+        commands.append('rm -f %s' % outputFileName)
+        commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
+        commands.append('cp -f %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
+        commands.append('sleep 5s')
+        commands.append('rm -f %s' % outputFileName)
+        jobOptions_Makefile_hadd_stage1[outputFileName]= {
+          'target'          : os.path.join(outputDir, outputFileName),
+          'dependencies'    : inputFileNames,
+          'commands'        : commands,
+          'outputFileNames' : [ os.path.join(outputDir, outputFileName) ],
+        }
+jobOptions_Makefile_hadd_stage2 = {} # key = outputFileName
+processes = []
+for sampleName, sample in background_samples.items():
+  if not sample['process'] in processes:
+    processes.append(sample['process'])
+print("processes = ", processes)
+for process in processes:  
+  for srcVertices in run_srcVertices:
+    for algorithm in run_algorithms:
+      for isolation_maxDeltaZOption in run_isolation_maxDeltaZOptions:
+        for isolation_minTrackHits in run_isolation_minTrackHits:
+          inputFileNames = []
+          for sampleName, sample in background_samples.items():
+            if sample['process'] == process:
+              for job in jobOptions_Makefile_hadd_stage1.values():
+                for outputFileName_job in job['outputFileNames']:
+                  job_key = '%s_%s_%s_dz_wrt_%s_%iHits' % (sampleName, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits)
+                  if outputFileName_job.find(job_key) != -1:
+                    inputFileNames.append(outputFileName_job)
+          job_key_hadd_stage2 = '%s_%s_%s_dz_wrt_%s_%iHits' % (process, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits)
+          outputFileName = "hadd_stage2_%s.root" % job_key_hadd_stage2
+          if not outputFileName in jobOptions_Makefile_hadd_stage2.keys():
+            commands = []
+            commands.append('rm -f %s' % outputFileName)
+            commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
+            commands.append('cp -f %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
+            commands.append('sleep 5s')
+            commands.append('rm -f %s' % outputFileName)
+            jobOptions_Makefile_hadd_stage2[outputFileName]= {
+              'target'          : os.path.join(outputDir, outputFileName),
+              'dependencies'    : inputFileNames,
+              'commands'        : commands,
+              'outputFileNames' : [ os.path.join(outputDir, outputFileName) ],
+            }
+jobOptions_Makefile_hadd_stage3 = {} # key = outputFileName
 for sampleName, sample in background_samples.items(): 
   process = sample['process']
   inputFileNames = []
-  for job in jobOptions_Makefile_hadd_stage1:
+  for job in jobOptions_Makefile_hadd_stage2.values():
     for outputFileName_job in job['outputFileNames']:
-      if outputFileName_job.find(sampleName) != -1 or outputFileName_job.find(process):
+      if outputFileName_job.find(process) != -1:
         inputFileNames.append(outputFileName_job)
   outputFileName = "hadd_%s_all.root" % process
-  isFirst = True
-  for job in jobOptions_Makefile_hadd_stage2:
-    for outputFileName_job in job['outputFileNames']:
-      if outputFileName == outputFileName_job:
-        isFirst = False
-  if isFirst:
+  if not outputFileName in jobOptions_Makefile_hadd_stage3.keys():
     commands = []
     commands.append('rm -f %s' % outputFileName)
     commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
     commands.append('cp -f %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
     commands.append('sleep 30s')
     commands.append('rm -f %s' % outputFileName)
-    jobOptions_Makefile_hadd_stage2.append({
+    jobOptions_Makefile_hadd_stage3[outputFileName] = {
       'target'          : os.path.join(outputDir, outputFileName),
       'dependencies'    : inputFileNames,
       'commands'        : commands,
       'outputFileNames' : [ os.path.join(outputDir, outputFileName) ],
-    })
+    }
 makeFileName_hadd = os.path.join(configDir, "Makefile_hadd")
 jobOptions_Makefile_hadd = []
-jobOptions_Makefile_hadd.extend(jobOptions_Makefile_hadd_stage1)
-jobOptions_Makefile_hadd.extend(jobOptions_Makefile_hadd_stage2)
+jobOptions_Makefile_hadd.extend([ job for job in jobOptions_Makefile_hadd_stage1.values() ])
+jobOptions_Makefile_hadd.extend([ job for job in jobOptions_Makefile_hadd_stage2.values() ])
+jobOptions_Makefile_hadd.extend([ job for job in jobOptions_Makefile_hadd_stage3.values() ])
 build_Makefile(makeFileName_hadd, jobOptions_Makefile_hadd)
 
 message  = "Finished building config files."
