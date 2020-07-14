@@ -17,69 +17,113 @@ background_samples = {
   # CV: minbias cross-section taken to be 75mb, 
   #     resulting in 200 pileup interaction per bunch-crossing for instantaneous luminosity of 7.5e+34 cm^-2 s^-1
   #    (assuming that 70% of all bunches are colliding, i.e. collision frequence of 28 MHz)
-  'minbias' : {
-    'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_w_offlineVtxCollection_HGCalFix_MINBIAS_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix/200630_131646/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_w_onlineVtxCollection_HGCalFix_MINBIAS_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8_isoFix/200630_131531/'  
-    },
-    'numJobs' : 10, 
-    'crossSection' : 75.0e+9/200, # pb
-    'process' : "minbias"
-  },
+##  'minbias' : {
+##    'inputFilePath' : {
+##      'offlinePrimaryVertices' : '',
+##      'hltPhase2PixelVertices' : ''  
+##    },
+##    'numJobs' : 10, 
+##    'crossSection' : 75.0e+9/200, # pb
+##    'process' : "minbias"
+##  },
   # CV: cross-sections for QCD, Drell-Yan, and W+jets production taken from the twiki
   #       https://twiki.cern.ch/twiki/bin/viewauth/CMS/HighLevelTriggerPhase2#Rate_calculations
 ##  'qcd_pt15to20' : {
-##    'inputFilePath' : "",
+##    'inputFilePath' : {
+##      'offlinePrimaryVertices' : '',
+##      'hltPhase2PixelVertices' : ''  
+##    },
+##    'numJobs' : 10, 
 ##    'crossSection' : 923300000.0,
 ##    'process' : "QCD"
 ##  },
 ##  'qcd_pt20to30' : {
-##    'inputFilePath' : "",
+##    'inputFilePath' : {
+##      'offlinePrimaryVertices' : '',
+##      'hltPhase2PixelVertices' : ''  
+##    },
+##    'numJobs' : 10, 
 ##    'crossSection' : 436000000.0,
 ##    'process' : "QCD"
 ##  },
-##  'qcd_pt30to50' : {
-##    'inputFilePath' : "",
-##    'crossSection' : 118400000.0,
-##    'process' : "QCD"
-##  },
-##  'qcd_pt50to80' : {
-##    'inputFilePath' : "",
-##    'crossSection' : 17650000.0,
-##    'process' : "QCD"
-##  },
-##  'qcd_pt80to120' : {
-##    'inputFilePath' : "",
-##    'crossSection' : 2671000.0,
-##    'process' : "QCD"
-##  },
-##  'qcd_pt120to170' : {
-##    'inputFilePath' : "",
-##    'crossSection' : 469700.0 ,
-##    'process' : "QCD"
-##  },
-##  'qcd_pt170to300' : {
-##    'inputFilePath' : "",
-##    'crossSection' : 121700.0,
-##    'process' : "QCD"
-##  },  
-##  'qcd_ptGt300' : {
-##    'inputFilePath' : "",
-##    'crossSection' : 9171.0,
-##    'process' : "QCD"
-##  },
-##  'dy_mass10to50' : {
-##    'inputFilePath' : "",
-##    'crossSection' : 16880.0,
-##    'process' : "DY"
-##  },
-##  'dy_massGt50' : {
-##    'inputFilePath' : "",
-##    'crossSection' : 5795.0,
-##    'process' : "DY"
-##  },
+  'qcd_pt30to50' : {
+    'inputFilePath' : {
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232606/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_233400/'  
+    },
+    'numJobs' : 10, 
+    'crossSection' : 118400000.0,
+    'process' : "QCD"
+  },
+  'qcd_pt50to80' : {
+    'inputFilePath' : {
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232636/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_230414/'  
+    },
+    'numJobs' : 10, 
+    'crossSection' : 17650000.0,
+    'process' : "QCD"
+  },
+  'qcd_pt80to120' : {
+    'inputFilePath' : {
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232521/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_233333/'  
+    },
+    'numJobs' : 10, 
+    'crossSection' : 2671000.0,
+    'process' : "QCD"
+  },
+  'qcd_pt120to170' : {
+    'inputFilePath' : {
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232405/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_233305/'  
+    },
+    'numJobs' : 10, 
+    'crossSection' : 469700.0 ,
+    'process' : "QCD"
+  },
+  'qcd_pt170to300' : {
+    'inputFilePath' : {
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232451/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_233114/'  
+    },
+    'numJobs' : 10, 
+    'crossSection' : 121700.0,
+    'process' : "QCD"
+  },  
+  'qcd_ptGt300' : {
+    'inputFilePath' : {
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232252/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_233141/'  
+    },
+    'numJobs' : 10, 
+    'crossSection' : 9171.0,
+    'process' : "QCD"
+  },
+  'dy_mass10to50' : {
+    'inputFilePath' : {
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOfflineVtx/200710_232002/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOnlineVtx/200710_232851/'  
+    },
+    'numJobs' : 10, 
+    'crossSection' : 16880.0,
+    'process' : "DY"
+  },
+  'dy_massGt50' : {
+    'inputFilePath' : {
+      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx/200710_231855/',
+      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOnlineVtx/200710_232823/'  
+    },
+    'numJobs' : 10, 
+    'crossSection' : 5795.0,
+    'process' : "DY"
+  },
 ##  'w' : {
-##    'inputFilePath' : "",
+##    'inputFilePath' : {
+##      'offlinePrimaryVertices' : '',
+##      'hltPhase2PixelVertices' : ''  
+##    },
+##    'numJobs' : 10, 
 ##    'crossSection' : 56990.0,
 ##    'process' : "W"
 ##  },
@@ -88,9 +132,10 @@ background_samples = {
 run_algorithms = [ "hps" ]
 run_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
 run_isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
-run_isolation_minTrackHits = [ 3, 5, 8 ]
+##run_isolation_minTrackHits = [ 3, 5, 8 ]
+run_isolation_minTrackHits = [ 8 ]
 
-version = "2020Jul01"
+version = "2020Jul12"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)
@@ -186,7 +231,7 @@ jobOptions_Makefile_sbatch.append({
 makeFileName_sbatch = os.path.join(configDir, "Makefile_sbatch")
 build_Makefile(makeFileName_sbatch, jobOptions_Makefile_sbatch)
 
-jobOptions_Makefile_hadd = []
+jobOptions_Makefile_hadd_stage1 = []
 for job_key, jobs in jobOptions.items():
   inputFileNames = [ os.path.join(job['outputFilePath'], job['outputFileName']) for job in jobs ]
   outputFileName = "hadd_%s.root" % job_key
@@ -196,33 +241,43 @@ for job_key, jobs in jobOptions.items():
   commands.append('cp -f %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
   commands.append('sleep 5s')
   commands.append('rm -f %s' % outputFileName)
-  jobOptions_Makefile_hadd.append({
+  jobOptions_Makefile_hadd_stage1.append({
     'target'          : os.path.join(outputDir, outputFileName),
     'dependencies'    : inputFileNames,
     'commands'        : commands,
     'outputFileNames' : [ os.path.join(outputDir, outputFileName) ],
   })
+jobOptions_Makefile_hadd_stage2 = []
 for sampleName, sample in background_samples.items(): 
   process = sample['process']
   inputFileNames = []
-  for job in jobOptions_Makefile_hadd:
+  for job in jobOptions_Makefile_hadd_stage1:
     for outputFileName_job in job['outputFileNames']:
-      if outputFileName_job.find(sampleName) != -1:
+      if outputFileName_job.find(sampleName) != -1 or outputFileName_job.find(process):
         inputFileNames.append(outputFileName_job)
   outputFileName = "hadd_%s_all.root" % process
-  commands = []
-  commands.append('rm -f %s' % outputFileName)
-  commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
-  commands.append('cp -f %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
-  commands.append('sleep 30s')
-  commands.append('rm -f %s' % outputFileName)
-  jobOptions_Makefile_hadd.append({
-    'target'          : os.path.join(outputDir, outputFileName),
-    'dependencies'    : inputFileNames,
-    'commands'        : commands,
-    'outputFileNames' : [ os.path.join(outputDir, outputFileName) ],
-  })
+  isFirst = True
+  for job in jobOptions_Makefile_hadd_stage2:
+    for outputFileName_job in job['outputFileNames']:
+      if outputFileName == outputFileName_job:
+        isFirst = False
+  if isFirst:
+    commands = []
+    commands.append('rm -f %s' % outputFileName)
+    commands.append('hadd %s %s' % (outputFileName, " ".join(inputFileNames)))
+    commands.append('cp -f %s %s' % (outputFileName, os.path.join(outputDir, outputFileName)))
+    commands.append('sleep 30s')
+    commands.append('rm -f %s' % outputFileName)
+    jobOptions_Makefile_hadd_stage2.append({
+      'target'          : os.path.join(outputDir, outputFileName),
+      'dependencies'    : inputFileNames,
+      'commands'        : commands,
+      'outputFileNames' : [ os.path.join(outputDir, outputFileName) ],
+    })
 makeFileName_hadd = os.path.join(configDir, "Makefile_hadd")
+jobOptions_Makefile_hadd = []
+jobOptions_Makefile_hadd.extend(jobOptions_Makefile_hadd_stage1)
+jobOptions_Makefile_hadd.extend(jobOptions_Makefile_hadd_stage2)
 build_Makefile(makeFileName_hadd, jobOptions_Makefile_hadd)
 
 message  = "Finished building config files."
