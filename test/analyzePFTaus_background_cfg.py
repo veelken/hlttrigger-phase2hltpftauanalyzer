@@ -23,8 +23,11 @@ process.source = cms.Source("PoolSource",
 ##    ) 
 )
 
-inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_w_offlineVtxCollection_HGCalFix_MINBIAS_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_142511/'
-processName = "minbias"
+#inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_w_offlineVtxCollection_HGCalFix_MINBIAS_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_142511/'
+inputFilePath = None
+inputFileNames = []
+#processName = "minbias"
+processName = "QCD"
 lumiScale = 2.8e+7 # 28 MHz
 srcVertices = 'offlinePrimaryVertices'
 #srcVertices = 'hltPhase2PixelVertices'
@@ -51,9 +54,10 @@ if inputFilePath:
     print("Searching for input files in path = '%s'" % inputFilePath)
     inputFileNames = getInputFileNames(inputFilePath)
     print("Found %i input files." % len(inputFileNames))
-else:
+    process.source.fileNames = cms.untracked.vstring(inputFileNames)
+elif len(inputFileNames) > 0:
     print("Processing %i input files: %s" % (len(inputFileNames), inputFileNames))
-process.source.fileNames = cms.untracked.vstring(inputFileNames)
+    process.source.fileNames = cms.untracked.vstring(inputFileNames)
 #--------------------------------------------------------------------------------
 
 from Configuration.AlCa.GlobalTag import GlobalTag
@@ -138,6 +142,53 @@ for algorithm in algorithms:
     )
     setattr(process, moduleName_PFTauIsolationAnalyzer, module_PFTauIsolationAnalyzer)
     ##process.analysisSequence += module_PFTauIsolationAnalyzer
+#--------------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------------
+# CV: fill histogram of generator PtHat information when running on QCD multijet MC samples
+#    (generator PtHat information will be valid for QCD multijet MC samples only)
+if processName == "QCD":
+
+    print("Adding GenPtHatAnalyzer.")
+    process.genPtHatSequence = cms.Sequence()
+
+    process.hltHpsPFTausPassingTrigger = cms.EDProducer("MyPFTauSelector",
+      src = cms.InputTag('hltSelectedHpsPFTaus8HitsMaxDeltaZWithOfflineVertices'),
+      src_sumChargedIso = cms.InputTag('hltHpsPFTauChargedIsoPtSum8HitsMaxDeltaZWithOfflineVertices'),
+      min_pt = cms.double(30.),
+      max_pt = cms.double(-1.),
+      min_absEta = cms.double(-1.),
+      max_absEta = cms.double(2.4),
+      min_leadTrackPt = cms.double(5.),
+      max_leadTrackPt = cms.double(-1.),
+      min_relChargedIso = cms.double(-1.),
+      max_relChargedIso = cms.double(0.05),
+      min_absChargedIso = cms.double(-1.),
+      max_absChargedIso = cms.double(-1.),
+      invert = cms.bool(False)
+    )
+    process.genPtHatSequence += process.hltHpsPFTausPassingTrigger
+
+    process.hltHpsPFTauPairsPassingTrigger = PFTauPairs.clone(
+      srcPFTaus = cms.InputTag('hltHpsPFTausPassingTrigger'),
+      srcPFTauSumChargedIso = cms.InputTag('')
+    )
+    process.genPtHatSequence += process.hltHpsPFTauPairsPassingTrigger
+
+    process.hltHpsPFTauPairFilter = cms.EDFilter("CandViewCountFilter",
+      src = cms.InputTag('hltHpsPFTauPairsPassingTrigger'),
+      minNumber = cms.uint32(1)
+    )
+    process.genPtHatSequence += process.hltHpsPFTauPairFilter
+
+    process.genPtHatAnalzer = cms.EDAnalyzer("GenPtHatAnalyzer",
+      src = cms.InputTag('generator'),
+      lumiScale = cms.double(lumiScale),
+      dqmDirectory = cms.string("GenPtHatAnalyzer")
+    )
+    process.genPtHatSequence += process.genPtHatAnalzer
+
+    process.genPtHatPath = cms.Path(process.genPtHatSequence)
 #--------------------------------------------------------------------------------
 
 process.load("DQMServices.Core.DQMStore_cfi")
