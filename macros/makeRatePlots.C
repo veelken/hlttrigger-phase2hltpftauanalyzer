@@ -237,22 +237,33 @@ void makeRatePlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/rate/2020Jul01/";
-  std::string inputFileName = "hadd_minbias_all.root";
-  std::string inputFileName_full = inputFilePath;
-  if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
-  inputFileName_full.append(inputFileName);
-  TFile* inputFile = new TFile(inputFileName_full.data());
-  if ( !inputFile ) {
-    std::cerr << "Failed to open input file = '" << inputFileName_full << "' !!" << std::endl;
-    assert(0);
-  }
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/rate/2020Jul12/";
 
   std::vector<std::string> processes;
-  processes.push_back("minbias");
-  //processes.push_back("QCD");
-  //processes.push_back("DY");
+  //processes.push_back("minbias");
+  processes.push_back("QCD");
+  processes.push_back("DY");
   //processes.push_back("W");
+
+  std::map<std::string, std::string> inputFileNames; // key = process
+  inputFileNames["minbias"] = "hadd_minbias_all.root";
+  inputFileNames["QCD"]     = "hadd_QCD_all.root";
+  inputFileNames["DY"]      = "hadd_DY_all.root";
+  inputFileNames["W"]       = "hadd_W_all.root";
+
+  std::map<std::string, TFile*> inputFiles; // key = process
+  for ( std::vector<std::string>::const_iterator process = processes.begin();
+	process != processes.end(); ++process ) {
+    std::string inputFileName_full = inputFilePath;
+    if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
+    inputFileName_full.append(inputFileNames[*process]);
+    TFile* inputFile = new TFile(inputFileName_full.data());
+    if ( !inputFile ) {
+      std::cerr << "Failed to open input file = '" << inputFileName_full << "' !!" << std::endl;
+      assert(0);
+    }
+    inputFiles[*process] = inputFile;
+  }
 
   std::vector<std::string> pfAlgos;
   //pfAlgos.push_back("PFTau");
@@ -374,7 +385,7 @@ void makeRatePlots()
 	          process != processes.end(); ++process ) {
               std::string histogram2dName = Form(("%s/%s/" + dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s_%s").data(), 
                 process->data(), srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
-              TH2* histogram2d = loadHistogram2d(inputFile, histogram2dName);
+              TH2* histogram2d = loadHistogram2d(inputFiles[*process], histogram2dName);
 
               TH1* histogram_rateSingleTau = makeRateHistogram(histogram2d, 1);
               histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*absEtaRange][*min_leadTrackPt][*isolationWP][*process] = histogram_rateSingleTau;
@@ -479,11 +490,13 @@ void makeRatePlots()
             std::string outputFileName5 = Form("makeRatePlots_DoubleTau_%s%s_%s_%s_%s.png", 
               pfAlgo->data(), vertexOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
             showHistograms(1150, 1150,
-                           histograms5["minbias"], legendEntries_vs_processes["minbias"],
+                           //histograms5["minbias"], legendEntries_vs_processes["minbias"],
                            histograms5["QCD"],     legendEntries_vs_processes["QCD"],
                            histograms5["DY"],      legendEntries_vs_processes["DY"],
-                           histograms5["W"],       legendEntries_vs_processes["W"],
+                           //histograms5["W"],       legendEntries_vs_processes["W"],
 		           nullptr, "",
+		           nullptr, "",
+                           nullptr, "",
 		           nullptr, "",
 		           colors, lineStyles, 
 		           0.040, 0.65, 0.66, 0.24, 0.28,
@@ -497,11 +510,13 @@ void makeRatePlots()
             std::string outputFileName6 = Form("makeRatePlots_DoubleTau_%s%s_%s_%s_%s.png", 
               pfAlgo->data(), vertexOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
             showHistograms(1150, 1150,
-                           histograms6["minbias"], legendEntries_vs_processes["minbias"],
+                           //histograms6["minbias"], legendEntries_vs_processes["minbias"],
                            histograms6["QCD"],     legendEntries_vs_processes["QCD"],
                            histograms6["DY"],      legendEntries_vs_processes["DY"],
-                           histograms6["W"],       legendEntries_vs_processes["W"],
+                           //histograms6["W"],       legendEntries_vs_processes["W"],
 		           nullptr, "",
+		           nullptr, "",
+                           nullptr, "",
 		           nullptr, "",
 		           colors, lineStyles, 
 		           0.040, 0.65, 0.66, 0.24, 0.28,
@@ -516,6 +531,9 @@ void makeRatePlots()
     }
   }
 
-  delete inputFile;
+  for ( std::map<std::string, TFile*>::const_iterator inputFile = inputFiles.begin();
+        inputFile != inputFiles.end(); ++inputFile ) {
+    delete inputFile->second;
+  }
 }
 
