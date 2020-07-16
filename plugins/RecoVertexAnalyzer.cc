@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoVertexAnalyzer.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoVertexAnalyzer.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "DataFormats/Common/interface/Handle.h"

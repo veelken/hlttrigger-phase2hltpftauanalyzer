@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_dqmAuxFunctions_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_dqmAuxFunctions_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_dqmAuxFunctions_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_dqmAuxFunctions_h
 
 #include "DQMServices/Core/interface/DQMStore.h"
 #include "DQMServices/Core/interface/MonitorElement.h"

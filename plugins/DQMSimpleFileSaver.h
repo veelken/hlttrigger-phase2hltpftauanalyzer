@@ -1,12 +1,12 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_DQMSimpleFileSaver_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_DQMSimpleFileSaver_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_DQMSimpleFileSaver_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_DQMSimpleFileSaver_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/dqmAuxFunctions.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/dqmAuxFunctions.h"
 
 #include <string>
 #include <vector>

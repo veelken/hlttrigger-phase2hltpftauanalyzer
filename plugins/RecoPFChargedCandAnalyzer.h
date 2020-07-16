@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_RecoPFChargedCandAnalyzer_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_RecoPFChargedCandAnalyzer_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_RecoPFChargedCandAnalyzer_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_RecoPFChargedCandAnalyzer_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"

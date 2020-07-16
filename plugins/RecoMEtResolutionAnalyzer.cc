@@ -1,10 +1,10 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoMEtResolutionAnalyzer.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoMEtResolutionAnalyzer.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/Utilities/interface/Exception.h"
 #include "DataFormats/Common/interface/Handle.h"
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow
 
 #include <TMath.h>
 

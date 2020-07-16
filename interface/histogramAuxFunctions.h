@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_histogramAuxFunctions_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_histogramAuxFunctions_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_histogramAuxFunctions_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_histogramAuxFunctions_h
 
 #include <TH1.h> // TH1
 #include <TH2.h> // TH2
@@ -29,4 +29,4 @@ fillWithOverFlow2d(TH2* histogram,
 void 
 divideByBinWidth(TH1* histogram);
 
-#endif // HLTTrigger_TallinnHLTPFTauAnalyzer_histogramAuxFunctions_h
+#endif // HLTrigger_TallinnHLTPFTauAnalyzer_histogramAuxFunctions_h

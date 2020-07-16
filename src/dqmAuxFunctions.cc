@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/dqmAuxFunctions.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/dqmAuxFunctions.h"
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 

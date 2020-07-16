@@ -3,7 +3,7 @@
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/LocalFileInPath.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/LocalFileInPath.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 #include "FWCore/Utilities/interface/Parse.h"
 #include "FWCore/Utilities/interface/resolveSymbolicLinks.h"

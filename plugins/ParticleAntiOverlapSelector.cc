@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/ParticleAntiOverlapSelector.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/ParticleAntiOverlapSelector.h"
 
 #include "CommonTools/UtilAlgos/interface/ObjectSelector.h"
 

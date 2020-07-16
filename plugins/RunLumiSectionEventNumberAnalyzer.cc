@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/RunLumiSectionEventNumberAnalyzer.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/RunLumiSectionEventNumberAnalyzer.h"
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 

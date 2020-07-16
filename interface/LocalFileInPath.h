@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTaus_LocalFileInPath_h
-#define HLTTrigger_TallinnHLTPFTaus_LocalFileInPath_h
+#ifndef HLTrigger_TallinnHLTPFTaus_LocalFileInPath_h
+#define HLTrigger_TallinnHLTPFTaus_LocalFileInPath_h
 
 // Find a non-event-data file, given a relative path.
 //

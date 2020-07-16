@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_L1VertexAnalyzer_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_L1VertexAnalyzer_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_L1VertexAnalyzer_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_L1VertexAnalyzer_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -22,7 +22,7 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"                        // reco::GenParticle
 #include "DataFormats/Math/interface/deltaR.h"                                       // deltaR
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/GenChargedHadronToTrackMatch.h" // GenChargedHadronToRecoTrackMatch
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/GenChargedHadronToTrackMatch.h" // GenChargedHadronToRecoTrackMatch
 
 #include <TH1.h>
 #include <TString.h> // TString, Form()

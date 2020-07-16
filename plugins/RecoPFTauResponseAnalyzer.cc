@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoPFTauResponseAnalyzer.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoPFTauResponseAnalyzer.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/Utilities/interface/Exception.h"

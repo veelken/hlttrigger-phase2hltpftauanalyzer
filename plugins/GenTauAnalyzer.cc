@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/GenTauAnalyzer.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/GenTauAnalyzer.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "DataFormats/Common/interface/Handle.h"

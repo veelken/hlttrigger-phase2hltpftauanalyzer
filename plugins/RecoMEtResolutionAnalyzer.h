@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_HLTPFTauAnalyzer_RecoMEtResolutionAnalyzer_h
-#define HLTTrigger_HLTPFTauAnalyzer_RecoMEtResolutionAnalyzer_h
+#ifndef HLTrigger_HLTPFTauAnalyzer_RecoMEtResolutionAnalyzer_h
+#define HLTrigger_HLTPFTauAnalyzer_RecoMEtResolutionAnalyzer_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"

@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpGenTaus.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpGenTaus.h"
 
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"

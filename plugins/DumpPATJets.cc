@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpPATJets.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpPATJets.h"
 
 #include "DataFormats/Common/interface/Handle.h"
 

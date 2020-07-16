@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpGenParticles.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpGenParticles.h"
 
 #include "DataFormats/Common/interface/Handle.h"
 

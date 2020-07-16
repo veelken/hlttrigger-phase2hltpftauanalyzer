@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_RecoPFCandidateTypeAnalyzer_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_RecoPFCandidateTypeAnalyzer_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_RecoPFCandidateTypeAnalyzer_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_RecoPFCandidateTypeAnalyzer_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -16,7 +16,7 @@
 #include "DataFormats/VertexReco/interface/VertexFwd.h"                         // reco::VertexCollection
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"       // PileupSummaryInfo
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // divideByBinWidth
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // divideByBinWidth
 
 #include <TH1.h>     // TH1
 #include <TString.h> // TString, Form()

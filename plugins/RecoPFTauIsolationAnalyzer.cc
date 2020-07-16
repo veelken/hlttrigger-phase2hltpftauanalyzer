@@ -1,10 +1,10 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoPFTauIsolationAnalyzer.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoPFTauIsolationAnalyzer.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "DataFormats/Common/interface/Handle.h"
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/LocalFileInPath.h" // LocalFileInPath
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/lutAuxFunctions.h" // openFile(), loadTH1()
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/LocalFileInPath.h" // LocalFileInPath
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/lutAuxFunctions.h" // openFile(), loadTH1()
 
 #include <iostream>
 #include <iomanip>

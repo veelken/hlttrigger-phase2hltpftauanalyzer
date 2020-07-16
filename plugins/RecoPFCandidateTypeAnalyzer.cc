@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoPFCandidateTypeAnalyzer.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoPFCandidateTypeAnalyzer.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "DataFormats/Common/interface/Handle.h"

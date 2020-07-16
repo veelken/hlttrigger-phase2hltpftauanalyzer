@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpRecoVertices.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpRecoVertices.h"
 
 #include "DataFormats/Common/interface/Handle.h"
 

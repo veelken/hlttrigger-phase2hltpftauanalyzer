@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_RunLumiSectionEventNumberFilter_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_RunLumiSectionEventNumberFilter_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_RunLumiSectionEventNumberFilter_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_RunLumiSectionEventNumberFilter_h
 
 /** \class RunLumiSectionEventNumberFilter
  *

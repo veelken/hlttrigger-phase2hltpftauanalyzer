@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_PATTauAnalyzer_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_PATTauAnalyzer_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_PATTauAnalyzer_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_PATTauAnalyzer_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"

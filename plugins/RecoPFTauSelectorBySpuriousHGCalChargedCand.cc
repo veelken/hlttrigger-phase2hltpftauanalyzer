@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoPFTauSelectorBySpuriousHGCalChargedCand.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoPFTauSelectorBySpuriousHGCalChargedCand.h"
 
 RecoPFTauSelectorBySpuriousHGCalChargedCandImp::RecoPFTauSelectorBySpuriousHGCalChargedCandImp(const edm::ParameterSet& cfg, edm::ConsumesCollector&& iC)
 {

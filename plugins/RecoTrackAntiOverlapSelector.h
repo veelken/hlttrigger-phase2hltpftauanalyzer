@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_RecoTrackAntiOverlapSelector_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_RecoTrackAntiOverlapSelector_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_RecoTrackAntiOverlapSelector_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_RecoTrackAntiOverlapSelector_h
 
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"

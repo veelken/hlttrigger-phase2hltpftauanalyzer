@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_HLTPFTauAnalyzer_RecoPFTauResponseAnalyzer_h
-#define HLTTrigger_HLTPFTauAnalyzer_RecoPFTauResponseAnalyzer_h
+#ifndef HLTrigger_HLTPFTauAnalyzer_RecoPFTauResponseAnalyzer_h
+#define HLTrigger_HLTPFTauAnalyzer_RecoPFTauResponseAnalyzer_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"

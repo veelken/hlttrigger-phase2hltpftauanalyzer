@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_GenPtHatAnalyzer_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_GenPtHatAnalyzer_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_GenPtHatAnalyzer_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_GenPtHatAnalyzer_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"

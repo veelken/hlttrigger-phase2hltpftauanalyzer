@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/DQMSimpleFileSaver.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/DQMSimpleFileSaver.h"
 
 // framework & common header files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -10,7 +10,7 @@
 #include "DQMServices/Core/interface/MonitorElement.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/generalAuxFunctions.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/generalAuxFunctions.h"
 
 #include <TPRegexp.h>
 #include <TObjArray.h>

@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpRecoPFCandidates.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpRecoPFCandidates.h"
 
 #include "DataFormats/Common/interface/Handle.h"
 

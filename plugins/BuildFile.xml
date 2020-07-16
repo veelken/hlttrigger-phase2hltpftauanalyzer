@@ -9,7 +9,7 @@
 <use   name="FWCore/ParameterSet"/>
 <use   name="FWCore/Utilities"/>
 <use   name="FWCore/ServiceRegistry"/>
-<use   name="HLTTrigger/TallinnHLTPFTauAnalyzer"/>
+<use   name="HLTrigger/TallinnHLTPFTauAnalyzer"/>
 <use   name="PhysicsTools/JetMCUtils"/>
 <use   name="RecoTauTag/RecoTau"/>
 <use   name="SimDataFormats/PileupSummaryInfo"/>

@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_generalAuxFunctions_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_generalAuxFunctions_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_generalAuxFunctions_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_generalAuxFunctions_h
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/InputTag.h"

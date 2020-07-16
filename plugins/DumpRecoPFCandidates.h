@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_DumpRecoPFCandidates_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_DumpRecoPFCandidates_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_DumpRecoPFCandidates_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_DumpRecoPFCandidates_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"

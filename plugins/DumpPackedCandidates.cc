@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpPackedCandidates.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpPackedCandidates.h"
 
 #include "FWCore/Utilities/interface/Exception.h"
 

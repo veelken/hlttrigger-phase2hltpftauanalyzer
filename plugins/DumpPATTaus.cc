@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpPATTaus.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpPATTaus.h"
 
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h" // reco::PFCandidate::h, ::e, ::mu, ::gamma, ::h0

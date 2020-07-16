@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_TallinnL1PFTauIsolationAnalyzer_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_TallinnL1PFTauIsolationAnalyzer_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_TallinnL1PFTauIsolationAnalyzer_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_TallinnL1PFTauIsolationAnalyzer_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -19,7 +19,7 @@
 #include "DataFormats/JetReco/interface/GenJetCollection.h"                     // reco::GenJetCollection
 #include "PhysicsTools/JetMCUtils/interface/JetMCTag.h"                         // JetMCTagUtils::genTauDecayMode()
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow(), fillWithOverFlow2d()
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow(), fillWithOverFlow2d()
 
 #include <TFile.h>   // TFile
 #include <TH1.h>     // TH1

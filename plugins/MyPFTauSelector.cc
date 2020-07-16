@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/MyPFTauSelector.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/MyPFTauSelector.h"
 
 #include "FWCore/Utilities/interface/InputTag.h"
 

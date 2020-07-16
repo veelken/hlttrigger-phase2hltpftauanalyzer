@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_HLTPFTauAnalyzer_RecoPFCandidateConeEnResponseAnalyzer_h
-#define HLTTrigger_HLTPFTauAnalyzer_RecoPFCandidateConeEnResponseAnalyzer_h
+#ifndef HLTrigger_HLTPFTauAnalyzer_RecoPFCandidateConeEnResponseAnalyzer_h
+#define HLTrigger_HLTPFTauAnalyzer_RecoPFCandidateConeEnResponseAnalyzer_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -22,7 +22,7 @@
 #include "PhysicsTools/JetMCUtils/interface/JetMCTag.h"                         // JetMCTagUtils::genTauDecayMode()
 #include "DataFormats/Math/interface/deltaR.h"                                  // reco::deltaR
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow2d
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow2d
 
 #include <TH1.h>     // TH1
 #include <TH2.h>     // TH2

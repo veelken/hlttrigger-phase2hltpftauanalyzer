@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/GenVertexProducer.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/GenVertexProducer.h"
 
 #include "FWCore/Utilities/interface/InputTag.h"
 

@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_RecoPFTauSelectorBySpuriousHGCalChargedCand_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_RecoPFTauSelectorBySpuriousHGCalChargedCand_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_RecoPFTauSelectorBySpuriousHGCalChargedCand_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_RecoPFTauSelectorBySpuriousHGCalChargedCand_h
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/Event.h"

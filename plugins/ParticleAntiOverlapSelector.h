@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_ParticleAntiOverlapSelector_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_ParticleAntiOverlapSelector_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_ParticleAntiOverlapSelector_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_ParticleAntiOverlapSelector_h
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/Event.h"

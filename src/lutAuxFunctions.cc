@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/lutAuxFunctions.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/lutAuxFunctions.h"
 
 #include "FWCore/Utilities/interface/Exception.h"
 

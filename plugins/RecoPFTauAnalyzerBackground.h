@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_RecoPFTauAnalyzerBackground_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_RecoPFTauAnalyzerBackground_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_RecoPFTauAnalyzerBackground_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_RecoPFTauAnalyzerBackground_h
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -12,7 +12,7 @@
 #include "DataFormats/TauReco/interface/PFTau.h"                                // reco::PFTau
 #include "DataFormats/TauReco/interface/PFTauFwd.h"                             // reco::PFTauCollection
 #include "DataFormats/TauReco/interface/PFTauDiscriminator.h"                   // reco::PFTauDiscriminator
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow()
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow()
 
 #include <TH1.h>     // TH1
 #include <TH2.h>     // TH2

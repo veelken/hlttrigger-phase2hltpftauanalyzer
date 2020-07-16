@@ -1,9 +1,9 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/GenPtHatAnalyzer.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/GenPtHatAnalyzer.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "DataFormats/Common/interface/Handle.h"
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/histogramAuxFunctions.h" // fillWithOverFlow
 
 GenPtHatAnalyzer::GenPtHatAnalyzer(const edm::ParameterSet& cfg)
   : moduleLabel_(cfg.getParameter<std::string>("@module_label"))

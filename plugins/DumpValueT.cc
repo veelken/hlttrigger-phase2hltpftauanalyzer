@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpValueT.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/DumpValueT.h"
 
 typedef DumpValueT<bool> DumpBool;
 typedef DumpValueT<double> DumpDouble;

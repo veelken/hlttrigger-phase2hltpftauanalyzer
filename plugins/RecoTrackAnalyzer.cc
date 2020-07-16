@@ -1,4 +1,4 @@
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoTrackAnalyzer.h"
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoTrackAnalyzer.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "DataFormats/Common/interface/Handle.h"
@@ -6,7 +6,7 @@
 #include "PhysicsTools/JetMCUtils/interface/JetMCTag.h"                                // JetMCTagUtils::genTauDecayMode()
 #include "DataFormats/Math/interface/deltaR.h"                                         // deltaR
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/GenChargedHadronToTrackMatch.h" // GenChargedHadronToRecoTrackMatch
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/GenChargedHadronToTrackMatch.h" // GenChargedHadronToRecoTrackMatch
 
 #include <algorithm> // std::sort()
 

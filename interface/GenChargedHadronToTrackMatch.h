@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_GenChargedHadronToTrackMatch_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_GenChargedHadronToTrackMatch_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_GenChargedHadronToTrackMatch_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_GenChargedHadronToTrackMatch_h
 
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h" // reco::GenParticle
 #include "DataFormats/TrackReco/interface/Track.h"            // reco::Track

@@ -1,9 +1,9 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_lutAuxFunctions_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_lutAuxFunctions_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_lutAuxFunctions_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_lutAuxFunctions_h
 
 #include <FWCore/ParameterSet/interface/ParameterSet.h> // edm::ParameterSet
 
-#include "HLTTrigger/TallinnHLTPFTauAnalyzer/interface/LocalFileInPath.h" // LocalFileInPath
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/LocalFileInPath.h" // LocalFileInPath
 
 // forward declarations
 class TFile;
@@ -22,4 +22,4 @@ TH2 *
 loadTH2(TFile * inputFile,
         const std::string & histogramName);
 
-#endif // HLTTrigger_TallinnHLTPFTauAnalyzer_lutAuxFunctions_h
+#endif // HLTrigger_TallinnHLTPFTauAnalyzer_lutAuxFunctions_h

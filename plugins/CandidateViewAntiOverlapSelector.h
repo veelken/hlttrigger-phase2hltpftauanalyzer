@@ -1,5 +1,5 @@
-#ifndef HLTTrigger_TallinnHLTPFTauAnalyzer_CandidateViewAntiOverlapSelector_h
-#define HLTTrigger_TallinnHLTPFTauAnalyzer_CandidateViewAntiOverlapSelector_h
+#ifndef HLTrigger_TallinnHLTPFTauAnalyzer_CandidateViewAntiOverlapSelector_h
+#define HLTrigger_TallinnHLTPFTauAnalyzer_CandidateViewAntiOverlapSelector_h
 
 #include "FWCore/Framework/interface/stream/EDFilter.h"
 #include "FWCore/Framework/interface/Event.h"
