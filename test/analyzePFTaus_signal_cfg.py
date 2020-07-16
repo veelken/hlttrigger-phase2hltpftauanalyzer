@@ -57,8 +57,11 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 process.analysisSequence = cms.Sequence()
 
 #--------------------------------------------------------------------------------
+process.load("PhysicsTools.HepMCCandAlgos.genParticles_cfi")
+process.analysisSequence += process.genParticles
+
 process.load("PhysicsTools.JetMCAlgos.TauGenJets_cfi")
-process.tauGenJets.GenParticles = cms.InputTag('prunedGenParticles')
+process.tauGenJets.GenParticles = cms.InputTag('genParticles')
 process.analysisSequence += process.tauGenJets
 
 process.load("PhysicsTools.JetMCAlgos.TauGenJetsDecayModeSelectorAllHadrons_cfi")
