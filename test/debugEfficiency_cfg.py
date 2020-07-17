@@ -72,58 +72,12 @@ process.hltPFTausByROI = cms.EDFilter("PFTauAntiOverlapSelector",
 )
 process.analysisSequence += process.hltPFTausByROI
 
-from RecoTauTag.RecoTau.PFRecoTauQualityCuts_cfi import PFTauQualityCuts
-hltQualityCuts = PFTauQualityCuts.clone()
-hltQualityCuts.signalQualityCuts.minTrackPt = cms.double(0.9)
-hltQualityCuts.isolationQualityCuts.minTrackPt = cms.double(0.9)
-hltQualityCuts.isolationQualityCuts.maxDeltaZ = cms.double(0.2)
-hltQualityCuts.isolationQualityCuts.maxDeltaZToLeadTrack = cms.double(-1.)
-hltQualityCuts.isolationQualityCuts.minTrackHits = cms.uint32(8)
-hltQualityCuts.primaryVertexSrc = cms.InputTag('offlinePrimaryVertices')
-
-from RecoTauTag.RecoTau.TauDiscriminatorTools import noPrediscriminants
-process.hltPFTauChargedIsoPtSumByROI = cms.EDProducer("PFRecoTauDiscriminationByIsolation",
-  PFTauProducer = cms.InputTag('hltPFTausByROI'),
-  particleFlowSrc = cms.InputTag('particleFlowTmp'),
-  vertexSrc = cms.InputTag('offlinePrimaryVertices'),
-  qualityCuts = hltQualityCuts,
-  Prediscriminants = noPrediscriminants,
-  ApplyDiscriminationByTrackerIsolation = cms.bool(True),
-  ApplyDiscriminationByECALIsolation = cms.bool(False),
-  ApplyDiscriminationByWeightedECALIsolation = cms.bool(False),
-  enableHGCalWorkaround = cms.bool(True),
-  WeightECALIsolation = cms.double(0.),
-  minTauPtForNoIso = cms.double(-99.),
-  applyOccupancyCut = cms.bool(False),
-  maximumOccupancy = cms.uint32(0),
-  applySumPtCut = cms.bool(False),
-  maximumSumPtCut = cms.double(-1.),
-  applyRelativeSumPtCut = cms.bool(False),
-  relativeSumPtCut = cms.double(-1.),
-  relativeSumPtOffset = cms.double(0.),
-  storeRawOccupancy = cms.bool(False),
-  storeRawSumPt = cms.bool(True),
-  storeRawPUsumPt = cms.bool(False),
-  storeRawFootprintCorrection = cms.bool(False),
-  storeRawPhotonSumPt_outsideSignalCone = cms.bool(False),
-  customOuterCone = cms.double(-1.),
-  applyPhotonPtSumOutsideSignalConeCut = cms.bool(False),
-  maxAbsPhotonSumPt_outsideSignalCone = cms.double(1.e+9),
-  maxRelPhotonSumPt_outsideSignalCone = cms.double(0.1),
-  applyFootprintCorrection = cms.bool(False),
-  footprintCorrections = cms.VPSet(),
-  applyDeltaBetaCorrection = cms.bool(False),
-  deltaBetaPUTrackPtCutOverride = cms.bool(False),
-  deltaBetaPUTrackPtCutOverride_val = cms.double(0.5),
-  isoConeSizeForDeltaBeta = cms.double(0.5),
-  deltaBetaFactor = cms.string("0.38"),
-  applyRhoCorrection = cms.bool(False),
-  rhoProducer = cms.InputTag("NotUsed"),
-  rhoConeSize = cms.double(0.357),
-  rhoUEOffsetCorrection = cms.double(0.),
-  UseAllPFCandsForWeights = cms.bool(False),
-  verbosity = cms.int32(0)
-)
+from HLTrigger.TallinnHLTPFTauAnalyzer.PFRecoTauChargedIsoPtSum_cfi import hltPFTauChargedIsoPtSum
+process.hltPFTauChargedIsoPtSumByROI = hltPFTauChargedIsoPtSum.clone()
+process.hltPFTauChargedIsoPtSumByROI.PFTauProducer = cms.InputTag('hltPFTausByROI')
+process.hltPFTauChargedIsoPtSumByROI.particleFlowSrc = cms.InputTag('particleFlowTmp')
+process.hltPFTauChargedIsoPtSumByROI.vertexSrc = cms.InputTag('offlinePrimaryVertices')
+process.hltPFTauChargedIsoPtSumByROI.qualityCuts.primaryVertexSrc = cms.InputTag('offlinePrimaryVertices')
 process.analysisSequence += process.hltPFTauChargedIsoPtSumByROI
 #--------------------------------------------------------------------------------
 

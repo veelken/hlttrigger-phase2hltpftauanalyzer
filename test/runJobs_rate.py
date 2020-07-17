@@ -3,7 +3,7 @@
 import getpass
 import os
 
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames, build_sbatchManagerFile, build_Makefile
+from HLTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames, build_sbatchManagerFile, build_Makefile
 
 # CV: define instantaneous luminosity for HL-LHC running period taken from the twiki
 #       https://twiki.cern.ch/twiki/bin/viewauth/CMS/HighLevelTriggerPhase2#Rate_calculations
@@ -134,8 +134,11 @@ run_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
 run_isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
 ##run_isolation_minTrackHits = [ 3, 5, 8 ]
 run_isolation_minTrackHits = [ 8 ]
+l1_useStrips = True
+##cfgFileName_original = "analyzePFTaus_signal_cfg.py"
+cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_signal_cfg.py"
 
-version = "2020Jul12"
+version = "2020Jul17"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)
@@ -151,7 +154,7 @@ run_command('mkdir -p %s' % outputDir)
 
 def build_cfgFile(cfgFileName_original, cfgFileName_modified, 
                   inputFileNames, process, lumiScale, 
-                  srcVertices, algorithm, isolation_maxDeltaZOption, isolation_minTrackHits, 
+                  hlt_srcVertices, hlt_algorithm, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits, l1_useStrips, 
                   outputFileName):
   print("Building configFile = '%s'" % cfgFileName_modified)
 
@@ -163,20 +166,21 @@ def build_cfgFile(cfgFileName_original, cfgFileName_modified,
   sedCommand += '  s/##inputFileNames/inputFileNames/; s/\$inputFileNames/%s/;' % [ inputFileName.replace("/", "\/") for inputFileName in inputFileNames ]
   sedCommand += '  s/##processName/processName/; s/\$processName/%s/;' % process
   sedCommand += '  s/##lumiScale/lumiScale/; s/\$lumiScale/%s/;' % lumiScale
-  sedCommand += '  s/##srcVertices/srcVertices/; s/\$srcVertices/%s/;' % srcVertices
-  sedCommand += '  s/##algorithms/algorithms/; s/\$algorithm/%s/;' % algorithm
-  sedCommand += '  s/##isolation_maxDeltaZOptions/isolation_maxDeltaZOptions/; s/\$isolation_maxDeltaZOption/%s/;' % isolation_maxDeltaZOption
-  sedCommand += '  s/##isolation_minTrackHits/isolation_minTrackHits/; s/\$isolation_minTrackHits/%s/;' % isolation_minTrackHits
+  sedCommand += '  s/##hlt_srcVertices/hlt_srcVertices/; s/\$hlt_srcVertices/%s/;' % hlt_srcVertices
+  sedCommand += '  s/##hlt_algorithms/hlt_algorithms/; s/\$hlt_algorithm/%s/;' % hlt_algorithm
+  sedCommand += '  s/##hlt_isolation_maxDeltaZOptions/hlt_isolation_maxDeltaZOptions/; s/\$hlt_isolation_maxDeltaZOption/%s/;' % hlt_isolation_maxDeltaZOption
+  sedCommand += '  s/##hlt_isolation_minTrackHits/hlt_isolation_minTrackHits/; s/\$hlt_isolation_minTrackHits/%s/;' % hlt_isolation_minTrackHits
+  sedCommand += '  s/##l1_useStrips/l1_useStrips/; s/\$l1_useStrips/%s/;' % l1_useStrips
   sedCommand += '  s/##outputFileName/outputFileName/; s/\$outputFileName/%s/"' % outputFileName
   sedCommand += ' %s > %s' % (cfgFileName_original, cfgFileName_modified)
   run_command(sedCommand)
 
-jobOptions = {} # key = sampleName + algorithm + isolation_maxDeltaZOption + isolation_minTrackHits (all separated by underscore)
+jobOptions = {} # key = sampleName + hlt_algorithm + hlt_isolation_maxDeltaZOption + hlt_isolation_minTrackHits (all separated by underscore)
 for sampleName, sample in background_samples.items(): 
   process = sample['process']
-  for srcVertices in run_srcVertices:
-    print("processing sample = '%s': srcVertices = '%s'" % (sampleName, srcVertices)) 
-    inputFilePath = sample['inputFilePath'][srcVertices]
+  for hlt_srcVertices in run_hlt_srcVertices:
+    print("processing sample = '%s': hlt_srcVertices = '%s'" % (sampleName, hlt_srcVertices)) 
+    inputFilePath = sample['inputFilePath'][hlt_srcVertices]
     print(" inputFilePath = '%s'" % inputFilePath)
     inputFileNames = getInputFileNames(inputFilePath)
     numInputFiles = len(inputFileNames)
@@ -191,10 +195,10 @@ for sampleName, sample in background_samples.items():
       idxLastFile = (jobId + 1)*numInputFiles/numJobs - 1
       inputFileNames_job = inputFileNames[idxFirstFile:idxLastFile + 1]
       #print("job #%i: inputFiles = %s" % (jobId, inputFileNames_job))
-      for algorithm in run_algorithms:
-        for isolation_maxDeltaZOption in run_isolation_maxDeltaZOptions:
-          for isolation_minTrackHits in run_isolation_minTrackHits:
-            job_key = '%s_%s_%s_dz_wrt_%s_%iHits' % (sampleName, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits)
+      for hlt_algorithm in run_hlt_algorithms:
+        for hlt_isolation_maxDeltaZOption in run_hlt_isolation_maxDeltaZOptions:
+          for hlt_isolation_minTrackHits in run_hlt_isolation_minTrackHits:
+            job_key = '%s_%s_%s_dz_wrt_%s_%iHits' % (sampleName, hlt_algorithm, hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits)
             if not job_key in jobOptions.keys():
               jobOptions[job_key] = []        
             cfgFileName_modified = os.path.join(configDir, "analyzePFTaus_background_%s_%i_cfg.py" % \
@@ -202,9 +206,9 @@ for sampleName, sample in background_samples.items():
             outputFileName = "analyzePFTaus_background_%s_%i.root" % \
               (job_key, jobId)
             build_cfgFile(
-              "analyzePFTaus_background_cfg.py", cfgFileName_modified, 
+              cfgFileName_original, cfgFileName_modified, 
               inputFileNames_job, sample['process'], lumiScale, 
-              srcVertices, algorithm, isolation_maxDeltaZOption, isolation_minTrackHits, 
+              hlt_srcVertices, hlt_algorithm, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits, l1_useStrips, 
               outputFileName)
             logFileName = cfgFileName_modified.replace("_cfg.py", ".log")
             jobOptions[job_key].append({
@@ -257,19 +261,19 @@ for sampleName, sample in background_samples.items():
     processes.append(sample['process'])
 print("processes = ", processes)
 for process in processes:  
-  for srcVertices in run_srcVertices:
-    for algorithm in run_algorithms:
-      for isolation_maxDeltaZOption in run_isolation_maxDeltaZOptions:
-        for isolation_minTrackHits in run_isolation_minTrackHits:
+  for hlt_srcVertices in run_hlt_srcVertices:
+    for hlt_algorithm in run_hlt_algorithms:
+      for hlt_isolation_maxDeltaZOption in run_hlt_isolation_maxDeltaZOptions:
+        for hlt_isolation_minTrackHits in run_hlt_isolation_minTrackHits:
           inputFileNames = []
           for sampleName, sample in background_samples.items():
             if sample['process'] == process:
               for job in jobOptions_Makefile_hadd_stage1.values():
                 for outputFileName_job in job['outputFileNames']:
-                  job_key = '%s_%s_%s_dz_wrt_%s_%iHits' % (sampleName, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits)
+                  job_key = '%s_%s_%s_dz_wrt_%s_%iHits' % (sampleName, hlt_algorithm, hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits)
                   if outputFileName_job.find(job_key) != -1:
                     inputFileNames.append(outputFileName_job)
-          job_key_hadd_stage2 = '%s_%s_%s_dz_wrt_%s_%iHits' % (process, algorithm, srcVertices, isolation_maxDeltaZOption, isolation_minTrackHits)
+          job_key_hadd_stage2 = '%s_%s_%s_dz_wrt_%s_%iHits' % (process, hlt_algorithm, hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits)
           outputFileName = "hadd_stage2_%s.root" % job_key_hadd_stage2
           if not outputFileName in jobOptions_Makefile_hadd_stage2.keys():
             commands = []

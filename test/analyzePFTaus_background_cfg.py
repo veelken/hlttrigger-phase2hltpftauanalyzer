@@ -16,7 +16,7 @@ process.maxEvents = cms.untracked.PSet(
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        'file:/home/veelken/Phase2HLT/CMSSW_11_1_0_pre6/src/HLTTrigger/Phase2HLTPFTaus/test/step3_RAW2DIGI_RECO.root'
+        'file:/home/veelken/Phase2HLT/CMSSW_11_1_0/src/HLTrigger/Phase2HLTPFTaus/test/step3_RAW2DIGI_RECO.root'
     ),
 ##    eventsToProcess = cms.untracked.VEventRange(
 ##        '1:262:90464'
@@ -29,28 +29,28 @@ inputFileNames = []
 #processName = "minbias"
 processName = "QCD"
 lumiScale = 2.8e+7 # 28 MHz
-srcVertices = 'offlinePrimaryVertices'
-#srcVertices = 'hltPhase2PixelVertices'
-#algorithms = [ "hps", "shrinking-cone" ]
-algorithms = [ "hps" ]
-isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
-isolation_minTrackHits = 8
-outputFileName = "analyzePFTaus_background_%s_%s_DEBUG.root" % (processName, srcVertices)
+hlt_srcVertices = 'offlinePrimaryVertices'
+#hlt_srcVertices = 'hltPhase2PixelVertices'
+#hlt_algorithms = [ "hps", "shrinking-cone" ]
+hlt_algorithms = [ "hps" ]
+hlt_isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
+hlt_isolation_minTrackHits = 8
+outputFileName = "analyzePFTaus_background_%s_%s_DEBUG.root" % (processName, hlt_srcVertices)
 
 ##inputFilePath = None
 ##inputFileNames = $inputFileNames
 ##processName = "$processName"
 ##lumiScale = $lumiScale
-##srcVertices = '$srcVertices'
-##algorithms = [ "$algorithm" ]
-##isolation_maxDeltaZOptions = [ "$isolation_maxDeltaZOption" ]
-##isolation_minTrackHits = $isolation_minTrackHits
+##hlt_srcVertices = '$hlt_srcVertices'
+##hlt_algorithms = [ "$hlt_algorithm" ]
+##hlt_isolation_maxDeltaZOptions = [ "$hlt_isolation_maxDeltaZOption" ]
+##hlt_isolation_minTrackHits = $hlt_isolation_minTrackHits
 ##outputFileName = "$outputFileName"
 
 #--------------------------------------------------------------------------------
 # set input files
 if inputFilePath:
-    from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames
+    from HLTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames
     print("Searching for input files in path = '%s'" % inputFilePath)
     inputFileNames = getInputFileNames(inputFilePath)
     print("Found %i input files." % len(inputFileNames))
@@ -66,79 +66,80 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 process.analysisSequence = cms.Sequence()
 
 #--------------------------------------------------------------------------------
-for algorithm in algorithms:
+# CV: fill HLT tau plots
+for hlt_algorithm in hlt_algorithms:
 
-  pfTauLabel = None
-  if algorithm == "shrinking-cone":
-    pfTauLabel = "PFTau"
-  elif algorithm == "hps":
-    pfTauLabel = "HpsPFTau"
+  hlt_pfTauLabel = None
+  if hlt_algorithm == "shrinking-cone":
+    hlt_pfTauLabel = "PFTau"
+  elif hlt_algorithm == "hps":
+    hlt_pfTauLabel = "HpsPFTau"
   else:
-    raise ValueError("Invalid parameter algorithm = '%s' !!" % algorithm)
+    raise ValueError("Invalid parameter hlt_algorithm = '%s' !!" % hlt_algorithm)
 
-  for isolation_maxDeltaZOption in isolation_maxDeltaZOptions:
+  for hlt_isolation_maxDeltaZOption in hlt_isolation_maxDeltaZOptions:
 
-    suffix = "%iHits" % isolation_minTrackHits
-    if isolation_maxDeltaZOption == "primaryVertex":
+    suffix = "%iHits" % hlt_isolation_minTrackHits
+    if hlt_isolation_maxDeltaZOption == "primaryVertex":
       suffix += "MaxDeltaZ"
-    elif isolation_maxDeltaZOption == "leadTrack":
+    elif hlt_isolation_maxDeltaZOption == "leadTrack":
       suffix += "MaxDeltaZToLeadTrack"
     else:
-      raise ValueError("Invalid parameter isolation_maxDeltaZOption = '%s' !!" % isolation_maxDeltaZOption)
-    if srcVertices == "offlinePrimaryVertices":
+      raise ValueError("Invalid parameter hlt_isolation_maxDeltaZOption = '%s' !!" % hlt_isolation_maxDeltaZOption)
+    if hlt_srcVertices == "offlinePrimaryVertices":
       suffix += "WithOfflineVertices"
-    elif srcVertices == "hltPhase2PixelVertices":
+    elif hlt_srcVertices == "hltPhase2PixelVertices":
       suffix += "WithOnlineVertices"
-    elif srcVertices == "hltPhase2TrimmedPixelVertices":
+    elif hlt_srcVertices == "hltPhase2TrimmedPixelVertices":
       suffix += "WithOnlineVerticesTrimmed"
     else:
-      raise ValueError("Invalid parameter srcVertices = '%s' !!" % srcVertices)  
+      raise ValueError("Invalid parameter hlt_srcVertices = '%s' !!" % hlt_srcVertices)  
 
-    moduleName_PFTauAnalyzerBackground = "analyze%ss%s" % (pfTauLabel, suffix)
+    moduleName_PFTauAnalyzerBackground = "analyze%ss%s" % (hlt_pfTauLabel, suffix)
     module_PFTauAnalyzerBackground = cms.EDAnalyzer("RecoPFTauAnalyzerBackground",
-      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (pfTauLabel, suffix)),
-      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix)),
+      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (hlt_pfTauLabel, suffix)),
+      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix)),
       min_pt = cms.double(20.),
       max_absEta = cms.double(2.4), 
       lumiScale = cms.double(lumiScale),
-      dqmDirectory = cms.string("%s/%s/%sAnalyzerBackground%s" % (processName, srcVertices, pfTauLabel, suffix))
+      dqmDirectory = cms.string("%s/%s/%sAnalyzerBackground%s" % (processName, hlt_srcVertices, hlt_pfTauLabel, suffix))
     )
     setattr(process, moduleName_PFTauAnalyzerBackground, module_PFTauAnalyzerBackground)
     process.analysisSequence += module_PFTauAnalyzerBackground
 
-    from HLTTrigger.Phase2HLTPFTaus.PFTauPairProducer_cfi import PFTauPairs
-    moduleName_PFTauPairProducer = "hlt%sPairs%s" % (pfTauLabel, suffix)
+    from HLTrigger.Phase2HLTPFTaus.PFTauPairProducer_cfi import PFTauPairs
+    moduleName_PFTauPairProducer = "hlt%sPairs%s" % (hlt_pfTauLabel, suffix)
     module_PFTauPairProducer = PFTauPairs.clone(
-      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (pfTauLabel, suffix)),
-      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix))
+      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (hlt_pfTauLabel, suffix)),
+      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix))
     )
     setattr(process, moduleName_PFTauPairProducer, module_PFTauPairProducer)
     process.analysisSequence += module_PFTauPairProducer
 
-    moduleName_PFTauPairAnalyzer = "analyze%sPairs%s" % (pfTauLabel, suffix)
+    moduleName_PFTauPairAnalyzer = "analyze%sPairs%s" % (hlt_pfTauLabel, suffix)
     module_PFTauPairAnalyzer = cms.EDAnalyzer("RecoPFTauPairAnalyzer",
       srcPFTauPairs = cms.InputTag(moduleName_PFTauPairProducer),
       srcRefTaus = cms.InputTag(''),
       lumiScale = cms.double(lumiScale),
-      dqmDirectory = cms.string("%s/%s/%sPairAnalyzer%s" % (processName, srcVertices, pfTauLabel, suffix))
+      dqmDirectory = cms.string("%s/%s/%sPairAnalyzer%s" % (processName, hlt_srcVertices, hlt_pfTauLabel, suffix))
     )
     setattr(process, moduleName_PFTauPairAnalyzer, module_PFTauPairAnalyzer)
     process.analysisSequence += module_PFTauPairAnalyzer
 
-    moduleName_PFTauIsolationAnalyzer = "analyze%sIsolation%s" % (pfTauLabel, suffix)
+    moduleName_PFTauIsolationAnalyzer = "analyze%sIsolation%s" % (hlt_pfTauLabel, suffix)
     module_PFTauIsolationAnalyzer = cms.EDAnalyzer("RecoPFTauIsolationAnalyzer",
-      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (pfTauLabel, suffix)),
-      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (pfTauLabel, suffix)),
-      srcPFTauSumNeutralIso = cms.InputTag('hlt%sNeutralIsoPtSum%s' % (pfTauLabel, suffix)),
+      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (hlt_pfTauLabel, suffix)),
+      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix)),
+      srcPFTauSumNeutralIso = cms.InputTag('hlt%sNeutralIsoPtSum%s' % (hlt_pfTauLabel, suffix)),
       srcGenTaus = cms.InputTag(''),
       dRmatch = cms.double(0.3),                                                            
       srcRho = cms.InputTag('hltKT6PFJets:rho'),
-      #inputFileName_rhoCorr = cms.string("HLTTrigger/TallinnHLTPFTauAnalyzer/data/rhoCorr.root"),
+      #inputFileName_rhoCorr = cms.string("HLTrigger/TallinnHLTPFTauAnalyzer/data/rhoCorr.root"),
       #histogramName_rhoCorr = cms.string("DQMData/RhoCorrAnalyzer/neutralPFCandPt_vs_absEta"),
       inputFileName_rhoCorr = cms.string(""),
       histogramName_rhoCorr = cms.string(""), 
       lumiScale = cms.double(lumiScale),                    
-      dqmDirectory = cms.string("%s/%s/%sIsolationAnalyzer%s" % (processName, srcVertices, pfTauLabel, suffix))
+      dqmDirectory = cms.string("%s/%s/%sIsolationAnalyzer%s" % (processName, hlt_srcVertices, hlt_pfTauLabel, suffix))
     )
     setattr(process, moduleName_PFTauIsolationAnalyzer, module_PFTauIsolationAnalyzer)
     ##process.analysisSequence += module_PFTauIsolationAnalyzer
