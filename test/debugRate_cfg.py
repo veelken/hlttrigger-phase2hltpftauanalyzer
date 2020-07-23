@@ -65,7 +65,7 @@ process.analysisSequence = cms.Sequence()
 
 #--------------------------------------------------------------------------------
 
-from HLTTrigger.Phase2HLTPFTaus.PFTauPairProducer_cfi import PFTauPairs
+from HLTrigger.Phase2HLTPFTaus.PFTauPairProducer_cfi import PFTauPairs
 process.hltHpsPFTauPairs = PFTauPairs.clone(
     srcPFTaus = cms.InputTag(srcPFTaus),
     srcPFTauSumChargedIso = cms.InputTag(srcPFTauSumChargedIso)

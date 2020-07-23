@@ -23,8 +23,8 @@ process.source = cms.Source("PoolSource",
 ##    ) 
 )
 
-#inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_w_offlineVtxCollection_HGCalFix_MINBIAS_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_142511/'
-inputFilePath = None
+inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wL1/'
+#inputFilePath = None
 inputFileNames = []
 #processName = "minbias"
 processName = "QCD"
@@ -112,6 +112,25 @@ process.analysisSequence += getattr(process, moduleName_L1HPSPFTauIsolationAnaly
 
 #--------------------------------------------------------------------------------
 # CV: fill HLT tau plots (with and without matching to L1 taus)
+
+def get_suffix(hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits):
+    suffix = "%iHits" % hlt_isolation_minTrackHits
+    if hlt_isolation_maxDeltaZOption == "primaryVertex":
+      suffix += "MaxDeltaZ"
+    elif hlt_isolation_maxDeltaZOption == "leadTrack":
+      suffix += "MaxDeltaZToLeadTrack"
+    else:
+      raise ValueError("Invalid parameter hlt_isolation_maxDeltaZOption = '%s' !!" % hlt_isolation_maxDeltaZOption)
+    if hlt_srcVertices == "offlinePrimaryVertices":
+      suffix += "WithOfflineVertices"
+    elif hlt_srcVertices == "hltPhase2PixelVertices":
+      suffix += "WithOnlineVertices"
+    elif hlt_srcVertices == "hltPhase2TrimmedPixelVertices":
+      suffix += "WithOnlineVerticesTrimmed"
+    else:
+      raise ValueError("Invalid parameter hlt_srcVertices = '%s' !!" % hlt_srcVertices)  
+    return suffix
+
 for hlt_algorithm in hlt_algorithms:
   for hlt_matchToL1 in [ True, False ]:
 
@@ -125,21 +144,7 @@ for hlt_algorithm in hlt_algorithms:
 
     for hlt_isolation_maxDeltaZOption in hlt_isolation_maxDeltaZOptions:
 
-      suffix = "%iHits" % hlt_isolation_minTrackHits
-      if hlt_isolation_maxDeltaZOption == "primaryVertex":
-        suffix += "MaxDeltaZ"
-      elif hlt_isolation_maxDeltaZOption == "leadTrack":
-        suffix += "MaxDeltaZToLeadTrack"
-      else:
-        raise ValueError("Invalid parameter hlt_isolation_maxDeltaZOption = '%s' !!" % hlt_isolation_maxDeltaZOption)
-      if hlt_srcVertices == "offlinePrimaryVertices":
-        suffix += "WithOfflineVertices"
-      elif hlt_srcVertices == "hltPhase2PixelVertices":
-        suffix += "WithOnlineVertices"
-      elif hlt_srcVertices == "hltPhase2TrimmedPixelVertices":
-        suffix += "WithOnlineVerticesTrimmed"
-      else:
-        raise ValueError("Invalid parameter hlt_srcVertices = '%s' !!" % hlt_srcVertices)  
+      suffix = get_suffix(hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits)
 
       hlt_srcPFTaus = 'hltSelected%ss%s' % (hlt_pfTauLabel, suffix)
       hlt_srcPFTauSumChargedIso = 'hlt%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix)
@@ -147,10 +152,27 @@ for hlt_algorithm in hlt_algorithms:
       if hlt_matchToL1:
         suffix += "MatchedToL1"
 
+        if not hasattr(process, "L1HPSPFTausPassingTrigger"):
+          process.L1HPSPFTausPassingTrigger = cms.EDProducer("L1HPSPFTauSelector",
+            src = cms.InputTag(l1_srcPFTaus),
+            min_pt = cms.double(20.),
+            max_pt = cms.double(-1.),
+            min_absEta = cms.double(-1.),
+            max_absEta = cms.double(2.4),
+            min_leadTrackPt = cms.double(5.),
+            max_leadTrackPt = cms.double(-1.),
+            min_relChargedIso = cms.double(-1.),
+            max_relChargedIso = cms.double(0.05),
+            min_absChargedIso = cms.double(-1.),
+            max_absChargedIso = cms.double(-1.),
+            invert = cms.bool(False)
+          )
+          process.analysisSequence += process.L1HPSPFTausPassingTrigger
+
         moduleName_hltPFTausMatchedToL1 = "%sMatchedToL1" % hlt_srcPFTaus
         module_hltPFTausMatchedToL1 = cms.EDFilter("PFTauAntiOverlapSelector",
           src = cms.InputTag(hlt_srcPFTaus),
-          srcNotToBeFiltered = cms.VInputTag(l1_srcPFTaus),
+          srcNotToBeFiltered = cms.VInputTag('L1HPSPFTausPassingTrigger'),
           dRmin = cms.double(0.3),
           invert = cms.bool(True),
           filter = cms.bool(False)
@@ -159,12 +181,24 @@ for hlt_algorithm in hlt_algorithms:
         process.analysisSequence += module_hltPFTausMatchedToL1
         hlt_srcPFTaus = moduleName_hltPFTausMatchedToL1
 
-        from HLTrigger.TallinnHLTPFTauAnalyzer.PFRecoTauChargedIsoPtSum_cfi import hltPFTauChargedIsoPtSum
+        from HLTrigger.Phase2HLTPFTaus.PFRecoTauChargedIsoPtSum_cfi import hltPFTauChargedIsoPtSum
         moduleName_hltPFTauChargedIsoPtSum = "%sMatchedToL1" % hlt_srcPFTauSumChargedIso
         module_hltPFTauChargedIsoPtSum = hltPFTauChargedIsoPtSum.clone()
         module_hltPFTauChargedIsoPtSum.PFTauProducer = cms.InputTag(hlt_srcPFTaus)
         module_hltPFTauChargedIsoPtSum.particleFlowSrc = cms.InputTag('particleFlowTmp')
         module_hltPFTauChargedIsoPtSum.vertexSrc = cms.InputTag(hlt_srcVertices)
+        hlt_isolation_maxDeltaZ            = None
+        hlt_isolation_maxDeltaZToLeadTrack = None
+        if hlt_isolation_maxDeltaZOption == "primaryVertex":
+          hlt_isolation_maxDeltaZ            =  0.15 # value optimized for offline tau reconstruction at higher pileup expected during LHC Phase-2
+          hlt_isolation_maxDeltaZToLeadTrack = -1.   # disabled
+        elif hlt_isolation_maxDeltaZOption == "leadTrack":
+          hlt_isolation_maxDeltaZ            = -1.   # disabled
+          hlt_isolation_maxDeltaZToLeadTrack =  0.15 # value optimized for offline tau reconstruction at higher pileup expected during LHC Phase-2
+        else:
+          raise ValueError("Invalid parameter hlt_isolation_maxDeltaZOption = '%s' !!" % hlt_isolation_maxDeltaZOption)
+        module_hltPFTauChargedIsoPtSum.qualityCuts.isolationQualityCuts.maxDeltaZ = cms.double(hlt_isolation_maxDeltaZ)
+        module_hltPFTauChargedIsoPtSum.qualityCuts.isolationQualityCuts.maxDeltaZToLeadTrack = cms.double(hlt_isolation_maxDeltaZToLeadTrack)
         module_hltPFTauChargedIsoPtSum.qualityCuts.primaryVertexSrc = cms.InputTag(hlt_srcVertices)
         module_hltPFTauChargedIsoPtSum.qualityCuts.isolationQualityCuts.minTrackHits = cms.uint32(hlt_isolation_minTrackHits)
         setattr(process, moduleName_hltPFTauChargedIsoPtSum, module_hltPFTauChargedIsoPtSum)
@@ -239,9 +273,17 @@ if processName == "QCD":
     print("Adding GenPtHatAnalyzer.")
     process.genPtHatSequence = cms.Sequence()
 
+    hlt_isolation_maxDeltaZOption = None
+    if hlt_srcVertices == 'hltPhase2PixelVertices' and "leadTrack" in hlt_isolation_maxDeltaZOptions:
+      hlt_isolation_maxDeltaZOption = "leadTrack"
+    else:
+      hlt_isolation_maxDeltaZOption = "primaryVertex"
+
+    suffix = get_suffix(hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits)
+
     process.hltHpsPFTausPassingTrigger = cms.EDProducer("MyPFTauSelector",
-      src = cms.InputTag('hltSelectedHpsPFTaus8HitsMaxDeltaZWithOfflineVertices'),
-      src_sumChargedIso = cms.InputTag('hltHpsPFTauChargedIsoPtSum8HitsMaxDeltaZWithOfflineVertices'),
+      src = cms.InputTag('hltSelectedHpsPFTaus%sMatchedToL1' % suffix),
+      src_sumChargedIso = cms.InputTag('hltHpsPFTauChargedIsoPtSum%sMatchedToL1' % suffix),
       min_pt = cms.double(30.),
       max_pt = cms.double(-1.),
       min_absEta = cms.double(-1.),
@@ -270,12 +312,99 @@ if processName == "QCD":
 
     process.genPtHatAnalzer = cms.EDAnalyzer("GenPtHatAnalyzer",
       src = cms.InputTag('generator'),
-      lumiScale = cms.double(lumiScale),
+      lumiScale = cms.double(lumiScale_genPtHat),
       dqmDirectory = cms.string("GenPtHatAnalyzer")
     )
     process.genPtHatSequence += process.genPtHatAnalzer
 
     process.genPtHatPath = cms.Path(process.genPtHatSequence)
+#--------------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------------
+# CV: check events that pass HLT ditau trigger with L1 trigger matching,
+#     but fail the same HLT ditau trigger in case no L1 trigger matching is applied
+
+process.debugSequence = cms.Sequence()
+
+hlt_isolation_maxDeltaZOption = None
+if hlt_srcVertices == 'hltPhase2PixelVertices' and "leadTrack" in hlt_isolation_maxDeltaZOptions:
+  hlt_isolation_maxDeltaZOption = "leadTrack"
+else:
+  hlt_isolation_maxDeltaZOption = "primaryVertex"
+
+suffix = get_suffix(hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits)
+
+process.hltHpsPFTausPassingPtGt125 = cms.EDProducer("MyPFTauSelector",
+  src = cms.InputTag('hltSelectedHpsPFTaus%s' % suffix),
+  src_sumChargedIso = cms.InputTag('hltHpsPFTauChargedIsoPtSum%s' % suffix),
+  min_pt = cms.double(125.),
+  max_pt = cms.double(-1.),
+  min_absEta = cms.double(-1.),
+  max_absEta = cms.double(2.4),
+  min_leadTrackPt = cms.double(5.),
+  max_leadTrackPt = cms.double(-1.),
+  min_relChargedIso = cms.double(-1.),
+  max_relChargedIso = cms.double(0.05),
+  min_absChargedIso = cms.double(-1.),
+  max_absChargedIso = cms.double(-1.),
+  invert = cms.bool(False)
+)
+process.debugSequence += process.hltHpsPFTausPassingPtGt125
+
+process.hltHpsPFTauPairsPassingPtGt125 = PFTauPairs.clone(
+  srcPFTaus = cms.InputTag('hltHpsPFTausPassingPtGt125'),
+  srcPFTauSumChargedIso = cms.InputTag('')
+)
+process.debugSequence += process.hltHpsPFTauPairsPassingPtGt125
+
+process.hltHpsPFTauPairsPassingPtGt125Veto = cms.EDFilter("MyCandViewCountFilter",
+  src = cms.InputTag('hltHpsPFTauPairsPassingPtGt125'),
+  minNumber = cms.int32(-1),
+  maxNumber = cms.int32(0)
+)
+process.debugSequence += process.hltHpsPFTauPairsPassingPtGt125Veto
+
+process.hltHpsPFTausMatchedToL1PassingPtGt125 = process.hltHpsPFTausPassingPtGt125.clone(
+  src = cms.InputTag('hltSelectedHpsPFTaus%sMatchedToL1' % suffix),
+  src_sumChargedIso = cms.InputTag('hltHpsPFTauChargedIsoPtSum%sMatchedToL1' % suffix)
+)
+process.debugSequence += process.hltHpsPFTausMatchedToL1PassingPtGt125
+
+process.hltHpsPFTauPairsMatchedToL1PassingPtGt125 = PFTauPairs.clone(
+  srcPFTaus = cms.InputTag('hltHpsPFTausMatchedToL1PassingPtGt125'),
+  srcPFTauSumChargedIso = cms.InputTag('')
+)
+process.debugSequence += process.hltHpsPFTauPairsMatchedToL1PassingPtGt125
+
+process.hltHpsPFTauPairsMatchedToL1PassingPtGt125Filter = cms.EDFilter("MyCandViewCountFilter",
+  src = cms.InputTag('hltHpsPFTauPairsMatchedToL1PassingPtGt125'),
+  minNumber = cms.int32(1),
+  maxNumber = cms.int32(-1)
+)
+process.debugSequence += process.hltHpsPFTauPairsMatchedToL1PassingPtGt125Filter
+
+process.dumpOnlineHpsPFTaus = cms.EDAnalyzer("DumpRecoPFTaus",
+  src = cms.InputTag('hltSelectedHpsPFTaus%s' % suffix),
+  src_sumChargedIso = cms.InputTag('hltHpsPFTauChargedIsoPtSum%s' % suffix),
+  src_discriminators = cms.VInputTag()
+)
+process.debugSequence += process.dumpOnlineHpsPFTaus
+
+process.dumpOnlineHpsPFTausMatchedToL1 = cms.EDAnalyzer("DumpRecoPFTaus",
+  src = cms.InputTag('hltSelectedHpsPFTaus%sMatchedToL1' % suffix),
+  src_sumChargedIso = cms.InputTag('hltHpsPFTauChargedIsoPtSum%sMatchedToL1' % suffix),
+  src_discriminators = cms.VInputTag()
+)
+process.debugSequence += process.dumpOnlineHpsPFTausMatchedToL1
+
+import os
+process.runLumiSectionEventNumberAnalyzer = cms.EDAnalyzer("RunLumiSectionEventNumberAnalyzer",
+  output = cms.string(os.path.join("/home/veelken/Phase2HLT/CMSSW_11_1_0/src/HLTrigger/TallinnHLTPFTauAnalyzer/test/DEBUG/", outputFileName.replace(".root", ".txt"))),
+  separator = cms.string(":")
+)
+process.debugSequence += process.runLumiSectionEventNumberAnalyzer
+
+process.debugPath = cms.Path(process.debugSequence)
 #--------------------------------------------------------------------------------
 
 process.load("DQMServices.Core.DQMStore_cfi")

@@ -28,7 +28,7 @@ outputFileName = "selEvents_debugEfficiencyLoss_absEta1p6to2p4_isoFix2_2020Jul07
 
 #--------------------------------------------------------------------------------
 # set input files
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames
+from HLTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames
 print("Searching for input files in path = '%s'" % inputFilePath)
 inputFileNames = getInputFileNames(inputFilePath)
 print("Found %i input files." % len(inputFileNames))

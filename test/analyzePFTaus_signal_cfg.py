@@ -20,7 +20,7 @@ process.source = cms.Source("PoolSource",
     )
 )
 
-inputFilePath = '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_w_offlineVtxCollection_HGCalFix_VBFHTT_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_142633/'
+inputFilePath = '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx_wL1/'
 processName = "qqH_htt"
 hlt_srcVertices = 'offlinePrimaryVertices'
 #hlt_srcVertices = 'hltPhase2PixelVertices'
@@ -39,6 +39,9 @@ outputFileName = "analyzePFTaus_signal_%s_%s_DEBUG.root" % (processName, hlt_src
 ##hlt_isolation_minTrackHits = $hlt_isolation_minTrackHits
 ##outputFileName = "$outputFileName"
 
+#hasMiniAOD = False
+hasMiniAOD = True
+
 #--------------------------------------------------------------------------------
 # set input files
 if inputFilePath:
@@ -46,7 +49,7 @@ if inputFilePath:
     print("Searching for input files in path = '%s'" % inputFilePath)
     inputFileNames = getInputFileNames(inputFilePath)
     print("Found %i input files." % len(inputFileNames))
-    #process.source.fileNames = cms.untracked.vstring(inputFileNames)
+    process.source.fileNames = cms.untracked.vstring(inputFileNames)
 else:
     print("Processing %i input files: %s" % (len(inputFileNames), inputFileNames))
     process.source.fileNames = cms.untracked.vstring(inputFileNames)
@@ -76,41 +79,47 @@ process.selectedGenHadTaus = cms.EDFilter("GenJetSelector",
 )
 process.analysisSequence += process.selectedGenHadTaus
 
-process.genMatchedOfflinePFTaus = cms.EDFilter("PATTauAntiOverlapSelector",
-  src = cms.InputTag('slimmedTaus'),
-  srcNotToBeFiltered = cms.VInputTag('selectedGenHadTaus'),
-  dRmin = cms.double(0.3),
-  invert = cms.bool(True),
-  filter = cms.bool(True)                                                          
-)
-process.analysisSequence += process.genMatchedOfflinePFTaus
+if hasMiniAOD:
+  process.genMatchedOfflinePFTaus = cms.EDFilter("PATTauAntiOverlapSelector",
+    src = cms.InputTag('slimmedTaus'),
+    srcNotToBeFiltered = cms.VInputTag('selectedGenHadTaus'),
+    dRmin = cms.double(0.3),
+    invert = cms.bool(True),
+    filter = cms.bool(True)                                                          
+  )
+  process.analysisSequence += process.genMatchedOfflinePFTaus
 
-process.selectedOfflinePFTaus = cms.EDFilter("PATTauSelector",
-  src = cms.InputTag('genMatchedOfflinePFTaus'),
-  cut = cms.string("pt > 20. & abs(eta) < 2.4 & tauID('decayModeFinding') > 0.5 & tauID('byLooseCombinedIsolationDeltaBetaCorr3Hits') > 0.5")
-)
-process.analysisSequence += process.selectedOfflinePFTaus
+  process.selectedOfflinePFTaus = cms.EDFilter("PATTauSelector",
+    src = cms.InputTag('genMatchedOfflinePFTaus'),
+    cut = cms.string("pt > 20. & abs(eta) < 2.4 & tauID('decayModeFinding') > 0.5 & tauID('byLooseCombinedIsolationDeltaBetaCorr3Hits') > 0.5")
+  )
+  process.analysisSequence += process.selectedOfflinePFTaus
 
-process.selectedOfflinePFTauFilter = cms.EDFilter("CandViewCountFilter",
-  src = cms.InputTag('selectedOfflinePFTaus'),
-  minNumber = cms.uint32(1)
-)
-process.analysisSequence += process.selectedOfflinePFTauFilter
+  process.selectedOfflinePFTauFilter = cms.EDFilter("CandViewCountFilter",
+    src = cms.InputTag('selectedOfflinePFTaus'),
+    minNumber = cms.uint32(1)
+  )
+  process.analysisSequence += process.selectedOfflinePFTauFilter
 
-process.offlineMatchedGenHadTaus = cms.EDFilter("GenJetAntiOverlapSelector",
-  src = cms.InputTag('selectedGenHadTaus'),
-  srcNotToBeFiltered = cms.VInputTag('selectedOfflinePFTaus'),
-  dRmin = cms.double(0.3),
-  invert = cms.bool(True),
-  filter = cms.bool(True)                                                          
-)
-process.analysisSequence += process.offlineMatchedGenHadTaus
+  process.offlineMatchedGenHadTaus = cms.EDFilter("GenJetAntiOverlapSelector",
+    src = cms.InputTag('selectedGenHadTaus'),
+    srcNotToBeFiltered = cms.VInputTag('selectedOfflinePFTaus'),
+    dRmin = cms.double(0.3),
+    invert = cms.bool(True),
+    filter = cms.bool(True)                                                          
+  )
+  process.analysisSequence += process.offlineMatchedGenHadTaus
+
+if hasMiniAOD:
+  srcGenHadTaus = 'offlineMatchedGenHadTaus'
+else:
+  srcGenHadTaus = 'selectedGenHadTaus'
 #--------------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------------
 # CV: fill plots related to tracking and vertexing
 process.genVertex = cms.EDProducer("GenVertexProducer",
-  src = cms.InputTag('prunedGenParticles'),
+  src = cms.InputTag('genParticles'),
   pdgIds = cms.vint32(-15, +15) # CV: use { -15, +15 } for signal, empty list for background                                    
 ) 
 process.analysisSequence += process.genVertex
@@ -134,71 +143,72 @@ process.analyzeVertices3 = process.analyzeVertices1.clone(
 )
 process.analysisSequence += process.analyzeVertices3
 
-# CV: select subset of reco::Track and reco::PFCandidate objects within dR < 0.8 cones around generator-level hadronic tau decays
-#     in order to reduce computing time
-process.generalTracksGenHadTauMatched = cms.EDProducer("RecoTrackAntiOverlapSelector",
-  src = cms.InputTag('generalTracks'),
-  srcNotToBeFiltered = cms.VInputTag('selectedGenHadTaus'),
-  dRmin = cms.double(0.8),
-  invert = cms.bool(True)
-)
-process.analysisSequence += process.generalTracksGenHadTauMatched
+if hasMiniAOD:
+  # CV: select subset of reco::Track and reco::PFCandidate objects within dR < 0.8 cones around generator-level hadronic tau decays
+  #     in order to reduce computing time
+  process.generalTracksGenHadTauMatched = cms.EDProducer("RecoTrackAntiOverlapSelector",
+    src = cms.InputTag('generalTracks'),
+    srcNotToBeFiltered = cms.VInputTag(srcGenHadTaus),
+    dRmin = cms.double(0.8),
+    invert = cms.bool(True)
+  )
+  process.analysisSequence += process.generalTracksGenHadTauMatched
 
-process.packedPFCandidatesGenHadTauMatched = cms.EDFilter("PackedCandidateAntiOverlapSelector",
-  src = cms.InputTag('packedPFCandidates'),
-  srcNotToBeFiltered = cms.VInputTag('selectedGenHadTaus'),
-  dRmin = cms.double(0.8),
-  invert = cms.bool(True),
-  filter = cms.bool(False)
-)
-process.analysisSequence += process.packedPFCandidatesGenHadTauMatched
+  process.packedPFCandidatesGenHadTauMatched = cms.EDFilter("PackedCandidateAntiOverlapSelector",
+    src = cms.InputTag('packedPFCandidates'),
+    srcNotToBeFiltered = cms.VInputTag(srcGenHadTaus),
+    dRmin = cms.double(0.8),
+    invert = cms.bool(True),
+    filter = cms.bool(False)
+  )
+  process.analysisSequence += process.packedPFCandidatesGenHadTauMatched
 
-process.particleFlowTmpGenHadTauMatched = cms.EDFilter("PFCandidateAntiOverlapSelector",
-  src = cms.InputTag('particleFlowTmp'),
-  srcNotToBeFiltered = cms.VInputTag('selectedGenHadTaus'),
-  dRmin = cms.double(0.8),
-  invert = cms.bool(True),
-  filter = cms.bool(False)
-)
-process.analysisSequence += process.particleFlowTmpGenHadTauMatched
+  process.particleFlowTmpGenHadTauMatched = cms.EDFilter("PFCandidateAntiOverlapSelector",
+    src = cms.InputTag('particleFlowTmp'),
+    srcNotToBeFiltered = cms.VInputTag(srcGenHadTaus),
+    dRmin = cms.double(0.8),
+    invert = cms.bool(True),
+    filter = cms.bool(False)
+  )
+  process.analysisSequence += process.particleFlowTmpGenHadTauMatched
 
-# CV: reco::Track collections reconstructed offline and at HLT level not yet separately stored in ROOT file,
-#     which is why the same collections are used for "Offline" and "HLT" inputs
-process.analyzeTracksWrtRecVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
-  srcGenTaus = cms.InputTag('selectedGenHadTaus'),
-  vtxMode = cms.string("recVtx"),
-  srcOfflineVertices = cms.InputTag('offlineSlimmedPrimaryVertices'),                                       
-  srcOfflineTracks = cms.InputTag('generalTracksGenHadTauMatched'),                                                     
-  srcOfflinePFCands = cms.InputTag('packedPFCandidatesGenHadTauMatched'),
-  srcOnlineVertices = cms.InputTag('hltPhase2PixelVertices'),
-  #srcOnlineVertices = cms.InputTag('offlinePrimaryVertices'),                                                  
-  srcOnlineTracks = cms.InputTag('generalTracksGenHadTauMatched'),
-  srcOnlinePFCands = cms.InputTag('particleFlowTmpGenHadTauMatched'),
-  dqmDirectory = cms.string("recoTrackAnalyzerWrtRecVertex"),
-  debug = cms.bool(False)                                     
-)
-process.analysisSequence += process.analyzeTracksWrtRecVertex
+  # CV: reco::Track collections reconstructed offline and at HLT level not yet separately stored in ROOT file,
+  #     which is why the same collections are used for "Offline" and "HLT" inputs
+  process.analyzeTracksWrtRecVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
+    srcGenTaus = cms.InputTag(srcGenHadTaus),
+    vtxMode = cms.string("recVtx"),
+    srcOfflineVertices = cms.InputTag('offlineSlimmedPrimaryVertices'),                                       
+    srcOfflineTracks = cms.InputTag('generalTracksGenHadTauMatched'),                                                     
+    srcOfflinePFCands = cms.InputTag('packedPFCandidatesGenHadTauMatched'),
+    srcOnlineVertices = cms.InputTag('hltPhase2PixelVertices'),
+    #srcOnlineVertices = cms.InputTag('offlinePrimaryVertices'),                                                  
+    srcOnlineTracks = cms.InputTag('generalTracksGenHadTauMatched'),
+    srcOnlinePFCands = cms.InputTag('particleFlowTmpGenHadTauMatched'),
+    dqmDirectory = cms.string("recoTrackAnalyzerWrtRecVertex"),
+    debug = cms.bool(False)                                     
+  )
+  process.analysisSequence += process.analyzeTracksWrtRecVertex
 
-process.genVertex = cms.EDProducer("GenVertexProducer",
-  src = cms.InputTag('prunedGenParticles'),
-  pdgIds = cms.vint32(-15, +15) # CV: use { -15, +15 } for signal, empty list for background                                    
-) 
-process.analysisSequence += process.genVertex
+  process.genVertex = cms.EDProducer("GenVertexProducer",
+    src = cms.InputTag('genParticles'),
+    pdgIds = cms.vint32(-15, +15) # CV: use { -15, +15 } for signal, empty list for background                                    
+  ) 
+  process.analysisSequence += process.genVertex
 
-process.analyzeTracksWrtGenVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
-  srcGenTaus = cms.InputTag('selectedGenHadTaus'),
-  vtxMode = cms.string("genVtx"),
-  srcGenVertex_position = cms.InputTag('genVertex:position'),                                                   
-  srcOfflineTracks = cms.InputTag('generalTracksGenHadTauMatched'),
-  srcOfflinePFCands = cms.InputTag('packedPFCandidatesGenHadTauMatched'),
-  srcOnlineVertices = cms.InputTag('hltPhase2PixelVertices'),
-  #srcOnlineVertices = cms.InputTag('offlinePrimaryVertices'),  
-  srcOnlineTracks = cms.InputTag('generalTracksGenHadTauMatched'),
-  srcOnlinePFCands = cms.InputTag('particleFlowTmpGenHadTauMatched'),
-  dqmDirectory = cms.string("recoTrackAnalyzerWrtGenVertex"),
-  debug = cms.bool(False)                                     
-)
-process.analysisSequence += process.analyzeTracksWrtGenVertex
+  process.analyzeTracksWrtGenVertex = cms.EDAnalyzer("RecoTrackAnalyzer",
+    srcGenTaus = cms.InputTag(srcGenHadTaus),
+    vtxMode = cms.string("genVtx"),
+    srcGenVertex_position = cms.InputTag('genVertex:position'),                                                   
+    srcOfflineTracks = cms.InputTag('generalTracksGenHadTauMatched'),
+    srcOfflinePFCands = cms.InputTag('packedPFCandidatesGenHadTauMatched'),
+    srcOnlineVertices = cms.InputTag('hltPhase2PixelVertices'),
+    #srcOnlineVertices = cms.InputTag('offlinePrimaryVertices'),  
+    srcOnlineTracks = cms.InputTag('generalTracksGenHadTauMatched'),
+    srcOnlinePFCands = cms.InputTag('particleFlowTmpGenHadTauMatched'),
+    dqmDirectory = cms.string("recoTrackAnalyzerWrtGenVertex"),
+    debug = cms.bool(False)                                     
+  )
+  process.analysisSequence += process.analyzeTracksWrtGenVertex
 #--------------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------------
@@ -235,7 +245,7 @@ for hlt_algorithm in hlt_algorithms:
     module_PFTauAnalyzerSignal_wrtGenHadTaus = cms.EDAnalyzer("RecoPFTauAnalyzerSignal",
       srcPFTaus = cms.InputTag('hltSelected%ss%s' % (hlt_pfTauLabel, suffix)),
       srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix)),
-      srcDenominator = cms.InputTag('offlineMatchedGenHadTaus'),
+      srcDenominator = cms.InputTag(srcGenHadTaus),
       typeDenominator = cms.string("gen"),                                                                            
       lumiScale = cms.double(1.),
       dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_wrtGenHadTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
@@ -255,7 +265,7 @@ for hlt_algorithm in hlt_algorithms:
     moduleName_PFTauPairAnalyzer_wrtGenHadTaus = "analyze%sPairs%sWrtGenHadTaus" % (hlt_pfTauLabel, suffix)
     module_PFTauPairAnalyzer_wrtGenHadTaus = cms.EDAnalyzer("RecoPFTauPairAnalyzer",
       srcPFTauPairs = cms.InputTag(moduleName_PFTauPairProducer),
-      srcRefTaus = cms.InputTag('offlineMatchedGenHadTaus'),
+      srcRefTaus = cms.InputTag(srcGenHadTaus),
       min_refTau_pt = cms.double(20.),
       max_refTau_pt = cms.double(1.e+3),                                                                
       min_refTau_absEta = cms.double(-1.),
@@ -266,31 +276,32 @@ for hlt_algorithm in hlt_algorithms:
     setattr(process, moduleName_PFTauPairAnalyzer_wrtGenHadTaus, module_PFTauPairAnalyzer_wrtGenHadTaus)
     process.analysisSequence += module_PFTauPairAnalyzer_wrtGenHadTaus
 
-    moduleName_PFTauAnalyzerSignal_wrtOfflineTaus = "analyze%ss%sWrtOfflineTaus" % (hlt_pfTauLabel, suffix)
-    modulePF_PFTauAnalyzerSignal_wrtOfflineTaus = cms.EDAnalyzer("RecoPFTauAnalyzerSignal",
-    srcPFTaus = cms.InputTag('hltSelected%ss%s' % (hlt_pfTauLabel, suffix)),
-      srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix)),
-      srcDenominator = cms.InputTag('selectedOfflinePFTaus'),
-      typeDenominator = cms.string("offline"),  
-      lumiScale = cms.double(1.),   
-      dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_wrtOfflineTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
-    )
-    setattr(process, moduleName_PFTauAnalyzerSignal_wrtOfflineTaus, modulePF_PFTauAnalyzerSignal_wrtOfflineTaus)
-    process.analysisSequence += modulePF_PFTauAnalyzerSignal_wrtOfflineTaus
+    if hasMiniAOD:
+      moduleName_PFTauAnalyzerSignal_wrtOfflineTaus = "analyze%ss%sWrtOfflineTaus" % (hlt_pfTauLabel, suffix)
+      modulePF_PFTauAnalyzerSignal_wrtOfflineTaus = cms.EDAnalyzer("RecoPFTauAnalyzerSignal",
+      srcPFTaus = cms.InputTag('hltSelected%ss%s' % (hlt_pfTauLabel, suffix)),
+        srcPFTauSumChargedIso = cms.InputTag('hlt%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix)),
+        srcDenominator = cms.InputTag('selectedOfflinePFTaus'),
+        typeDenominator = cms.string("offline"),  
+        lumiScale = cms.double(1.),   
+        dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_wrtOfflineTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
+      )
+      setattr(process, moduleName_PFTauAnalyzerSignal_wrtOfflineTaus, modulePF_PFTauAnalyzerSignal_wrtOfflineTaus)
+      process.analysisSequence += modulePF_PFTauAnalyzerSignal_wrtOfflineTaus
 
-    moduleName_PFTauPairAnalyzer_wrtOfflineTaus = "analyze%sPairs%sWrtOfflineTaus" % (hlt_pfTauLabel, suffix)
-    module_PFTauPairAnalyzer_wrtOfflineTaus = cms.EDAnalyzer("RecoPFTauPairAnalyzer",
-      srcPFTauPairs = cms.InputTag(moduleName_PFTauPairProducer),
-      srcRefTaus = cms.InputTag('selectedOfflinePFTaus'),
-      min_refTau_pt = cms.double(20.),
-      max_refTau_pt = cms.double(1.e+3),                                                                
-      min_refTau_absEta = cms.double(-1.),
-      max_refTau_absEta = cms.double(2.4),  
-      lumiScale = cms.double(1.),                                                              
-      dqmDirectory = cms.string("%s/%sPairAnalyzer%s_wrtOfflineTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
-    )
-    setattr(process, moduleName_PFTauPairAnalyzer_wrtOfflineTaus, module_PFTauPairAnalyzer_wrtOfflineTaus)
-    process.analysisSequence += module_PFTauPairAnalyzer_wrtOfflineTaus
+      moduleName_PFTauPairAnalyzer_wrtOfflineTaus = "analyze%sPairs%sWrtOfflineTaus" % (hlt_pfTauLabel, suffix)
+      module_PFTauPairAnalyzer_wrtOfflineTaus = cms.EDAnalyzer("RecoPFTauPairAnalyzer",
+        srcPFTauPairs = cms.InputTag(moduleName_PFTauPairProducer),
+        srcRefTaus = cms.InputTag('selectedOfflinePFTaus'),
+        min_refTau_pt = cms.double(20.),
+        max_refTau_pt = cms.double(1.e+3),                                                                
+        min_refTau_absEta = cms.double(-1.),
+        max_refTau_absEta = cms.double(2.4),  
+        lumiScale = cms.double(1.),                                                              
+        dqmDirectory = cms.string("%s/%sPairAnalyzer%s_wrtOfflineTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
+      )
+      setattr(process, moduleName_PFTauPairAnalyzer_wrtOfflineTaus, module_PFTauPairAnalyzer_wrtOfflineTaus)
+      process.analysisSequence += module_PFTauPairAnalyzer_wrtOfflineTaus
 
     moduleName_PFTauIsolationAnalyzer = "analyze%sIsolation%s" % (hlt_pfTauLabel, suffix)
     module_PFTauIsolationAnalyzer = cms.EDAnalyzer("RecoPFTauIsolationAnalyzer",

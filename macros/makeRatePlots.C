@@ -237,13 +237,13 @@ void makeRatePlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/rate/2020Jul12/";
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/rate/2020Jul21/";
 
   std::vector<std::string> processes;
-  //processes.push_back("minbias");
+  processes.push_back("minbias");
   processes.push_back("QCD");
   processes.push_back("DY");
-  //processes.push_back("W");
+  processes.push_back("W");
 
   std::map<std::string, std::string> inputFileNames; // key = process
   inputFileNames["minbias"] = "hadd_minbias_all.root";
@@ -270,9 +270,9 @@ void makeRatePlots()
   pfAlgos.push_back("HpsPFTau");
 
   std::vector<std::string> vertexOptions;
-  vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
-  vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
-  vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
   vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVertices");
   //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVerticesTrimmed");
   //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
@@ -311,7 +311,7 @@ void makeRatePlots()
   srcVertices["3HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
 
   std::vector<std::string> l1MatchingOptions;
-  l1MatchingOptions.push_back("a");            // CV: no matching of HLT taus to L1 taus
+  l1MatchingOptions.push_back("");            // CV: no matching of HLT taus to L1 taus
   l1MatchingOptions.push_back("MatchedToL1"); 
 
   std::vector<std::string> absEtaRanges;
@@ -348,11 +348,11 @@ void makeRatePlots()
   legendEntries_vs_leadTrackPt["leadTrackPtGt1"] = "lead. Track p_{T} > 1 GeV";
   legendEntries_vs_leadTrackPt["leadTrackPtGt2"] = "lead. Track p_{T} > 2 GeV";
   legendEntries_vs_leadTrackPt["leadTrackPtGt5"] = "lead. Track p_{T} > 5 GeV";
-std::cout << "break-point 0.1 reached" << std::endl;
+
   std::map<std::string, std::string> legendEntries_vs_l1MatchingOption; // key = l1MatchingOption
-  legendEntries_vs_l1MatchingOption["a"]            = "wo. L1 Matching";
+  legendEntries_vs_l1MatchingOption[""]            = "wo. L1 Matching";
   legendEntries_vs_l1MatchingOption["MatchedToL1"] = "w. L1 Matching";
-std::cout << "break-point 0.2 reached" << std::endl;
+
   std::map<std::string, std::string> legendEntries_vs_processes; // key = process
   legendEntries_vs_processes["minbias"] = "Minimum Bias";
   legendEntries_vs_processes["QCD"]     = "QCD";
@@ -386,13 +386,10 @@ std::cout << "break-point 0.2 reached" << std::endl;
 	pfAlgo != pfAlgos.end(); ++pfAlgo ) {
     for ( std::vector<std::string>::const_iterator vertexOption = vertexOptions.begin();
 	  vertexOption != vertexOptions.end(); ++vertexOption ) {
-std::cout << "break-point 1 reached" << std::endl;
       for ( std::vector<std::string>::const_iterator absEtaRange = absEtaRanges.begin();
 	      absEtaRange != absEtaRanges.end(); ++absEtaRange ) {
-std::cout << "break-point 2 reached" << std::endl;
         for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
 	      l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {        
-std::cout << "break-point 3 reached" << std::endl;
           for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
                 min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
             for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
@@ -423,7 +420,7 @@ std::cout << "break-point 3 reached" << std::endl;
             } // isolationWP
           } // min_leadTrackPt
         } // l1MatchingOption
-std::cout << "break-point 4 reached" << std::endl;      
+
         for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
 	      l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
           for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
@@ -531,7 +528,7 @@ std::cout << "break-point 4 reached" << std::endl;
 		           outputFileName5);
 
             string_to_TH1Map1 histograms6 = histograms_rateDoubleTau_vs_l1MatchingOption[*pfAlgo][*vertexOption][*absEtaRange][*min_leadTrackPt][*isolationWP];
-            std::string outputFileName6 = Form("makeRatePlots_DoubleTau_%s%s%s_%s_%s_vs_l1MatchingOption.png", 
+            std::string outputFileName6 = Form("makeRatePlots_DoubleTau_%s%s_%s_%s_%s_vs_l1MatchingOption.png", 
               pfAlgo->data(), vertexOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
             showHistograms(1150, 1150,
 	  	           histograms6[""],            legendEntries_vs_l1MatchingOption[""],
@@ -560,12 +557,10 @@ std::cout << "break-point 4 reached" << std::endl;
               std::string outputFileName7 = Form("makeRatePlots_SingleTau_%s%s%s_%s_%s_%s_vs_processes.png", 
                 pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
               showHistograms(1150, 1150,
-                             //histograms7["minbias"], legendEntries_vs_processes["minbias"],
+                             histograms7["minbias"], legendEntries_vs_processes["minbias"],
                              histograms7["QCD"],     legendEntries_vs_processes["QCD"],
                              histograms7["DY"],      legendEntries_vs_processes["DY"],
-                             //histograms7["W"],       legendEntries_vs_processes["W"],
-		             nullptr, "",
-		             nullptr, "",
+                             histograms7["W"],       legendEntries_vs_processes["W"],
                              nullptr, "",
 		             nullptr, "",
 		             colors, lineStyles, 
@@ -573,19 +568,17 @@ std::cout << "break-point 4 reached" << std::endl;
 		             labelTextLines, 0.050,
 		             0.63, 0.66, 0.26, 0.07, 
 		             -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		             true, 1.e+1, 1.e+8, "Single #tau Trigger Rate [Hz]", 1.4, 
+		             true, 1.e-1, 1.e+6, "Single #tau Trigger Rate [Hz]", 1.4, 
 		             outputFileName7);
 
               string_to_TH1Map1 histograms8 = histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt][*isolationWP];
               std::string outputFileName8 = Form("makeRatePlots_DoubleTau_%s%s%s_%s_%s_%s_vs_processes.png", 
                 pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
               showHistograms(1150, 1150,
-                             //histograms8["minbias"], legendEntries_vs_processes["minbias"],
+                             histograms8["minbias"], legendEntries_vs_processes["minbias"],
                              histograms8["QCD"],     legendEntries_vs_processes["QCD"],
                              histograms8["DY"],      legendEntries_vs_processes["DY"],
-                             //histograms8["W"],       legendEntries_vs_processes["W"],
-		             nullptr, "",
-		             nullptr, "",
+                             histograms8["W"],       legendEntries_vs_processes["W"],
                              nullptr, "",
 		             nullptr, "",
 		             colors, lineStyles, 
@@ -593,7 +586,7 @@ std::cout << "break-point 4 reached" << std::endl;
 		             labelTextLines, 0.050,
 		             0.63, 0.66, 0.26, 0.07, 
 		             -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		             true, 1.e+1, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
+		             true, 1.e-1, 1.e+6, "Double #tau Trigger Rate [Hz]", 1.4, 
 		             outputFileName8);
             } // isolationWP
           } // min_leadTrackPt

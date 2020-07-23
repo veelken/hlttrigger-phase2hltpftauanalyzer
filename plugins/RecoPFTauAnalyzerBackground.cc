@@ -98,17 +98,10 @@ void RecoPFTauAnalyzerBackground::analyze(const edm::Event& evt, const edm::Even
   {
     ratePlot->fillHistograms(pfTaus_wChargedIso, evtWeight);
   }
-
-  ++numEvents_processed_;
 }
 
 void RecoPFTauAnalyzerBackground::endJob()
-{
-  for ( auto ratePlot : ratePlots_ ) 
-  {
-    ratePlot->scaleHistograms(1./numEvents_processed_);
-  }
-}
+{}
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 

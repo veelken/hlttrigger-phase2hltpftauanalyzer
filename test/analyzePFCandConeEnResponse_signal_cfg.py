@@ -26,7 +26,7 @@ outputFileName = "analyzePFCandConeEnResponse_signal_2020Jul07.root"
 
 #--------------------------------------------------------------------------------
 # set input files
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames
+from HLTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames
 print("Searching for input files in path = '%s'" % inputFilePath)
 inputFileNames = getInputFileNames(inputFilePath)
 print("Found %i input files." % len(inputFileNames))

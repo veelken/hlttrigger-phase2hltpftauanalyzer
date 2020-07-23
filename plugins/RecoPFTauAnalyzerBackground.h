@@ -179,8 +179,6 @@ class RecoPFTauAnalyzerBackground : public edm::EDAnalyzer
     double max_dz_;
   };
   std::vector<ratePlotEntryType*> ratePlots_;
-
-  unsigned long numEvents_processed_;
 };
 
 #endif   

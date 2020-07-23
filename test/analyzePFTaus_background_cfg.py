@@ -23,8 +23,8 @@ process.source = cms.Source("PoolSource",
 ##    ) 
 )
 
-#inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_w_offlineVtxCollection_HGCalFix_MINBIAS_Phase2HLTTDRWinter20_PU200_CMSSW_11_1_0_pre8/200627_142511/'
-inputFilePath = None
+inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wL1/'
+#inputFilePath = None
 inputFileNames = []
 #processName = "minbias"
 processName = "QCD"
@@ -67,18 +67,8 @@ process.analysisSequence = cms.Sequence()
 
 #--------------------------------------------------------------------------------
 # CV: fill HLT tau plots
-for hlt_algorithm in hlt_algorithms:
 
-  hlt_pfTauLabel = None
-  if hlt_algorithm == "shrinking-cone":
-    hlt_pfTauLabel = "PFTau"
-  elif hlt_algorithm == "hps":
-    hlt_pfTauLabel = "HpsPFTau"
-  else:
-    raise ValueError("Invalid parameter hlt_algorithm = '%s' !!" % hlt_algorithm)
-
-  for hlt_isolation_maxDeltaZOption in hlt_isolation_maxDeltaZOptions:
-
+def get_suffix(hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits):
     suffix = "%iHits" % hlt_isolation_minTrackHits
     if hlt_isolation_maxDeltaZOption == "primaryVertex":
       suffix += "MaxDeltaZ"
@@ -94,6 +84,21 @@ for hlt_algorithm in hlt_algorithms:
       suffix += "WithOnlineVerticesTrimmed"
     else:
       raise ValueError("Invalid parameter hlt_srcVertices = '%s' !!" % hlt_srcVertices)  
+    return suffix
+
+for hlt_algorithm in hlt_algorithms:
+
+  hlt_pfTauLabel = None
+  if hlt_algorithm == "shrinking-cone":
+    hlt_pfTauLabel = "PFTau"
+  elif hlt_algorithm == "hps":
+    hlt_pfTauLabel = "HpsPFTau"
+  else:
+    raise ValueError("Invalid parameter hlt_algorithm = '%s' !!" % hlt_algorithm)
+
+  for hlt_isolation_maxDeltaZOption in hlt_isolation_maxDeltaZOptions:
+
+    suffix = get_suffix(hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits)
 
     moduleName_PFTauAnalyzerBackground = "analyze%ss%s" % (hlt_pfTauLabel, suffix)
     module_PFTauAnalyzerBackground = cms.EDAnalyzer("RecoPFTauAnalyzerBackground",
@@ -153,9 +158,17 @@ if processName == "QCD":
     print("Adding GenPtHatAnalyzer.")
     process.genPtHatSequence = cms.Sequence()
 
+    hlt_isolation_maxDeltaZOption = None
+    if hlt_srcVertices == 'hltPhase2PixelVertices' and "leadTrack" in hlt_isolation_maxDeltaZOptions:
+      hlt_isolation_maxDeltaZOption = "leadTrack"
+    else:
+      hlt_isolation_maxDeltaZOption = "primaryVertex"
+
+    suffix = get_suffix(hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits)
+
     process.hltHpsPFTausPassingTrigger = cms.EDProducer("MyPFTauSelector",
-      src = cms.InputTag('hltSelectedHpsPFTaus8HitsMaxDeltaZWithOfflineVertices'),
-      src_sumChargedIso = cms.InputTag('hltHpsPFTauChargedIsoPtSum8HitsMaxDeltaZWithOfflineVertices'),
+      src = cms.InputTag('hltSelectedHpsPFTaus%s' % suffix),
+      src_sumChargedIso = cms.InputTag('hltHpsPFTauChargedIsoPtSum%s' % suffix),
       min_pt = cms.double(30.),
       max_pt = cms.double(-1.),
       min_absEta = cms.double(-1.),
@@ -188,7 +201,7 @@ if processName == "QCD":
       dqmDirectory = cms.string("GenPtHatAnalyzer")
     )
     process.genPtHatSequence += process.genPtHatAnalzer
-
+  
     process.genPtHatPath = cms.Path(process.genPtHatSequence)
 #--------------------------------------------------------------------------------
 

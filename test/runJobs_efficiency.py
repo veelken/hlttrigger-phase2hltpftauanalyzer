@@ -7,9 +7,15 @@ from HLTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames, 
 
 signal_samples = {
   'qqH_htt' : {
-    'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx/200711_090732/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOnlineVtx/200711_090837/'
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx_wL1_2FM/',
+        'numEvents' : 140108
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOnlineVtx_wL1_2FM/',
+        'numEvents' : 144510
+      }
     },
     'numJobs' : 10,
     'process' : "qqH_htt"
@@ -25,7 +31,7 @@ l1_useStrips = True
 ##cfgFileName_original = "analyzePFTaus_signal_cfg.py"
 cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_signal_cfg.py"
 
-version = "2020Jul17"
+version = "2020Jul23"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/efficiency", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/efficiency", version)
@@ -66,11 +72,17 @@ for sampleName, sample in signal_samples.items():
   process = sample['process']
   for hlt_srcVertices in run_hlt_srcVertices:
     print("processing sample = '%s': hlt_srcVertices = '%s'" % (sampleName, hlt_srcVertices)) 
-    inputFilePath = sample['inputFilePath'][hlt_srcVertices]
+    inputFilePath = sample['samples'][hlt_srcVertices]['inputFilePath']
     print(" inputFilePath = '%s'" % inputFilePath)
-    inputFileNames = getInputFileNames(inputFilePath)
-    numInputFiles = len(inputFileNames)
-    print("Found %i input files." % numInputFiles)
+    inputFileNames = None
+    numInputFiles = None
+    if os.path.exists(inputFilePath):
+      inputFileNames = getInputFileNames(inputFilePath)
+      numInputFiles = len(inputFileNames)
+      print("Found %i input files." % numInputFiles)
+    else:
+      print("Path = '%s' does not exist --> skipping !!" % inputFilePath)
+      continue
     numJobs = sample['numJobs']
     for jobId in range(numJobs):
       idxFirstFile = jobId*numInputFiles/numJobs

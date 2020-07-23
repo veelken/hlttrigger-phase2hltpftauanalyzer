@@ -17,128 +17,201 @@ background_samples = {
   # CV: minbias cross-section taken to be 75mb, 
   #     resulting in 200 pileup interaction per bunch-crossing for instantaneous luminosity of 7.5e+34 cm^-2 s^-1
   #    (assuming that 70% of all bunches are colliding, i.e. collision frequence of 28 MHz)
-##  'minbias' : {
-##    'inputFilePath' : {
-##      'offlinePrimaryVertices' : '',
-##      'hltPhase2PixelVertices' : ''  
-##    },
-##    'numJobs' : 10, 
-##    'crossSection' : 75.0e+9/200, # pb
-##    'process' : "minbias"
-##  },
+  'minbias' : {
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wL1/',
+        'numEvents' : 979872
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOnlineVtx_wL1/',
+        'numEvents' : 935926
+      }
+    },
+    'numJobs' : 10, 
+    'crossSection' : 75.0e+9/200, # pb
+    'process' : "minbias"
+  },
   # CV: cross-sections for QCD, Drell-Yan, and W+jets production taken from the twiki
   #       https://twiki.cern.ch/twiki/bin/viewauth/CMS/HighLevelTriggerPhase2#Rate_calculations
 ##  'qcd_pt15to20' : {
-##    'inputFilePath' : {
-##      'offlinePrimaryVertices' : '',
-##      'hltPhase2PixelVertices' : ''  
+##    'samples' : {
+##      'offlinePrimaryVertices' : { 
+##        'inputFilePath' : 
+##        'numEvents' : 
+##      },
+##      'hltPhase2PixelVertices' : {
+##        'inputFilePath' : 
+##        'numEvents' : 
+##      }
 ##    },
 ##    'numJobs' : 10, 
 ##    'crossSection' : 923300000.0,
 ##    'process' : "QCD"
 ##  },
 ##  'qcd_pt20to30' : {
-##    'inputFilePath' : {
-##      'offlinePrimaryVertices' : '',
-##      'hltPhase2PixelVertices' : ''  
+##    'samples' : {
+##      'offlinePrimaryVertices' : { 
+##        'inputFilePath' : 
+##        'numEvents' : 
+##      },
+##      'hltPhase2PixelVertices' : {
+##        'inputFilePath' : 
+##        'numEvents' : 
+##      }
 ##    },
 ##    'numJobs' : 10, 
 ##    'crossSection' : 436000000.0,
 ##    'process' : "QCD"
 ##  },
   'qcd_pt30to50' : {
-    'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232606/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_233400/'  
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
+        'numEvents' : 'XXXXXX'
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
+        'numEvents' : 198916
+      }
     },
     'numJobs' : 10, 
     'crossSection' : 118400000.0,
     'process' : "QCD"
   },
   'qcd_pt50to80' : {
-    'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232636/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_230414/'  
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
+        'numEvents' : 143880
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
+        'numEvents' : 201080
+      }
     },
     'numJobs' : 10, 
     'crossSection' : 17650000.0,
     'process' : "QCD"
   },
   'qcd_pt80to120' : {
-    'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232521/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_233333/'  
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
+        'numEvents' : 100000
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
+        'numEvents' : 100000
+      }
     },
     'numJobs' : 10, 
     'crossSection' : 2671000.0,
     'process' : "QCD"
   },
   'qcd_pt120to170' : {
-    'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232405/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_233305/'  
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
+        'numEvents' : 50000
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
+        'numEvents' : 50000
+      }
     },
     'numJobs' : 10, 
     'crossSection' : 469700.0 ,
     'process' : "QCD"
   },
   'qcd_pt170to300' : {
-    'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232451/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_233114/'  
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
+        'numEvents' : 50000
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
+        'numEvents' : 47915
+      }
     },
     'numJobs' : 10, 
     'crossSection' : 121700.0,
     'process' : "QCD"
   },  
   'qcd_ptGt300' : {
-    'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOfflineVtx/200710_232252/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOnlineVtx/200710_233141/'  
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
+        'numEvents' : 'XXXXX'
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
+        'numEvents' : 48050
+      }
     },
     'numJobs' : 10, 
     'crossSection' : 9171.0,
     'process' : "QCD"
   },
   'dy_mass10to50' : {
-    'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOfflineVtx/200710_232002/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOnlineVtx/200710_232851/'  
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOfflineVtx_wL1/',
+        'numEvents' : 96923
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOnlineVtx_wL1/',
+        'numEvents' : 96923
+      }
     },
     'numJobs' : 10, 
     'crossSection' : 16880.0,
     'process' : "DY"
   },
   'dy_massGt50' : {
-    'inputFilePath' : {
-      'offlinePrimaryVertices' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx/200710_231855/',
-      'hltPhase2PixelVertices' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOnlineVtx/200710_232823/'  
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx_wL1/',
+        'numEvents' : 9125
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOnlineVtx_wL1/',
+        'numEvents' : 9125
+      }
     },
     'numJobs' : 10, 
     'crossSection' : 5795.0,
     'process' : "DY"
   },
-##  'w' : {
-##    'inputFilePath' : {
-##      'offlinePrimaryVertices' : '',
-##      'hltPhase2PixelVertices' : ''  
-##    },
-##    'numJobs' : 10, 
-##    'crossSection' : 56990.0,
-##    'process' : "W"
-##  },
+  'w' : {
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
+        'numEvents' : 16796
+      },
+      'hltPhase2PixelVertices' : {
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
+        'numEvents' : 17253
+      }
+    },
+    'numJobs' : 10, 
+    'crossSection' : 56990.0,
+    'process' : "W"
+  },
 }
 
-run_algorithms = [ "hps" ]
-run_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
-run_isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
-##run_isolation_minTrackHits = [ 3, 5, 8 ]
-run_isolation_minTrackHits = [ 8 ]
+run_hlt_algorithms = [ "hps" ]
+run_hlt_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
+##run_hlt_srcVertices = [ "hltPhase2PixelVertices" ]
+run_hlt_isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
+##run_hlt_isolation_minTrackHits = [ 3, 5, 8 ]
+run_hlt_isolation_minTrackHits = [ 8 ]
 l1_useStrips = True
-##cfgFileName_original = "analyzePFTaus_signal_cfg.py"
-cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_signal_cfg.py"
+##cfgFileName_original = "analyzePFTaus_background_cfg.py"
+cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_background_cfg.py"
 
-version = "2020Jul17"
+version = "2020Jul23"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)
@@ -153,7 +226,7 @@ run_command('mkdir -p %s' % configDir)
 run_command('mkdir -p %s' % outputDir)
 
 def build_cfgFile(cfgFileName_original, cfgFileName_modified, 
-                  inputFileNames, process, lumiScale, 
+                  inputFileNames, process, lumiScale,
                   hlt_srcVertices, hlt_algorithm, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits, l1_useStrips, 
                   outputFileName):
   print("Building configFile = '%s'" % cfgFileName_modified)
@@ -180,15 +253,19 @@ for sampleName, sample in background_samples.items():
   process = sample['process']
   for hlt_srcVertices in run_hlt_srcVertices:
     print("processing sample = '%s': hlt_srcVertices = '%s'" % (sampleName, hlt_srcVertices)) 
-    inputFilePath = sample['inputFilePath'][hlt_srcVertices]
+    inputFilePath = sample['samples'][hlt_srcVertices]['inputFilePath']
     print(" inputFilePath = '%s'" % inputFilePath)
-    inputFileNames = getInputFileNames(inputFilePath)
-    numInputFiles = len(inputFileNames)
-    print("Found %i input files." % numInputFiles)
+    inputFileNames = None
+    numInputFiles = None
+    if os.path.exists(inputFilePath):
+      inputFileNames = getInputFileNames(inputFilePath)
+      numInputFiles = len(inputFileNames)
+      print("Found %i input files." % numInputFiles)
+    else:
+      print("Path = '%s' does not exist --> skipping !!" % inputFilePath)
+      continue
     numJobs = sample['numJobs']
-    lumiScale = sample['crossSection']*conversionFactor*instLuminosity/numJobs # rate in Hz corresponding to one MC event
-    # CV: lumiScale needs to be divided by numJobs,
-    #     as rate normalization implemented in RecoPFTauAnalyzerBackground::endJob method assumes that whole MC sample is analyzed using single cmsRun job
+    lumiScale = sample['crossSection']*conversionFactor*instLuminosity/sample['samples'][hlt_srcVertices]['numEvents'] # rate in Hz corresponding to one MC event
     print(" lumiScale = %1.2f" % lumiScale)
     for jobId in range(numJobs):
       idxFirstFile = jobId*numInputFiles/numJobs
@@ -207,7 +284,7 @@ for sampleName, sample in background_samples.items():
               (job_key, jobId)
             build_cfgFile(
               cfgFileName_original, cfgFileName_modified, 
-              inputFileNames_job, sample['process'], lumiScale, 
+              inputFileNames_job, sample['process'], lumiScale,
               hlt_srcVertices, hlt_algorithm, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits, l1_useStrips, 
               outputFileName)
             logFileName = cfgFileName_modified.replace("_cfg.py", ".log")

@@ -3,8 +3,8 @@
 #       https://github.com/HEP-KBFI/tth-htt/blob/master/python/sbatchManagerTools.py
 #----------------------------------------------------------------------------------------------------
 
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.safe_root import ROOT
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.tthAnalysisTools import createFile, logging, run_cmd
+from HLTrigger.TallinnHLTPFTauAnalyzer.tools.safe_root import ROOT
+from HLTrigger.TallinnHLTPFTauAnalyzer.tools.tthAnalysisTools import createFile, logging, run_cmd
 
 import os
 import jinja2

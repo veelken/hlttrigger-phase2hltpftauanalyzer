@@ -4,8 +4,8 @@
 #     with minor modifications
 #----------------------------------------------------------------------------------------------------
 
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.sbatchManagerTools import is_file_ok
-from HLTTrigger.TallinnHLTPFTauAnalyzer.tools.tthAnalysisTools import get_log_version, logging, run_cmd
+from HLTrigger.TallinnHLTPFTauAnalyzer.tools.sbatchManagerTools import is_file_ok
+from HLTrigger.TallinnHLTPFTauAnalyzer.tools.tthAnalysisTools import get_log_version, logging, run_cmd
 
 import codecs
 import getpass

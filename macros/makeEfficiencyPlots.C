@@ -418,7 +418,7 @@ void makeEfficiencyPlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/efficiency/2020Jul12/";
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/efficiency/2020Jul21/";
   std::string inputFileName = "hadd_qqH_htt_all.root";
   std::string inputFileName_full = inputFilePath;
   if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
@@ -429,51 +429,60 @@ void makeEfficiencyPlots()
     assert(0);
   }
 
-  std::vector<std::string> pfAlgos;
-  //pfAlgos.push_back("PFTau");
-  pfAlgos.push_back("HpsPFTau");
+  std::string l1_pfAlgo = "WithStripsPF"; // 'WithStripsPF' or 'WithoutStripsPF'
+  std::string l1_ptThreshold = "ptGt20";
+  std::string l1_min_leadTrackPt = "leadTrackPtGt5";
+  std::string l1_isolationWP = "relChargedIsoLt0p05";
 
-  std::vector<std::string> vertexOptions;
-  vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
-  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
-  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
-  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVertices");
-  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVerticesTrimmed");
-  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
+  std::vector<std::string> hlt_pfAlgos;
+  //hlt_pfAlgos.push_back("PFTau");
+  hlt_pfAlgos.push_back("HpsPFTau");
+
+  std::vector<std::string> hlt_vertexOptions;
+  hlt_vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
+  //hlt_vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  //hlt_vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
+  hlt_vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVertices");
+  //hlt_vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVerticesTrimmed");
+  //hlt_vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
 /*
-  vertexOptions.push_back("5HitsMaxDeltaZWithOfflineVertices");
-  vertexOptions.push_back("5HitsMaxDeltaZToLeadTrackWithOfflineVertices");
-  vertexOptions.push_back("5HitsMaxDeltaZWithOnlineVertices");
-  vertexOptions.push_back("5HitsMaxDeltaZToLeadTrackWithOnlineVertices");
-  //vertexOptions.push_back("5HitsMaxDeltaZWithOnlineVerticesTrimmed");
-  //vertexOptions.push_back("5HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
-  vertexOptions.push_back("3HitsMaxDeltaZWithOfflineVertices");
-  vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOfflineVertices");
-  vertexOptions.push_back("3HitsMaxDeltaZWithOnlineVertices");
-  vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOnlineVertices");
-  //vertexOptions.push_back("3HitsMaxDeltaZWithOnlineVerticesTrimmed");
-  //vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
+  hlt_vertexOptions.push_back("5HitsMaxDeltaZWithOfflineVertices");
+  hlt_vertexOptions.push_back("5HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  hlt_vertexOptions.push_back("5HitsMaxDeltaZWithOnlineVertices");
+  hlt_vertexOptions.push_back("5HitsMaxDeltaZToLeadTrackWithOnlineVertices");
+  //hlt_vertexOptions.push_back("5HitsMaxDeltaZWithOnlineVerticesTrimmed");
+  //hlt_vertexOptions.push_back("5HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
+  hlt_vertexOptions.push_back("3HitsMaxDeltaZWithOfflineVertices");
+  hlt_vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  hlt_vertexOptions.push_back("3HitsMaxDeltaZWithOnlineVertices");
+  hlt_vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOnlineVertices");
+  //hlt_vertexOptions.push_back("3HitsMaxDeltaZWithOnlineVerticesTrimmed");
+  //hlt_vertexOptions.push_back("3HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
  */
 
-  std::map<std::string, std::string> srcVertices; // key = vertexOption
-  srcVertices["8HitsMaxDeltaZWithOfflineVertices"]                  = "offlinePrimaryVertices";
-  srcVertices["8HitsMaxDeltaZToLeadTrackWithOfflineVertices"]       = "offlinePrimaryVertices";
-  srcVertices["8HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
-  srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
-  srcVertices["8HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
-  srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
-  srcVertices["5HitsMaxDeltaZWithOfflineVertices"]                  = "offlinePrimaryVertices";
-  srcVertices["5HitsMaxDeltaZToLeadTrackWithOfflineVertices"]       = "offlinePrimaryVertices";
-  srcVertices["5HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
-  srcVertices["5HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
-  srcVertices["5HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
-  srcVertices["5HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
-  srcVertices["3HitsMaxDeltaZWithOfflineVertices"]                  = "offlinePrimaryVertices";
-  srcVertices["3HitsMaxDeltaZToLeadTrackWithOfflineVertices"]       = "offlinePrimaryVertices";
-  srcVertices["3HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
-  srcVertices["3HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
-  srcVertices["3HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
-  srcVertices["3HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
+  std::map<std::string, std::string> hlt_srcVertices; // key = vertexOption
+  hlt_srcVertices["8HitsMaxDeltaZWithOfflineVertices"]                  = "offlinePrimaryVertices";
+  hlt_srcVertices["8HitsMaxDeltaZToLeadTrackWithOfflineVertices"]       = "offlinePrimaryVertices";
+  hlt_srcVertices["8HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
+  hlt_srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
+  hlt_srcVertices["8HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
+  hlt_srcVertices["8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
+  hlt_srcVertices["5HitsMaxDeltaZWithOfflineVertices"]                  = "offlinePrimaryVertices";
+  hlt_srcVertices["5HitsMaxDeltaZToLeadTrackWithOfflineVertices"]       = "offlinePrimaryVertices";
+  hlt_srcVertices["5HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
+  hlt_srcVertices["5HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
+  hlt_srcVertices["5HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
+  hlt_srcVertices["5HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
+  hlt_srcVertices["3HitsMaxDeltaZWithOfflineVertices"]                  = "offlinePrimaryVertices";
+  hlt_srcVertices["3HitsMaxDeltaZToLeadTrackWithOfflineVertices"]       = "offlinePrimaryVertices";
+  hlt_srcVertices["3HitsMaxDeltaZWithOnlineVertices"]                   = "hltPhase2PixelVertices";
+  hlt_srcVertices["3HitsMaxDeltaZToLeadTrackWithOnlineVertices"]        = "hltPhase2PixelVertices";
+  hlt_srcVertices["3HitsMaxDeltaZWithOnlineVerticesTrimmed"]            = "hltPhase2TrimmedPixelVertices";
+  hlt_srcVertices["3HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
+
+  std::vector<std::string> l1MatchingOptions;
+  l1MatchingOptions.push_back("");            // CV: no matching of HLT taus to L1 taus
+  l1MatchingOptions.push_back("MatchedToL1"); 
 
   std::vector<std::string> observables;
   observables.push_back("pt");
@@ -496,28 +505,28 @@ void makeEfficiencyPlots()
   decayModes.push_back("threeProng1Pi0");
   decayModes.push_back("all");
 
-  std::vector<std::string> ptThresholds;
-  ptThresholds.push_back("ptGt20");
-  //ptThresholds.push_back("ptGt25");
-  ptThresholds.push_back("ptGt30");
-  //ptThresholds.push_back("ptGt35");
-  ptThresholds.push_back("ptGt40");
-  //ptThresholds.push_back("ptGt45");
-  //ptThresholds.push_back("ptGt50");
+  std::vector<std::string> hlt_ptThresholds;
+  hlt_ptThresholds.push_back("ptGt20");
+  //hlt_ptThresholds.push_back("ptGt25");
+  hlt_ptThresholds.push_back("ptGt30");
+  //hlt_ptThresholds.push_back("ptGt35");
+  hlt_ptThresholds.push_back("ptGt40");
+  //hlt_ptThresholds.push_back("ptGt45");
+  //hlt_ptThresholds.push_back("ptGt50");
 
-  std::vector<std::string> min_leadTrackPtValues;
-  min_leadTrackPtValues.push_back("leadTrackPtGt1");
-  min_leadTrackPtValues.push_back("leadTrackPtGt2");
-  min_leadTrackPtValues.push_back("leadTrackPtGt5");
+  std::vector<std::string> hlt_min_leadTrackPtValues;
+  hlt_min_leadTrackPtValues.push_back("leadTrackPtGt1");
+  hlt_min_leadTrackPtValues.push_back("leadTrackPtGt2");
+  hlt_min_leadTrackPtValues.push_back("leadTrackPtGt5");
 
-  std::vector<std::string> isolationWPs;
-  isolationWPs.push_back("noIsolation");
-  isolationWPs.push_back("relChargedIsoLt0p40");
-  isolationWPs.push_back("relChargedIsoLt0p20");
-  isolationWPs.push_back("relChargedIsoLt0p10");
-  isolationWPs.push_back("relChargedIsoLt0p05");
-  //isolationWPs.push_back("relChargedIsoLt0p02");
-  //isolationWPs.push_back("relChargedIsoLt0p01");
+  std::vector<std::string> hlt_isolationWPs;
+  hlt_isolationWPs.push_back("noIsolation");
+  hlt_isolationWPs.push_back("relChargedIsoLt0p40");
+  hlt_isolationWPs.push_back("relChargedIsoLt0p20");
+  hlt_isolationWPs.push_back("relChargedIsoLt0p10");
+  hlt_isolationWPs.push_back("relChargedIsoLt0p05");
+  //hlt_isolationWPs.push_back("relChargedIsoLt0p02");
+  //hlt_isolationWPs.push_back("relChargedIsoLt0p01");
 
   std::map<std::string, double> xMin; // key = observable
   xMin["pt"]        =   0.;
@@ -562,7 +571,8 @@ void makeEfficiencyPlots()
   legendEntries_vs_decayModes["threeProng1Pi0"] = "h^{#pm}h^{#mp}h^{#pm}#pi^{0}";
   legendEntries_vs_decayModes["all"]            = "all";
 
-  std::string dqmDirectory = "%sAnalyzerSignal%s";
+  std::string hlt_dqmDirectory = "%sAnalyzerSignal%s%s";
+  std::string l1_dqmDirectory = "L1HPSPFTauAnalyzerSignal"; 
 
   int colors[6]       = {  1,  2,  8,  4,  6,  7 };
   int lineStyles[6]   = {  1,  1,  1,  1,  1,  1 };
@@ -576,193 +586,294 @@ void makeEfficiencyPlots()
   typedef std::map<std::string, string_to_TGraphMap5> string_to_TGraphMap6;
   typedef std::map<std::string, string_to_TGraphMap6> string_to_TGraphMap7;
   typedef std::map<std::string, string_to_TGraphMap7> string_to_TGraphMap8;
-  string_to_TGraphMap7 graphs_efficiency_vs_isolationWPs; // key = pfAlgo, vertexOption, observable, absEtaRange, ptThreshold, min_leadTrackPt, isolationWP
-  string_to_TGraphMap7 graphs_efficiency_vs_leadTrackPt;  // key = pfAlgo, vertexOption, observable, absEtaRange, ptThreshold, isolationWP, min_leadTrackPt
-  string_to_TGraphMap8 graphs_efficiency_vs_decayModes;   // key = pfAlgo, vertexOption, observable, absEtaRange, ptThreshold, min_leadTrackPt, isolationWP, decayMode
-  
-  for ( std::vector<std::string>::const_iterator pfAlgo = pfAlgos.begin();
-	pfAlgo != pfAlgos.end(); ++pfAlgo ) {
-    for ( std::vector<std::string>::const_iterator vertexOption = vertexOptions.begin();
-	  vertexOption != vertexOptions.end(); ++vertexOption ) {
+  typedef std::map<std::string, string_to_TGraphMap8> string_to_TGraphMap9;
+ 
+  // CV: compute L1 efficiency
+  string_to_TGraphMap2 graphs_l1_efficiency; // key = observable, absEtaRange
+  for ( std::vector<std::string>::const_iterator observable = observables.begin();
+	observable != observables.end(); ++observable ) {      
+    for ( std::vector<std::string>::const_iterator absEtaRange = absEtaRanges.begin();
+	  absEtaRange != absEtaRanges.end(); ++absEtaRange ) {
+      std::string histogramName_numerator = Form("%s%s_wrtGenHadTaus/%s/%s/effL1PFTau_vs_%s_numerator_all_%s_%s_%s", 
+        l1_dqmDirectory.data(), l1_pfAlgo.data(), absEtaRange->data(), "all", 
+        observable->data(), absEtaRange->data(), l1_ptThreshold.data(), l1_isolationWP.data());
+      //std::string histogramName_numerator = Form("%s%s_wrtOfflineTaus/%s/%s/effL1PFTau_vs_%s_numerator_all_%s_%s_%s", 
+      //  l1_dqmDirectory.data(), l1_pfAlgo.data(), absEtaRange->data(), "all", 
+      //  observable->data(), absEtaRange->data(), l1_ptThreshold.data(), l1_isolationWP.data());
+      TH1* histogram_numerator = loadHistogram(inputFile, histogramName_numerator);
+      std::string histogramName_denominator = Form("%s%s_wrtGenHadTaus/%s/%s/effL1PFTau_vs_%s_denominator_all_%s_%s_%s", 
+        l1_dqmDirectory.data(), l1_pfAlgo.data(), absEtaRange->data(), "all", 
+        observable->data(), absEtaRange->data(), l1_ptThreshold.data(), l1_isolationWP.data());
+      //std::string histogramName_denominator = Form("%s%s_wrtOfflineTaus/%s/%s/effL1PFTau_vs_%s_denominator_all_%s_%s_%s", 
+      //  l1_dqmDirectory.data(), l1_pfAlgo.data(), absEtaRange->data(), "all", 
+      //  observable->data(), absEtaRange->data(), l1_ptThreshold.data(), l1_isolationWP.data());
+      TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
+      TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
+      graphs_l1_efficiency[*observable][*absEtaRange] = graph_efficiency;
+    } // absEtaRange
+  } // observable
+
+  // CV: compute HLT efficiency
+  string_to_TGraphMap8 graphs_hlt_efficiency_vs_isolationWPs; // key = hlt_pfAlgo, hlt_vertexOption, l1MatchingOption, 
+                                                              //       observable, absEtaRange, hlt_ptThreshold, hlt_min_leadTrackPt, hlt_isolationWP
+  string_to_TGraphMap8 graphs_hlt_efficiency_vs_leadTrackPt;  // key = hlt_pfAlgo, hlt_vertexOption, l1MatchingOption, 
+                                                              //       observable, absEtaRange, hlt_ptThreshold, hlt_isolationWP, hlt_min_leadTrackPt
+  string_to_TGraphMap9 graphs_hlt_efficiency_vs_decayModes;   // key = hlt_pfAlgo, hlt_vertexOption, l1MatchingOption, 
+                                                              //       observable, absEtaRange, hlt_ptThreshold, hlt_min_leadTrackPt, hlt_isolationWP, decayMode
+  for ( std::vector<std::string>::const_iterator hlt_pfAlgo = hlt_pfAlgos.begin();
+	hlt_pfAlgo != hlt_pfAlgos.end(); ++hlt_pfAlgo ) {
+    for ( std::vector<std::string>::const_iterator hlt_vertexOption = hlt_vertexOptions.begin();
+	  hlt_vertexOption != hlt_vertexOptions.end(); ++hlt_vertexOption ) {
       for ( std::vector<std::string>::const_iterator observable = observables.begin();
 	    observable != observables.end(); ++observable ) {      
         for ( std::vector<std::string>::const_iterator absEtaRange = absEtaRanges.begin();
 	      absEtaRange != absEtaRanges.end(); ++absEtaRange ) {
-          for ( std::vector<std::string>::const_iterator ptThreshold = ptThresholds.begin();
-	        ptThreshold != ptThresholds.end(); ++ptThreshold ) {      
-            for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
-                  min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
-              for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
-	            isolationWP != isolationWPs.end(); ++isolationWP ) {
-                std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
-                  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
-                  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	        //std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
-                //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
-                //  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-                TH1* histogram_numerator = loadHistogram(inputFile, histogramName_numerator);
-	        std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
-                  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
-                  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	        //std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
-                //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(),
-                //  observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-                TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
-	        TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
-	        graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt][*isolationWP] = graph_efficiency;
-                graphs_efficiency_vs_leadTrackPt[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*isolationWP][*min_leadTrackPt] = graph_efficiency;
-              }
-            }
-
-            for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
-                  min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
-  	      string_to_TGraphMap1 graphs1 = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt];
-	      bool addFitFunctions1 = false;
-              double legendPosX = 0.71;
-	      if ( (*observable) == "pt" ) 
-	      {
-	        addFitFunctions1 = true;
-	      }
-              if ( (*observable) == "eta" ) 
-	      {
-                legendPosX = 0.43;
-	      }
-	      std::vector<std::string> labelTextLines1 = getLabelTextLines(*ptThreshold);
-              std::string outputFileName1 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_%s.png", 
-                pfAlgo->data(), vertexOption->data(), observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data());
-	      showGraphs(1150, 850,
-                         graphs1["noIsolation"],         legendEntries_vs_isolationWPs["noIsolation"],
-		         graphs1["relChargedIsoLt0p40"], legendEntries_vs_isolationWPs["relChargedIsoLt0p40"],
-		         graphs1["relChargedIsoLt0p20"], legendEntries_vs_isolationWPs["relChargedIsoLt0p20"],
-		         graphs1["relChargedIsoLt0p10"], legendEntries_vs_isolationWPs["relChargedIsoLt0p10"],
-  		         graphs1["relChargedIsoLt0p05"], legendEntries_vs_isolationWPs["relChargedIsoLt0p05"],
-                         nullptr, "",
-		         addFitFunctions1,
-		         colors, markerStyles, lineStyles, 
-		         0.040, legendPosX, 0.17, 0.23, 0.28, 
-		         labelTextLines1, 0.050,
-		         0.17, 0.85, 0.26, 0.05, 
-		         xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
-		         false, 0., 1.09, "Efficiency", 1.4, 
-		         outputFileName1);
-            }
-
-            for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
-	          isolationWP != isolationWPs.end(); ++isolationWP ) {
-              string_to_TGraphMap1 graphs2 = graphs_efficiency_vs_leadTrackPt[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*isolationWP];
-	      bool addFitFunctions2 = false;
-              double legendPosX = 0.61;
-	      if ( (*observable) == "pt" ) 
-	      {
-	        addFitFunctions2 = true;
-	      }
-              if ( (*observable) == "eta" ) 
-	      {
-                legendPosX = 0.38;
-	      }
-	      std::vector<std::string> labelTextLines2 = getLabelTextLines(*ptThreshold);
-              std::string outputFileName2 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_%s.png", 
-                pfAlgo->data(), vertexOption->data(), observable->data(), absEtaRange->data(), ptThreshold->data(), isolationWP->data());
-	      showGraphs(1150, 850,
-                         graphs2["leadTrackPtGt1"], legendEntries_vs_leadTrackPt["leadTrackPtGt1"],
-		         graphs2["leadTrackPtGt2"], legendEntries_vs_leadTrackPt["leadTrackPtGt2"],
-		         graphs2["leadTrackPtGt5"], legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
-                         nullptr, "",
-                         nullptr, "",
-                         nullptr, "",
-		         addFitFunctions2,
-		         colors, markerStyles, lineStyles, 
-		         0.040, legendPosX, 0.17, 0.33, 0.14, 
-		         labelTextLines2, 0.050,
-		         0.17, 0.85, 0.26, 0.05, 
-		         xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
-		         false, 0., 1.09, "Efficiency", 1.4, 
-		         outputFileName2);
-            }
-
-            for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
-                  min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
-    	      for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs.begin();
-	            isolationWP != isolationWPs.end(); ++isolationWP ) {  
-	        for ( std::vector<std::string>::const_iterator decayMode = decayModes.begin();
-	  	      decayMode != decayModes.end(); ++decayMode ) {
-                  std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
-                    srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
-                    observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	          //std::string histogramName_numerator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
-                  //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
-                  //  observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+          for ( std::vector<std::string>::const_iterator hlt_ptThreshold = hlt_ptThresholds.begin();
+	        hlt_ptThreshold != hlt_ptThresholds.end(); ++hlt_ptThreshold ) {      
+            for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
+	          l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) { 
+              for ( std::vector<std::string>::const_iterator hlt_min_leadTrackPt = hlt_min_leadTrackPtValues.begin();
+                    hlt_min_leadTrackPt != hlt_min_leadTrackPtValues.end(); ++hlt_min_leadTrackPt ) {
+                for ( std::vector<std::string>::const_iterator hlt_isolationWP = hlt_isolationWPs.begin();
+	              hlt_isolationWP != hlt_isolationWPs.end(); ++hlt_isolationWP ) {
+                  std::string histogramName_numerator = Form(("%s/" + hlt_dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
+                    hlt_srcVertices[*hlt_vertexOption].data(), hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(),
+                    observable->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_min_leadTrackPt->data(), hlt_isolationWP->data());
+	          //std::string histogramName_numerator = Form(("%s/" + hlt_dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_numerator_all_%s_%s_%s_%s").data(), 
+                  //  hlt_srcVertices[*hlt_vertexOption].data(), hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(),
+                  //  observable->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_min_leadTrackPt->data(), hlt_isolationWP->data());
                   TH1* histogram_numerator = loadHistogram(inputFile, histogramName_numerator);
-	          std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
-                    srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
-                    observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
-	          //std::string histogramName_denominator = Form(("%s/" + dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
-                  //  srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), absEtaRange->data(), decayMode->data(),
-                  //  observable->data(), decayMode->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+	          std::string histogramName_denominator = Form(("%s/" + hlt_dqmDirectory + "_wrtGenHadTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
+                    hlt_srcVertices[*hlt_vertexOption].data(), hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(),
+                    observable->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_min_leadTrackPt->data(), hlt_isolationWP->data());
+	          //std::string histogramName_denominator = Form(("%s/" + hlt_dqmDirectory + "_wrtOfflineTaus/%s/all/effPFTau_vs_%s_denominator_all_%s_%s_%s_%s").data(), 
+                  //  hlt_srcVertices[*hlt_vertexOption].data(), hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(),
+                  //  observable->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_min_leadTrackPt->data(), hlt_isolationWP->data());
                   TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
 	          TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
-	          graphs_efficiency_vs_decayModes[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt][*isolationWP][*decayMode] = graph_efficiency;
-                }
+	          graphs_hlt_efficiency_vs_isolationWPs[*hlt_pfAlgo][*hlt_vertexOption][*l1MatchingOption]
+                    [*observable][*absEtaRange][*hlt_ptThreshold][*hlt_min_leadTrackPt][*hlt_isolationWP] = graph_efficiency;
+                  graphs_hlt_efficiency_vs_leadTrackPt[*hlt_pfAlgo][*hlt_vertexOption][*l1MatchingOption]
+                    [*observable][*absEtaRange][*hlt_ptThreshold][*hlt_isolationWP][*hlt_min_leadTrackPt] = graph_efficiency;
+                  for ( std::vector<std::string>::const_iterator decayMode = decayModes.begin();
+	  	        decayMode != decayModes.end(); ++decayMode ) {
+                    std::string histogramName_numerator = Form(("%s/" + hlt_dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
+                      hlt_srcVertices[*hlt_vertexOption].data(), hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(), decayMode->data(),
+                      observable->data(), decayMode->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_min_leadTrackPt->data(), hlt_isolationWP->data());
+	            //std::string histogramName_numerator = Form(("%s/" + hlt_dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_numerator_%s_%s_%s_%s_%s").data(), 
+                    //  hlt_srcVertices[*hlt_vertexOption].data(), hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(), decayMode->data(),
+                    //  observable->data(), decayMode->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_min_leadTrackPt->data(), hlt_isolationWP->data());
+                    TH1* histogram_numerator = loadHistogram(inputFile, histogramName_numerator);
+	            std::string histogramName_denominator = Form(("%s/" + hlt_dqmDirectory + "_wrtGenHadTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
+                      hlt_srcVertices[*hlt_vertexOption].data(), hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(), decayMode->data(),
+                      observable->data(), decayMode->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_min_leadTrackPt->data(), hlt_isolationWP->data());
+	            //std::string histogramName_denominator = Form(("%s/" + hlt_dqmDirectory + "_wrtOfflineTaus/%s/%s/effPFTau_vs_%s_denominator_%s_%s_%s_%s_%s").data(), 
+                    //  hlt_srcVertices[*hlt_vertexOption].data(), hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(), decayMode->data(),
+                    //  observable->data(), decayMode->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_min_leadTrackPt->data(), hlt_isolationWP->data());
+                    TH1* histogram_denominator = loadHistogram(inputFile, histogramName_denominator);
+	            TGraph* graph_efficiency = makeEfficiencyGraph(histogram_numerator, histogram_denominator);
+	            graphs_hlt_efficiency_vs_decayModes[*hlt_pfAlgo][*hlt_vertexOption][*l1MatchingOption]
+                      [*observable][*absEtaRange][*hlt_ptThreshold][*hlt_min_leadTrackPt][*hlt_isolationWP][*decayMode] = graph_efficiency;
+                  } // decayMode
+                } // hlt_isolationWP
+              } // hlt_min_leadTrackPt
+            } // l1MatchingOption
+          } // hlt_ptThreshold
+        } // absEtaRange
+      } // observable
+    } // hlt_vertexOption
+  } // hlt_pfAlgo
 
-	        string_to_TGraphMap1 graphs3 = graphs_efficiency_vs_decayModes[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold][*min_leadTrackPt][*isolationWP];
-	        std::vector<std::string> labelTextLines3 = getLabelTextLines(*ptThreshold);
-	        std::string outputFileName3 = Form("makeEfficiencyPlots_%s%s_vs_decayMode_and_%s_%s_%s_%s_%s.png", 
-                  pfAlgo->data(), vertexOption->data(), observable->data(), absEtaRange->data(), ptThreshold->data(), min_leadTrackPt->data(), isolationWP->data());
+  // CV: make plots
+  for ( std::vector<std::string>::const_iterator hlt_pfAlgo = hlt_pfAlgos.begin();
+	hlt_pfAlgo != hlt_pfAlgos.end(); ++hlt_pfAlgo ) {
+    for ( std::vector<std::string>::const_iterator hlt_vertexOption = hlt_vertexOptions.begin();
+	  hlt_vertexOption != hlt_vertexOptions.end(); ++hlt_vertexOption ) {
+      for ( std::vector<std::string>::const_iterator observable = observables.begin();
+	    observable != observables.end(); ++observable ) {      
+        for ( std::vector<std::string>::const_iterator absEtaRange = absEtaRanges.begin();
+	      absEtaRange != absEtaRanges.end(); ++absEtaRange ) {
+          for ( std::vector<std::string>::const_iterator hlt_ptThreshold = hlt_ptThresholds.begin();
+	        hlt_ptThreshold != hlt_ptThresholds.end(); ++hlt_ptThreshold ) {      
+            for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
+	          l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
+              for ( std::vector<std::string>::const_iterator hlt_min_leadTrackPt = hlt_min_leadTrackPtValues.begin();
+                    hlt_min_leadTrackPt != hlt_min_leadTrackPtValues.end(); ++hlt_min_leadTrackPt ) {
+  	        string_to_TGraphMap1 graphs1 = graphs_hlt_efficiency_vs_isolationWPs[*hlt_pfAlgo][*hlt_vertexOption][*l1MatchingOption]
+                  [*observable][*absEtaRange][*hlt_ptThreshold][*hlt_min_leadTrackPt];
+	        bool addFitFunctions1 = false;
+                double legendPosX = 0.71;
+	        if ( (*observable) == "pt" ) 
+	        {
+	          addFitFunctions1 = true;
+	        }
+                if ( (*observable) == "eta" ) 
+	        {
+                  legendPosX = 0.43;
+	        }
+	        std::vector<std::string> labelTextLines1 = getLabelTextLines(*hlt_ptThreshold);
+                std::string outputFileName1 = Form("makeEfficiencyPlots_%s%s%s_vs_%s_%s_%s_%s_vs_isolationWP.png", 
+                  hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), 
+                  observable->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_min_leadTrackPt->data());
 	        showGraphs(1150, 850,
-  		           graphs3["oneProng0Pi0"],   legendEntries_vs_decayModes["oneProng0Pi0"],
-		           graphs3["oneProng1Pi0"],   legendEntries_vs_decayModes["oneProng1Pi0"],
-		           graphs3["oneProng2Pi0"],   legendEntries_vs_decayModes["oneProng2Pi0"],
-		           graphs3["threeProng0Pi0"], legendEntries_vs_decayModes["threeProng0Pi0"],
-		           graphs3["threeProng1Pi0"], legendEntries_vs_decayModes["threeProng1Pi0"],
-		           0, "",
-		           false,
+                           graphs1["noIsolation"],         legendEntries_vs_isolationWPs["noIsolation"],
+		           graphs1["relChargedIsoLt0p40"], legendEntries_vs_isolationWPs["relChargedIsoLt0p40"],
+		           graphs1["relChargedIsoLt0p20"], legendEntries_vs_isolationWPs["relChargedIsoLt0p20"],
+		           graphs1["relChargedIsoLt0p10"], legendEntries_vs_isolationWPs["relChargedIsoLt0p10"],
+  		           graphs1["relChargedIsoLt0p05"], legendEntries_vs_isolationWPs["relChargedIsoLt0p05"],
+                           nullptr, "",
+		           addFitFunctions1,
 		           colors, markerStyles, lineStyles, 
-		           0.045, 0.69, 0.17, 0.23, 0.28, 
-		           labelTextLines3, 0.045,
+		           0.040, legendPosX, 0.17, 0.23, 0.28, 
+		           labelTextLines1, 0.050,
 		           0.17, 0.85, 0.26, 0.05, 
 		           xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
 		           false, 0., 1.09, "Efficiency", 1.4, 
-		           outputFileName3);
-              }
-            }
+		           outputFileName1);
+              } // hlt_min_leadTrackPt
+            } // l1MatchingOption
+
+            for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
+	          l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
+              for ( std::vector<std::string>::const_iterator hlt_isolationWP = hlt_isolationWPs.begin();
+	            hlt_isolationWP != hlt_isolationWPs.end(); ++hlt_isolationWP ) {
+                string_to_TGraphMap1 graphs2 = graphs_hlt_efficiency_vs_leadTrackPt[*hlt_pfAlgo][*hlt_vertexOption][*l1MatchingOption]
+                  [*observable][*absEtaRange][*hlt_ptThreshold][*hlt_isolationWP];
+	        bool addFitFunctions2 = false;
+                double legendPosX = 0.61;
+	        if ( (*observable) == "pt" ) 
+	        {
+	          addFitFunctions2 = true;
+	        }
+                if ( (*observable) == "eta" ) 
+	        {
+                  legendPosX = 0.38;
+	        }
+	        std::vector<std::string> labelTextLines2 = getLabelTextLines(*hlt_ptThreshold);
+                std::string outputFileName2 = Form("makeEfficiencyPlots_%s%s%s_vs_%s_%s_%s_%s_vs_leadTrackPt.png", 
+                  hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), 
+                  observable->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_isolationWP->data());
+	        showGraphs(1150, 850,
+                           graphs2["leadTrackPtGt1"], legendEntries_vs_leadTrackPt["leadTrackPtGt1"],
+  		           graphs2["leadTrackPtGt2"], legendEntries_vs_leadTrackPt["leadTrackPtGt2"],
+		           graphs2["leadTrackPtGt5"], legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
+                           nullptr, "",
+                           nullptr, "",
+                           nullptr, "",
+		           addFitFunctions2,
+		           colors, markerStyles, lineStyles, 
+		           0.040, legendPosX, 0.17, 0.33, 0.14, 
+		           labelTextLines2, 0.050,
+		           0.17, 0.85, 0.26, 0.05, 
+		           xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
+		           false, 0., 1.09, "Efficiency", 1.4, 
+		           outputFileName2);
+              } // hlt_isolationWP
+            } // l1MatchingOption
+
+            for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
+	          l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
+              for ( std::vector<std::string>::const_iterator hlt_min_leadTrackPt = hlt_min_leadTrackPtValues.begin();
+                    hlt_min_leadTrackPt != hlt_min_leadTrackPtValues.end(); ++hlt_min_leadTrackPt ) {
+    	        for ( std::vector<std::string>::const_iterator hlt_isolationWP = hlt_isolationWPs.begin();
+	              hlt_isolationWP != hlt_isolationWPs.end(); ++hlt_isolationWP ) {  
+	          string_to_TGraphMap1 graphs3 = graphs_hlt_efficiency_vs_decayModes[*hlt_pfAlgo][*hlt_vertexOption][*l1MatchingOption]
+                    [*observable][*absEtaRange][*hlt_ptThreshold][*hlt_min_leadTrackPt][*hlt_isolationWP];
+	          std::vector<std::string> labelTextLines3 = getLabelTextLines(*hlt_ptThreshold);
+	          std::string outputFileName3 = Form("makeEfficiencyPlots_%s%s%s_vs_decayMode_and_%s_%s_%s_%s_%s.png", 
+                    hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), 
+                    observable->data(), absEtaRange->data(), hlt_ptThreshold->data(), hlt_min_leadTrackPt->data(), hlt_isolationWP->data());
+	          showGraphs(1150, 850,
+  		             graphs3["oneProng0Pi0"],   legendEntries_vs_decayModes["oneProng0Pi0"],
+		             graphs3["oneProng1Pi0"],   legendEntries_vs_decayModes["oneProng1Pi0"],
+		             graphs3["oneProng2Pi0"],   legendEntries_vs_decayModes["oneProng2Pi0"],
+		             graphs3["threeProng0Pi0"], legendEntries_vs_decayModes["threeProng0Pi0"],
+		             graphs3["threeProng1Pi0"], legendEntries_vs_decayModes["threeProng1Pi0"],
+		             0, "",
+		             false,
+		             colors, markerStyles, lineStyles, 
+		             0.045, 0.69, 0.17, 0.23, 0.28, 
+		             labelTextLines3, 0.045,
+		             0.17, 0.85, 0.26, 0.05, 
+		             xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
+		             false, 0., 1.09, "Efficiency", 1.4, 
+		             outputFileName3);
+                } // hlt_isolationWP
+              } // hlt_min_leadTrackPt
+            } // l1MatchingOption
 
             // CV: make final plot that shows trigger efficiency in steps
-            TGraph* graph_trackFinding = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold]["leadTrackPtGt1"]["noIsolation"];
-            TGraph* graph_leadTrackPt  = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold]["leadTrackPtGt5"]["noIsolation"];
-            TGraph* graph_isolation    = graphs_efficiency_vs_isolationWPs[*pfAlgo][*vertexOption][*observable][*absEtaRange][*ptThreshold]["leadTrackPtGt5"]["relChargedIsoLt0p05"];
-	    bool addFitFunctions4 = false;
-            double legendPosX = 0.57;
-	    if ( (*observable) == "pt" ) 
-	    {
-	      addFitFunctions4 = true;
-	    }
-            if ( (*observable) == "eta" ) 
-	    {
-              legendPosX = 0.36;
-	    }
-	    std::vector<std::string> labelTextLines4 = getLabelTextLines(*ptThreshold);
-            std::string outputFileName4 = Form("makeEfficiencyPlots_%s%s_vs_%s_%s_%s_final.png", 
-              pfAlgo->data(), vertexOption->data(), observable->data(), absEtaRange->data(), ptThreshold->data());
-	    showGraphs(1150, 850,
-                       graph_trackFinding, "Track finding",
-                       graph_leadTrackPt,  legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
-                       graph_isolation,    legendEntries_vs_isolationWPs["relChargedIsoLt0p05"],
-                       nullptr, "",
-                       nullptr, "",
-                       nullptr, "",
-		       addFitFunctions4,
-		       colors, markerStyles, lineStyles, 
-		       0.040, legendPosX, 0.17, 0.33, 0.16, 
-		       labelTextLines4, 0.050,
-		       0.17, 0.85, 0.26, 0.05, 
-		       xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
-		       false, 0., 1.09, "Efficiency", 1.4, 
-		       outputFileName4);
-	  }
-	}
-      }
-    }
-  }
+            for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
+	          l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
+              for ( std::vector<std::string>::const_iterator hlt_min_leadTrackPt = hlt_min_leadTrackPtValues.begin();
+                    hlt_min_leadTrackPt != hlt_min_leadTrackPtValues.end(); ++hlt_min_leadTrackPt ) {
+    	        for ( std::vector<std::string>::const_iterator hlt_isolationWP = hlt_isolationWPs.begin();
+	              hlt_isolationWP != hlt_isolationWPs.end(); ++hlt_isolationWP ) {  
+                  std::vector<TGraph*> graphs;
+                  std::vector<std::string> legendEntries;
+                  if ( (*l1MatchingOption) == "MatchedToL1" ) 
+                  {
+                    graphs.push_back(graphs_l1_efficiency[*observable][*absEtaRange]);
+                    legendEntries.push_back("L1");
+                  }
+                  // CV: track finding
+                  graphs.push_back(graphs_hlt_efficiency_vs_isolationWPs[*hlt_pfAlgo][*hlt_vertexOption][*l1MatchingOption]
+                    [*observable][*absEtaRange][*hlt_ptThreshold]["leadTrackPtGt1"]["noIsolation"]);
+                  legendEntries.push_back("Track finding");
+                  // CV: lead. track pT > 5 GeV
+                  graphs.push_back(graphs_hlt_efficiency_vs_isolationWPs[*hlt_pfAlgo][*hlt_vertexOption][*l1MatchingOption]
+                    [*observable][*absEtaRange][*hlt_ptThreshold]["leadTrackPtGt5"]["noIsolation"]);
+                  legendEntries.push_back(legendEntries_vs_leadTrackPt["leadTrackPtGt5"]);
+                  // CV: charged isolation < 0.05 * tau pT
+                  graphs.push_back(graphs_hlt_efficiency_vs_isolationWPs[*hlt_pfAlgo][*hlt_vertexOption][*l1MatchingOption]
+                    [*observable][*absEtaRange][*hlt_ptThreshold]["leadTrackPtGt5"]["relChargedIsoLt0p05"]);
+                  legendEntries.push_back(legendEntries_vs_isolationWPs["relChargedIsoLt0p05"]);
+                  TGraph* graph4 = ( graphs.size() >= 4 ) ? graphs[3] : nullptr;
+                  const std::string& legendEntry4 = ( legendEntries.size() >= 4 ) ? legendEntries[3] : "";
+  	          bool addFitFunctions4 = false;
+                  double legendPosX = 0.57;
+	          if ( (*observable) == "pt" ) 
+	          {
+	            addFitFunctions4 = true;
+	          }
+                  if ( (*observable) == "eta" ) 
+	          {
+                    legendPosX = 0.36;
+	          }
+                  double legendPosY  = 0.17;
+                  double legendSizeY = 0.14;
+                  if ( graph4 ) 
+                  {
+                    legendPosY  = 0.155;
+                    legendSizeY = 0.18;
+                  }
+	          std::vector<std::string> labelTextLines4 = getLabelTextLines(*hlt_ptThreshold);
+                  std::string outputFileName4 = Form("makeEfficiencyPlots_%s%s%s_vs_%s_%s_%s_final.png", 
+                    hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), 
+                    observable->data(), absEtaRange->data(), hlt_ptThreshold->data());
+	          showGraphs(1150, 850,
+                             graphs[0], legendEntries[0],
+                             graphs[1], legendEntries[1],
+                             graphs[2], legendEntries[2],
+                             graph4,    legendEntry4,
+                             nullptr, "",
+                             nullptr, "",
+		             addFitFunctions4,
+		             colors, markerStyles, lineStyles, 
+		             0.040, legendPosX, legendPosY, 0.33, legendSizeY,  
+		             labelTextLines4, 0.050,
+		             0.17, 0.85, 0.26, 0.05, 
+		             xMin[*observable], xMax[*observable], xAxisTitles[*observable], 1.2, 
+		             false, 0., 1.09, "Efficiency", 1.4, 
+		             outputFileName4);
+	        } // hlt_isolationWP
+  	      } // hlt_min_leadTrackPt
+            } // l1MatchingOption
+          } // hlt_ptThreshold
+        } // absEtaRange
+      } // observable
+    } // hlt_vertexOption
+  } // hlt_pfAlgo
 
   delete inputFile;
 }
