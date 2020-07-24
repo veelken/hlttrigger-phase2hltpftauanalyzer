@@ -171,11 +171,16 @@ void DumpRecoPFTaus::analyze(const edm::Event& evt, const edm::EventSetup& es)
     std::cout << std::endl;
     std::map<std::string, double> discriminator_values;
     size_t numDiscriminators = token_discriminators_.size();
-    for ( size_t idxDiscriminator = 0; idxDiscriminator < numDiscriminators; ++idxDiscriminator ) 
+    if ( numDiscriminators >= 1 )
     {
-      edm::Handle<reco::PFTauDiscriminator> discriminators;
-      evt.getByToken(token_discriminators_[idxDiscriminator], discriminators);
-      discriminator_values[src_discriminators_[idxDiscriminator].label()] = (*discriminators)[tauRef];
+      std::cout << "discriminators:" << std::endl;
+      for ( size_t idxDiscriminator = 0; idxDiscriminator < numDiscriminators; ++idxDiscriminator ) 
+      {
+        edm::Handle<reco::PFTauDiscriminator> discriminators;
+        evt.getByToken(token_discriminators_[idxDiscriminator], discriminators);
+        std::cout << " " << src_discriminators_[idxDiscriminator].label() << " = " << (*discriminators)[tauRef] << std::endl;
+        discriminator_values[src_discriminators_[idxDiscriminator].label()] = (*discriminators)[tauRef];
+      }
     }
     if ( debug_ ) 
     {
