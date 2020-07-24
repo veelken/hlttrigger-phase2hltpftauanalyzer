@@ -14,7 +14,10 @@ DumpRecoPFTaus::DumpRecoPFTaus(const edm::ParameterSet& cfg)
   src_ = cfg.getParameter<edm::InputTag>("src");
   token_ = consumes<reco::PFTauCollection>(src_);
   src_sumChargedIso_ = cfg.getParameter<edm::InputTag>("src_sumChargedIso");
-  token_sumChargedIso_ = consumes<reco::PFTauDiscriminator>(src_sumChargedIso_);
+  if ( src_sumChargedIso_.label() != "" ) 
+  {
+    token_sumChargedIso_ = consumes<reco::PFTauDiscriminator>(src_sumChargedIso_);
+  }
   src_discriminators_ = cfg.getParameter<std::vector<edm::InputTag>>("src_discriminators");
   for ( std::vector<edm::InputTag>::const_iterator src_discriminator = src_discriminators_.begin();
         src_discriminator != src_discriminators_.end(); ++src_discriminator ) {
@@ -121,16 +124,30 @@ void DumpRecoPFTaus::analyze(const edm::Event& evt, const edm::EventSetup& es)
   evt.getByToken(token_, taus);
   
   edm::Handle<reco::PFTauDiscriminator> sumChargedIso;
-  evt.getByToken(token_sumChargedIso_, sumChargedIso);
+  if ( src_sumChargedIso_.label() != "" ) 
+  {
+    evt.getByToken(token_sumChargedIso_, sumChargedIso);
+  }
 
   size_t numTaus = taus->size();
   //std::cout << " numTaus = " << numTaus << std::endl;
   for ( size_t idxTau = 0; idxTau < numTaus; ++idxTau ) 
   {
     reco::PFTauRef tauRef(taus, idxTau);
-    double sumChargedIso_value = (*sumChargedIso)[tauRef];
+    double sumChargedIso_value = -1.;
     std::cout << "PFTau #" << idxTau << ": " << " pT = " << tauRef->pt() << ", eta = " << tauRef->eta() << ", phi = " << tauRef->phi() << ","
-              << " decayMode = " << tauRef->decayMode() << ", mass = " << tauRef->mass() << ", chargedIso = " << sumChargedIso_value << std::endl;
+              << " decayMode = " << tauRef->decayMode() << " "
+              << "(nCharged = " << tauRef->signalTauChargedHadronCandidates().size() << ", nPiZeros = " << tauRef->signalPiZeroCandidates().size() << "),"
+              << " mass = " << tauRef->mass() << std::endl;
+    if ( src_sumChargedIso_.label() != "" ) 
+    {
+      sumChargedIso_value = (*sumChargedIso)[tauRef];
+      std::cout << " chargedIso = " << sumChargedIso_value << std::endl;
+    }
+    else  
+    {
+      std::cout << " chargedIso: N/A" << std::endl;
+    }
     std::cout << "lead. ChargedPFCand:";
     if ( tauRef->leadPFChargedHadrCand().isNonnull() )
     {

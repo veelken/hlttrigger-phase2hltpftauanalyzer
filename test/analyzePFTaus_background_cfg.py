@@ -161,10 +161,19 @@ if processName == "QCD":
     hlt_isolation_maxDeltaZOption = None
     if hlt_srcVertices == 'hltPhase2PixelVertices' and "leadTrack" in hlt_isolation_maxDeltaZOptions:
       hlt_isolation_maxDeltaZOption = "leadTrack"
-    else:
+    elif "primaryVertex" in hlt_isolation_maxDeltaZOptions:
       hlt_isolation_maxDeltaZOption = "primaryVertex"
-
+    elif "leadTrack" in hlt_isolation_maxDeltaZOptions:
+      hlt_isolation_maxDeltaZOption = "leadTrack"
+    else:
+      raise ValueError("Invalid parameter hlt_isolation_maxDeltaZOptions = %s !!" % hlt_isolation_maxDeltaZOptions)
     suffix = get_suffix(hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits)
+
+    module_hltPFTausMatchedToL1 = getattr(process, "hltSelected%ss%sMatchedToL1" % (hlt_pfTauLabel, suffix))
+    process.analysisSequence += module_hltPFTausMatchedToL1
+
+    module_hltPFTauChargedIsoPtSum = getattr(process, "hlt%sChargedIsoPtSum%sMatchedToL1" % (hlt_pfTauLabel, suffix))
+    process.analysisSequence += module_hltPFTauChargedIsoPtSum
 
     process.hltHpsPFTausPassingTrigger = cms.EDProducer("MyPFTauSelector",
       src = cms.InputTag('hltSelectedHpsPFTaus%s' % suffix),

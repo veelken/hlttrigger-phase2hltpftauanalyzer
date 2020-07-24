@@ -68,7 +68,7 @@ background_samples = {
     'samples' : {
       'offlinePrimaryVertices' : { 
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 'XXXXXX'
+        'numEvents' : 3122
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
@@ -198,7 +198,7 @@ background_samples = {
     'numJobs' : 10, 
     'crossSection' : 56990.0,
     'process' : "W"
-  },
+  }
 }
 
 run_hlt_algorithms = [ "hps" ]
@@ -211,7 +211,7 @@ l1_useStrips = True
 ##cfgFileName_original = "analyzePFTaus_background_cfg.py"
 cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_background_cfg.py"
 
-version = "2020Jul23"
+version = "2020Jul24"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)
@@ -266,7 +266,7 @@ for sampleName, sample in background_samples.items():
       continue
     numJobs = sample['numJobs']
     lumiScale = sample['crossSection']*conversionFactor*instLuminosity/sample['samples'][hlt_srcVertices]['numEvents'] # rate in Hz corresponding to one MC event
-    print(" lumiScale = %1.2f" % lumiScale)
+    print(" lumiScale = %1.4f" % lumiScale)
     for jobId in range(numJobs):
       idxFirstFile = jobId*numInputFiles/numJobs
       idxLastFile = (jobId + 1)*numInputFiles/numJobs - 1

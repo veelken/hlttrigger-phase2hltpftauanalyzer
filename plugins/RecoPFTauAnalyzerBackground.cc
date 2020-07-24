@@ -10,7 +10,6 @@
 
 RecoPFTauAnalyzerBackground::RecoPFTauAnalyzerBackground(const edm::ParameterSet& cfg)
   : moduleLabel_(cfg.getParameter<std::string>("@module_label"))
-  , numEvents_processed_(0)
 {
   srcPFTaus_ = cfg.getParameter<edm::InputTag>("srcPFTaus");
   tokenPFTaus_ = consumes<reco::PFTauCollection>(srcPFTaus_);
