@@ -77,6 +77,7 @@ void DumpPATTaus::analyze(const edm::Event& evt, const edm::EventSetup& es)
 
   std::vector<std::string> discriminatorsToCheck;
   discriminatorsToCheck.push_back(std::string("decayModeFinding"));
+  discriminatorsToCheck.push_back(std::string("decayModeFindingNewDMs"));
   discriminatorsToCheck.push_back(std::string("byLooseIsolationMVArun2v1DBoldDMwLT2017v2"));
   discriminatorsToCheck.push_back(std::string("byMediumIsolationMVArun2v1DBoldDMwLT2017v2"));
   discriminatorsToCheck.push_back(std::string("byTightIsolationMVArun2v1DBoldDMwLT2017v2"));
@@ -132,6 +133,10 @@ void DumpPATTaus::analyze(const edm::Event& evt, const edm::EventSetup& es)
       if ( tau.isTauIDAvailable(discriminatorToCheck) )
       {
     	std::cout << "  " << discriminatorToCheck << " = " << tau.tauID(discriminatorToCheck) << std::endl;
+      }
+      else
+      {
+    	std::cout << "  " << discriminatorToCheck << ": N/A" << std::endl;
       }
     }
   }
