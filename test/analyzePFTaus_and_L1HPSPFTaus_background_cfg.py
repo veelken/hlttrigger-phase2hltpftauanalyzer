@@ -321,7 +321,7 @@ if processName == "QCD":
 
     process.genPtHatAnalzer = cms.EDAnalyzer("GenPtHatAnalyzer",
       src = cms.InputTag('generator'),
-      lumiScale = cms.double(lumiScale_genPtHat),
+      lumiScale = cms.double(lumiScale),
       dqmDirectory = cms.string("GenPtHatAnalyzer")
     )
     process.genPtHatSequence += process.genPtHatAnalzer
