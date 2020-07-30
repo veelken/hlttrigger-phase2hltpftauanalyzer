@@ -237,7 +237,7 @@ void makeRatePlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/rate/2020Jul21/";
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/rate/2020Jul29/";
 
   std::vector<std::string> processes;
   processes.push_back("minbias");
@@ -270,9 +270,9 @@ void makeRatePlots()
   pfAlgos.push_back("HpsPFTau");
 
   std::vector<std::string> vertexOptions;
-  //vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
-  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
-  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
+  vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
+  vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
+  vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
   vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVertices");
   //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVerticesTrimmed");
   //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
@@ -397,7 +397,8 @@ void makeRatePlots()
               for ( std::vector<std::string>::const_iterator process = processes.begin();
 	            process != processes.end(); ++process ) {
                 std::string histogram2dName = Form(("%s/%s/" + dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s_%s").data(), 
-                  process->data(), srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
+                  process->data(), srcVertices[*vertexOption].data(), pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), 
+                  absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
                 TH2* histogram2d = loadHistogram2d(inputFiles[*process], histogram2dName);
 
                 TH1* histogram_rateSingleTau = makeRateHistogram(histogram2d, 1);

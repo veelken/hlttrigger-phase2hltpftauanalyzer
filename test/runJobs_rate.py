@@ -21,11 +21,11 @@ background_samples = {
     'samples' : {
       'offlinePrimaryVertices' : { 
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 979872
+        'numEvents' : 1000000
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOnlineVtx_wL1/',
-        'numEvents' : 935926
+        'numEvents' : 1000000
       }
     },
     'numJobs' : 10, 
@@ -68,11 +68,11 @@ background_samples = {
     'samples' : {
       'offlinePrimaryVertices' : { 
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 3122
+        'numEvents' : 433546
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
-        'numEvents' : 198916
+        'numEvents' : 487066
       }
     },
     'numJobs' : 10, 
@@ -83,11 +83,11 @@ background_samples = {
     'samples' : {
       'offlinePrimaryVertices' : { 
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 143880
+        'numEvents' : 292080
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
-        'numEvents' : 201080
+        'numEvents' : 235400
       }
     },
     'numJobs' : 10, 
@@ -132,7 +132,7 @@ background_samples = {
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
-        'numEvents' : 47915
+        'numEvents' : 50000
       }
     },
     'numJobs' : 10, 
@@ -143,11 +143,11 @@ background_samples = {
     'samples' : {
       'offlinePrimaryVertices' : { 
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 'XXXXX'
+        'numEvents' : 46490
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
-        'numEvents' : 48050
+        'numEvents' : 50000
       }
     },
     'numJobs' : 10, 
@@ -173,11 +173,11 @@ background_samples = {
     'samples' : {
       'offlinePrimaryVertices' : { 
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 9125
+        'numEvents' : 10000
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOnlineVtx_wL1/',
-        'numEvents' : 9125
+        'numEvents' : 10000
       }
     },
     'numJobs' : 10, 
@@ -188,11 +188,11 @@ background_samples = {
     'samples' : {
       'offlinePrimaryVertices' : { 
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 16796
+        'numEvents' : 53268
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
-        'numEvents' : 17253
+        'numEvents' : 63619
       }
     },
     'numJobs' : 10, 
@@ -211,7 +211,7 @@ l1_useStrips = True
 ##cfgFileName_original = "analyzePFTaus_background_cfg.py"
 cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_background_cfg.py"
 
-version = "2020Jul24"
+version = "2020Jul29"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)
