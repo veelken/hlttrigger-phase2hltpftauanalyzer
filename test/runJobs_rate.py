@@ -211,7 +211,7 @@ l1_useStrips = True
 ##cfgFileName_original = "analyzePFTaus_background_cfg.py"
 cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_background_cfg.py"
 
-version = "2020Jul29"
+version = "2020Aug04v3"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)
@@ -226,7 +226,7 @@ run_command('mkdir -p %s' % configDir)
 run_command('mkdir -p %s' % outputDir)
 
 def build_cfgFile(cfgFileName_original, cfgFileName_modified, 
-                  inputFileNames, process, lumiScale,
+                  inputFileNames, sampleName, process, lumiScale,
                   hlt_srcVertices, hlt_algorithm, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits, l1_useStrips, 
                   outputFileName):
   print("Building configFile = '%s'" % cfgFileName_modified)
@@ -237,6 +237,7 @@ def build_cfgFile(cfgFileName_original, cfgFileName_modified,
   sedCommand  = 'sed'
   sedCommand += ' "s/##inputFilePath/inputFilePath/; s/\$inputFilePath/None/;'
   sedCommand += '  s/##inputFileNames/inputFileNames/; s/\$inputFileNames/%s/;' % [ inputFileName.replace("/", "\/") for inputFileName in inputFileNames ]
+  sedCommand += '  s/##sampleName/sampleName/; s/\$sampleName/%s/;' % sampleName
   sedCommand += '  s/##processName/processName/; s/\$processName/%s/;' % process
   sedCommand += '  s/##lumiScale/lumiScale/; s/\$lumiScale/%s/;' % lumiScale
   sedCommand += '  s/##hlt_srcVertices/hlt_srcVertices/; s/\$hlt_srcVertices/%s/;' % hlt_srcVertices
@@ -284,7 +285,7 @@ for sampleName, sample in background_samples.items():
               (job_key, jobId)
             build_cfgFile(
               cfgFileName_original, cfgFileName_modified, 
-              inputFileNames_job, sample['process'], lumiScale,
+              inputFileNames_job, sampleName, sample['process'], lumiScale,
               hlt_srcVertices, hlt_algorithm, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits, l1_useStrips, 
               outputFileName)
             logFileName = cfgFileName_modified.replace("_cfg.py", ".log")

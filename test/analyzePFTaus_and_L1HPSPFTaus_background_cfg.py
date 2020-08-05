@@ -28,6 +28,8 @@ inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLT
 inputFileNames = []
 #processName = "minbias"
 processName = "QCD"
+#sampleName = "minbias"
+sampleName = "qcd_pt30to50"
 lumiScale = 2.8e+7 # 28 MHz
 hlt_srcVertices = 'offlinePrimaryVertices'
 #hlt_srcVertices = 'hltPhase2PixelVertices'
@@ -41,6 +43,7 @@ outputFileName = "analyzePFTaus_background_%s_%s_DEBUG.root" % (processName, hlt
 ##inputFilePath = None
 ##inputFileNames = $inputFileNames
 ##processName = "$processName"
+##sampleName = "$sampleName"
 ##lumiScale = $lumiScale
 ##hlt_srcVertices = '$hlt_srcVertices'
 ##hlt_algorithms = [ "$hlt_algorithm" ]
@@ -327,6 +330,17 @@ if processName == "QCD":
     process.genPtHatSequence += process.genPtHatAnalzer
 
     process.genPtHatPath = cms.Path(process.genPtHatSequence)
+#--------------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------------
+# CV: fill histogram of generator-level jet pT distribution 
+#     to check "stitching" of QCD samples in bins of generator PtHat
+process.genJetAnalyzer = cms.EDAnalyzer("GenJetAnalyzer",
+  src = cms.InputTag('ak4GenJetsNoNu'),
+  lumiScale = cms.double(lumiScale),                    
+  dqmDirectory = cms.string("%s/GenJetAnalyzer" % sampleName)
+)
+process.analysisSequence += process.genJetAnalyzer
 #--------------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------------
