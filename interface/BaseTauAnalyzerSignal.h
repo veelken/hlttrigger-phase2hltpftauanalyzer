@@ -29,20 +29,24 @@ using namespace dqm::implementation;
 
 namespace
 {
-  TString getHistogramName(const TString& histogramName_old, const std::string& observableName, double observable_min_value, double observable_max_value)
+  TString getHistogramName(const TString& histogramName_old, const std::string& observableName, double observable_min_value, double observable_max_value, int precision)
   {
     TString histogramName_new = histogramName_old;
+    std::string number_format = Form("1.%i", precision);
     if( observable_min_value >= 0. && observable_max_value > 0. ) 
     {
-      histogramName_new.Append(Form("_%s%1.2fto%1.2f", observableName.data(), observable_min_value, observable_max_value));
+      std::string histogramName_format = std::string("_%s%") + number_format + "fto%" + number_format + "f"
+      histogramName_new.Append(Form(histogramName_format.data(), observableName.data(), observable_min_value, observable_max_value));
     } 
     else if ( observable_min_value >= 0. ) 
     {
-      histogramName_new.Append(Form("_%sGt%1.2f", observableName.data(), observable_min_value));
+      std::string histogramName_format = std::string("_%sGt%") + number_format + "f";
+      histogramName_new.Append(Form(histogramName_format.data(), observableName.data(), observable_min_value));
     }
     else if ( observable_max_value > 0. ) 
     {
-      histogramName_new.Append(Form("_%sLt%1.2f", observableName.data(), observable_max_value));
+      std::string histogramName_format = std::string("_%sLt%") + number_format + "f";
+      histogramName_new.Append(Form(histogramName_format.data(), observableName.data(), observable_max_value));
     }
     return histogramName_new;
   }
@@ -143,11 +147,11 @@ class BaseTauAnalyzerSignal : public edm::EDAnalyzer
     void bookHistograms(DQMStore& dqmStore)
     {
       TString histogramName_suffix = decayMode_.data(); 
-      histogramName_suffix = getHistogramName(histogramName_suffix, "pt_numerator", min_pt_numerator_, max_pt_numerator_);
-      histogramName_suffix = getHistogramName(histogramName_suffix, "absEta", min_absEta_, max_absEta_);
-      histogramName_suffix = getHistogramName(histogramName_suffix, "leadTrackPt", min_leadTrackPt_, max_leadTrackPt_);
-      histogramName_suffix = getHistogramName(histogramName_suffix, "relDiscriminator", min_relDiscriminator_, max_relDiscriminator_);
-      histogramName_suffix = getHistogramName(histogramName_suffix, "absDiscriminator", min_absDiscriminator_, max_absDiscriminator_);
+      histogramName_suffix = getHistogramName(histogramName_suffix, "pt_numerator", min_pt_numerator_, max_pt_numerator_, 0);
+      histogramName_suffix = getHistogramName(histogramName_suffix, "absEta", min_absEta_, max_absEta_, 2);
+      histogramName_suffix = getHistogramName(histogramName_suffix, "leadTrackPt", min_leadTrackPt_, max_leadTrackPt_, 0);
+      histogramName_suffix = getHistogramName(histogramName_suffix, "relDiscriminator", min_relDiscriminator_, max_relDiscriminator_, 3);
+      histogramName_suffix = getHistogramName(histogramName_suffix, "absDiscriminator", min_absDiscriminator_, max_absDiscriminator_, 3);
       if ( !(min_relDiscriminator_ >= 0. || max_relDiscriminator_ > 0. || min_absDiscriminator_ >= 0. || max_absDiscriminator_ > 0.) )
       {
         histogramName_suffix.Append("_noIsolation");
