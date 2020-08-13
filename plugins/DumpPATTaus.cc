@@ -83,6 +83,7 @@ void DumpPATTaus::analyze(const edm::Event& evt, const edm::EventSetup& es)
   discriminatorsToCheck.push_back(std::string("byTightIsolationMVArun2v1DBoldDMwLT2017v2"));
   discriminatorsToCheck.push_back(std::string("chargedIsoPtSum"));
   discriminatorsToCheck.push_back(std::string("neutralIsoPtSum"));
+  discriminatorsToCheck.push_back(std::string("byDeepTau2017v2VSjetraw"));
   
   size_t numTaus = taus->size();
   for ( size_t idxTau = 0; idxTau < numTaus; ++idxTau ) 
