@@ -20,8 +20,8 @@ background_samples = {
   'minbias' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 1000000
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau2/',
+        'numEvents' : 999646
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOnlineVtx_wL1/',
@@ -46,7 +46,7 @@ background_samples = {
 ##      }
 ##    },
 ##    'numJobs' : 10, 
-##    'crossSection' : 923300000.0,
+##    'crossSection' : 923300000.0/200,
 ##    'process' : "QCD"
 ##  },
 ##  'qcd_pt20to30' : {
@@ -61,14 +61,14 @@ background_samples = {
 ##      }
 ##    },
 ##    'numJobs' : 10, 
-##    'crossSection' : 436000000.0,
+##    'crossSection' : 436000000.0/200,
 ##    'process' : "QCD"
 ##  },
   'qcd_pt30to50' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 433546
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
+        'numEvents' : 496878
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
@@ -76,14 +76,14 @@ background_samples = {
       }
     },
     'numJobs' : 10, 
-    'crossSection' : 118400000.0,
+    'crossSection' : 118400000.0/200,
     'process' : "QCD"
   },
   'qcd_pt50to80' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 292080
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
+        'numEvents' : 300000
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
@@ -91,13 +91,13 @@ background_samples = {
       }
     },
     'numJobs' : 10, 
-    'crossSection' : 17650000.0,
+    'crossSection' : 17650000.0/200,
     'process' : "QCD"
   },
   'qcd_pt80to120' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
         'numEvents' : 100000
       },
       'hltPhase2PixelVertices' : {
@@ -106,13 +106,13 @@ background_samples = {
       }
     },
     'numJobs' : 10, 
-    'crossSection' : 2671000.0,
+    'crossSection' : 2671000.0/200,
     'process' : "QCD"
   },
   'qcd_pt120to170' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
         'numEvents' : 50000
       },
       'hltPhase2PixelVertices' : {
@@ -121,13 +121,13 @@ background_samples = {
       }
     },
     'numJobs' : 10, 
-    'crossSection' : 469700.0 ,
+    'crossSection' : 469700.0/200,
     'process' : "QCD"
   },
   'qcd_pt170to300' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
         'numEvents' : 50000
       },
       'hltPhase2PixelVertices' : {
@@ -136,14 +136,14 @@ background_samples = {
       }
     },
     'numJobs' : 10, 
-    'crossSection' : 121700.0,
+    'crossSection' : 121700.0/200,
     'process' : "QCD"
   },  
   'qcd_ptGt300' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 46490
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
+        'numEvents' : 50000
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
@@ -151,13 +151,13 @@ background_samples = {
       }
     },
     'numJobs' : 10, 
-    'crossSection' : 9171.0,
+    'crossSection' : 9171.0/200,
     'process' : "QCD"
   },
   'dy_mass10to50' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOfflineVtx_wL1/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOfflineVtx_wDeepTau2/',
         'numEvents' : 96923
       },
       'hltPhase2PixelVertices' : {
@@ -172,7 +172,7 @@ background_samples = {
   'dy_massGt50' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx_wL1/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau2/',
         'numEvents' : 10000
       },
       'hltPhase2PixelVertices' : {
@@ -187,8 +187,8 @@ background_samples = {
   'w' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV_pythia8_wOfflineVtx_wL1/',
-        'numEvents' : 53268
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8_wOfflineVtx_wDeepTau2/',
+        'numEvents' : 85778
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
@@ -211,7 +211,7 @@ l1_useStrips = True
 ##cfgFileName_original = "analyzePFTaus_background_cfg.py"
 cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_background_cfg.py"
 
-version = "2020Jul29"
+version = "2020Aug04v3"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)
@@ -226,7 +226,7 @@ run_command('mkdir -p %s' % configDir)
 run_command('mkdir -p %s' % outputDir)
 
 def build_cfgFile(cfgFileName_original, cfgFileName_modified, 
-                  inputFileNames, process, lumiScale,
+                  inputFileNames, sampleName, process, lumiScale,
                   hlt_srcVertices, hlt_algorithm, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits, l1_useStrips, 
                   outputFileName):
   print("Building configFile = '%s'" % cfgFileName_modified)
@@ -237,6 +237,7 @@ def build_cfgFile(cfgFileName_original, cfgFileName_modified,
   sedCommand  = 'sed'
   sedCommand += ' "s/##inputFilePath/inputFilePath/; s/\$inputFilePath/None/;'
   sedCommand += '  s/##inputFileNames/inputFileNames/; s/\$inputFileNames/%s/;' % [ inputFileName.replace("/", "\/") for inputFileName in inputFileNames ]
+  sedCommand += '  s/##sampleName/sampleName/; s/\$sampleName/%s/;' % sampleName
   sedCommand += '  s/##processName/processName/; s/\$processName/%s/;' % process
   sedCommand += '  s/##lumiScale/lumiScale/; s/\$lumiScale/%s/;' % lumiScale
   sedCommand += '  s/##hlt_srcVertices/hlt_srcVertices/; s/\$hlt_srcVertices/%s/;' % hlt_srcVertices
@@ -284,7 +285,7 @@ for sampleName, sample in background_samples.items():
               (job_key, jobId)
             build_cfgFile(
               cfgFileName_original, cfgFileName_modified, 
-              inputFileNames_job, sample['process'], lumiScale,
+              inputFileNames_job, sampleName, sample['process'], lumiScale,
               hlt_srcVertices, hlt_algorithm, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits, l1_useStrips, 
               outputFileName)
             logFileName = cfgFileName_modified.replace("_cfg.py", ".log")

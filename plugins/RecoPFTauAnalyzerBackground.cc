@@ -1,6 +1,5 @@
 #include "HLTrigger/TallinnHLTPFTauAnalyzer/plugins/RecoPFTauAnalyzerBackground.h"
 
-#include "FWCore/ServiceRegistry/interface/Service.h"
 #include "DataFormats/Common/interface/Handle.h"
 
 #include <TMath.h>
@@ -9,98 +8,44 @@
 #include <iomanip>
 
 RecoPFTauAnalyzerBackground::RecoPFTauAnalyzerBackground(const edm::ParameterSet& cfg)
-  : moduleLabel_(cfg.getParameter<std::string>("@module_label"))
+  : BaseTauAnalyzerBackground(cfg)
 {
   srcPFTaus_ = cfg.getParameter<edm::InputTag>("srcPFTaus");
   tokenPFTaus_ = consumes<reco::PFTauCollection>(srcPFTaus_);
-  srcPFTauSumChargedIso_ = cfg.getParameter<edm::InputTag>("srcPFTauSumChargedIso");
-  tokenPFTauSumChargedIso_ = consumes<reco::PFTauDiscriminator>(srcPFTauSumChargedIso_);
-
-  min_pt_ = cfg.getParameter<double>("min_pt");
-  max_absEta_ = cfg.getParameter<double>("max_absEta");
-
-  lumiScale_ = cfg.getParameter<double>("lumiScale");
-
-  dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
+  srcPFTauDiscriminator_ = cfg.getParameter<edm::InputTag>("srcPFTauDiscriminator");
+  tokenPFTauDiscriminator_ = consumes<reco::PFTauDiscriminator>(srcPFTauDiscriminator_);
 }
 
 RecoPFTauAnalyzerBackground::~RecoPFTauAnalyzerBackground()
+{}
+
+std::vector<BaseTau> 
+RecoPFTauAnalyzerBackground::buildBaseTaus(const edm::Event& evt, const edm::EventSetup& es)
 {
-  for ( auto ratePlot : ratePlots_ ) 
-  {
-    delete ratePlot;
-  }
-}
+  std::vector<BaseTau> baseTaus;
 
-void RecoPFTauAnalyzerBackground::beginJob()
-{
-  if ( !edm::Service<dqm::legacy::DQMStore>().isAvailable() ) {
-    throw cms::Exception("RecoPFTauAnalyzerBackground") 
-      << " Failed to access dqmStore --> histograms will NEITHER be booked NOR filled !!\n";
-  }
-
-  DQMStore& dqmStore = (*edm::Service<dqm::legacy::DQMStore>());
-  dqmStore.setCurrentFolder(dqmDirectory_.data());
-
-  std::vector<double> min_absEtaValues = { -1.,   1.4,   1.4, -1.,    -1.  };
-  std::vector<double> max_absEtaValues = {  1.4,  2.172, 2.4,  2.172,  2.4 };
-  assert(min_absEtaValues.size() == max_absEtaValues.size());
-  size_t numAbsEtaRanges = min_absEtaValues.size();
-  std::vector<double> min_leadTrackPtValues = { 1., 2., 5. };
-  for ( size_t idxAbsEtaRange = 0; idxAbsEtaRange < numAbsEtaRanges; ++idxAbsEtaRange )
-  {
-    double min_absEta = min_absEtaValues[idxAbsEtaRange];
-    double max_absEta = max_absEtaValues[idxAbsEtaRange];
-    for ( auto min_leadTrackPt : min_leadTrackPtValues )
-    {
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt, -1.,   -1., 0.2)); // no isolation cut applied
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.40, -1., 0.2)); // vLoose
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.20, -1., 0.2)); // Loose
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.10, -1., 0.2)); // Medium
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.05, -1., 0.2)); // Tight
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.02, -1., 0.2)); // vTight
-      ratePlots_.push_back(new ratePlotEntryType(min_absEta, max_absEta, min_leadTrackPt,  0.01, -1., 0.2)); // vvTight
-    }
-  }
-
-  for ( auto ratePlot : ratePlots_ ) 
-  {
-    ratePlot->bookHistograms(dqmStore);
-  }
-}
-
-void RecoPFTauAnalyzerBackground::analyze(const edm::Event& evt, const edm::EventSetup& es)
-{
   edm::Handle<reco::PFTauCollection> pfTaus;
   evt.getByToken(tokenPFTaus_, pfTaus);
-  
-  edm::Handle<reco::PFTauDiscriminator> pfTauSumChargedIso;
-  evt.getByToken(tokenPFTauSumChargedIso_, pfTauSumChargedIso);
-  
-  const double evtWeight = lumiScale_;
+  edm::Handle<reco::PFTauDiscriminator> pfTauDiscriminator;
+  evt.getByToken(tokenPFTauDiscriminator_, pfTauDiscriminator);
 
-  std::vector<std::pair<const reco::PFTau*, double>> pfTaus_wChargedIso;
   size_t numPFTaus = pfTaus->size();
   for ( size_t idxPFTau = 0; idxPFTau < numPFTaus; ++idxPFTau ) 
   { 
     reco::PFTauRef pfTauRef(pfTaus, idxPFTau);
-    if ( (min_pt_     < 0. || pfTauRef->pt()             >= min_pt_    ) &&
-         (max_absEta_ < 0. || std::fabs(pfTauRef->eta()) <= max_absEta_) )
+    if ( (min_pt_ < 0. || pfTauRef->pt()                                 >= min_pt_ ) &&
+         (max_pt_ < 0. || pfTauRef->pt()                                 <= max_pt_ ) &&
+         (                pfTauRef->leadPFChargedHadrCand().isNonnull()             && 
+                          pfTauRef->leadPFChargedHadrCand()->bestTrack()            ) )
     {
-      double sumChargedIso = (*pfTauSumChargedIso)[pfTauRef];
-      pfTaus_wChargedIso.push_back(std::pair<const reco::PFTau*, double>(pfTauRef.get(), sumChargedIso));
+      double discriminator = (*pfTauDiscriminator)[pfTauRef];
+      double zVtx = pfTauRef->leadPFChargedHadrCand()->bestTrack()->vertex().z();
+      baseTaus.push_back(BaseTau(pfTauRef->p4(), pfTauRef->leadPFChargedHadrCand()->p4(), discriminator, zVtx));
     }
-    // CV: sort PFTaus by decreasing pT
-    std::sort(pfTaus_wChargedIso.begin(), pfTaus_wChargedIso.end(), isHigherPt);
   }
-  for ( auto ratePlot : ratePlots_ ) 
-  {
-    ratePlot->fillHistograms(pfTaus_wChargedIso, evtWeight);
-  }
+  
+  return baseTaus;
 }
-
-void RecoPFTauAnalyzerBackground::endJob()
-{}
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 
