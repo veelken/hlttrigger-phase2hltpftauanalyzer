@@ -224,7 +224,7 @@ void EvtWeightProducerGenPtHatStitching::produce(edm::Event& evt, const edm::Eve
   }
   else
   {
-    *evtWeight = 1.;
+    *evtWeight = 0.;
   }
   std::cout << "evtWeight = " << (*evtWeight) << std::endl;
 
