@@ -4,23 +4,7 @@ import getpass
 import os
 
 from HLTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames, build_sbatchManagerFile, build_Makefile
-
-signal_samples = {
-  'qqH_htt' : {
-    'samples' : {
-      'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx_wDeepTau2//',
-        'numEvents' : 300000
-      },
-      'hltPhase2PixelVertices' : {
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOnlineVtx_wL1_2FM/',
-        'numEvents' : 300000
-      }
-    },
-    'numJobs' : 10,
-    'process' : "qqH_htt"
-  }
-}
+from HLTrigger.TallinnHLTPFTauAnalyzer.samples_cfi import signal_samples
 
 run_hlt_algorithms = [ "hps" ]
 run_hlt_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
@@ -31,7 +15,7 @@ l1_useStrips = True
 ##cfgFileName_original = "analyzePFTaus_signal_cfg.py"
 cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_signal_cfg.py"
 
-version = "2020Jul23"
+version = "2020Aug19"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/efficiency", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/efficiency", version)

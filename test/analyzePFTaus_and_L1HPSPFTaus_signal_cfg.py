@@ -64,6 +64,14 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 process.analysisSequence = cms.Sequence()
 
 #--------------------------------------------------------------------------------
+# CV: compute event weights
+process.lumiScale = cms.EDProducer("EvtWeightProducerLumiScale",
+  lumiScale = cms.double(1.) # CV: no event weights needed for signal
+)
+process.analysisSequence += process.lumiScale
+#--------------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------------
 # CV: match offline recontructed and generator-level taus
 process.load("PhysicsTools.HepMCCandAlgos.genParticles_cfi")
 process.analysisSequence += process.genParticles
@@ -429,7 +437,7 @@ for hlt_algorithm in hlt_algorithms:
         max_relDiscriminator = cms.vdouble( -1.,    0.40,  0.20,  0.10,  0.05,  0.02,  0.01 ),
         min_absDiscriminator = cms.vdouble(),
         max_absDiscriminator = cms.vdouble(),                                                                                
-        lumiScale = cms.double(1.),
+        src_evtWeight = cms.InputTag('lumiScale'),
         dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_sumChargedIso_wrtGenHadTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
       )
       setattr(process, moduleName_PFTauAnalyzerSignal_sumChargedIso_wrtGenHadTaus, module_PFTauAnalyzerSignal_sumChargedIso_wrtGenHadTaus)
@@ -454,7 +462,7 @@ for hlt_algorithm in hlt_algorithms:
         max_relDiscriminator = cms.vdouble(), 
         min_absDiscriminator = cms.vdouble( -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.        ),
         max_absDiscriminator = cms.vdouble(  0.2599605,  0.4249705,  0.5983682,  0.7848675,  0.8834768,  0.9308689,  0.9573137,  0.9733927 ),
-        lumiScale = cms.double(1.),
+        src_evtWeight = cms.InputTag('lumiScale'),
         dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_deepTau_wrtGenHadTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
       )
       setattr(process, moduleName_PFTauAnalyzerSignal_deepTau_wrtGenHadTaus, module_PFTauAnalyzerSignal_deepTau_wrtGenHadTaus)
