@@ -35,7 +35,7 @@ namespace
     std::string number_format = Form("1.%i", precision);
     if( observable_min_value >= 0. && observable_max_value > 0. ) 
     {
-      std::string histogramName_format = std::string("_%s%") + number_format + "fto%" + number_format + "f"
+      std::string histogramName_format = std::string("_%s%") + number_format + "fto%" + number_format + "f";
       histogramName_new.Append(Form(histogramName_format.data(), observableName.data(), observable_min_value, observable_max_value));
     } 
     else if ( observable_min_value >= 0. ) 
@@ -95,7 +95,8 @@ class BaseTauAnalyzerSignal : public edm::EDAnalyzer
   std::vector<double> max_absDiscriminatorValues_;
   size_t num_absDiscriminatorValues_;
 
-  double lumiScale_;
+  edm::InputTag src_evtWeight_;
+  edm::EDGetTokenT<double> token_evtWeight_;
 
   std::string dqmDirectory_;
 

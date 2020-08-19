@@ -65,7 +65,8 @@ BaseTauAnalyzerBackground::BaseTauAnalyzerBackground(const edm::ParameterSet& cf
   checkArray("dz", min_dzValues_, max_dzValues_);
   num_dzValues_ = min_dzValues_.size();
 
-  lumiScale_ = cfg.getParameter<double>("lumiScale");
+  src_evtWeight_ = cfg.getParameter<edm::InputTag>("src_evtWeight");
+  token_genJets_ = consumes<double>(src_evtWeight_);
 
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }
@@ -146,11 +147,12 @@ void BaseTauAnalyzerBackground::analyze(const edm::Event& evt, const edm::EventS
   // CV: sort taus by decreasing pT
   std::sort(baseTaus.begin(), baseTaus.end(), isHigherPt);
 
-  const double evtWeight = lumiScale_;
+  edm::Handle<double> evtWeight;
+  evt.getByToken(token_evtWeight_, evtWeight);
 
   for ( auto ratePlot : ratePlots_ ) 
   {
-    ratePlot->fillHistograms(baseTaus, evtWeight);
+    ratePlot->fillHistograms(baseTaus, *evtWeight);
   }
 }
 

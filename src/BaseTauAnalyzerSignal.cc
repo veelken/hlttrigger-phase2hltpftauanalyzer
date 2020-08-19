@@ -82,7 +82,8 @@ BaseTauAnalyzerSignal::BaseTauAnalyzerSignal(const edm::ParameterSet& cfg)
     throw cms::Exception("BaseTauAnalyzerSignal") 
       << " No '' or '' Configuration parameters defined !!\n";
 
-  lumiScale_ = cfg.getParameter<double>("lumiScale");
+  edm::Handle<double> evtWeight;
+  evt.getByToken(token_evtWeight_, evtWeight);
 
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }
@@ -187,7 +188,8 @@ void BaseTauAnalyzerSignal::analyze(const edm::Event& evt, const edm::EventSetup
   // CV: sort taus by decreasing pT
   std::sort(baseTaus.begin(), baseTaus.end(), isHigherPt);
   
-  const double evtWeight = lumiScale_;
+  edm::Handle<double> evtWeight;
+  evt.getByToken(token_evtWeight_, evtWeight);
 
   if ( typeDenominator_ == kGen )
   {
@@ -196,7 +198,7 @@ void BaseTauAnalyzerSignal::analyze(const edm::Event& evt, const edm::EventSetup
 
     for ( auto efficiencyPlot : efficiencyPlots_ ) 
     {    
-      efficiencyPlot->fillHistograms(baseTaus, *denominatorTaus_gen, evtWeight);
+      efficiencyPlot->fillHistograms(baseTaus, *denominatorTaus_gen, *evtWeight);
     }
   }
 
@@ -207,7 +209,7 @@ void BaseTauAnalyzerSignal::analyze(const edm::Event& evt, const edm::EventSetup
 
     for ( auto efficiencyPlot : efficiencyPlots_ ) 
     {    
-      efficiencyPlot->fillHistograms(baseTaus, *denominatorTaus_offline, evtWeight);
+      efficiencyPlot->fillHistograms(baseTaus, *denominatorTaus_offline, *evtWeight);
     }
   }
 }

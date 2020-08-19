@@ -62,7 +62,9 @@ def addGenPtHatSequence(process, hlt_srcVertices, hlt_isolation_maxDeltaZOptions
     process.genPtHatSequence += process.hltHpsPFTauPairFilter
 
     process.genPtHatAnalzer = cms.EDAnalyzer("GenPtHatAnalyzer",
-      src = cms.InputTag('generator'),
+      src_genEventInfo = cms.InputTag('generator'),
+      src_genJets = cms.InputTag('ak4GenJetsNoNu'),
+      src_pileupSummaryInfo = cms.InputTag('addPileupInfo'),
       lumiScale = cms.double(lumiScale),
       dqmDirectory = cms.string("GenPtHatAnalyzer")
     )

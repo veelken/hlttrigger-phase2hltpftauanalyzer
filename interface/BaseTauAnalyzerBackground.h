@@ -31,7 +31,7 @@ namespace
     std::string number_format = Form("1.%i", precision);
     if( observable_min_value >= 0. && observable_max_value > 0. ) 
     {
-      std::string histogramName_format = std::string("_%s%") + number_format + "fto%" + number_format + "f"
+      std::string histogramName_format = std::string("_%s%") + number_format + "fto%" + number_format + "f";
       histogramName_new.Append(Form(histogramName_format.data(), observableName.data(), observable_min_value, observable_max_value));
     } 
     else if ( observable_min_value >= 0. ) 
@@ -84,7 +84,8 @@ class BaseTauAnalyzerBackground : public edm::EDAnalyzer
   std::vector<double> max_dzValues_;
   size_t num_dzValues_;
 
-  double lumiScale_;
+  edm::InputTag src_evtWeight_;
+  edm::EDGetTokenT<double> token_evtWeight_;
 
   std::string dqmDirectory_;
 
@@ -121,7 +122,7 @@ class BaseTauAnalyzerBackground : public edm::EDAnalyzer
       {
         histogramName_suffix.Append("_noIsolation");
       }
-      histogramName_suffix = getHistogramName(histogramName_suffix, "dz", min_dz_, max_dz_);
+      histogramName_suffix = getHistogramName(histogramName_suffix, "dz", min_dz_, max_dz_, 1);
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
 
       TString histogramName_numPFTaus_vs_ptThreshold = Form("numPFTaus_vs_ptThreshold%s", histogramName_suffix.Data());
