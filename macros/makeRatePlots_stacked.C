@@ -3,6 +3,7 @@
 #include <TCanvas.h>
 #include <TFile.h>
 #include <TH1.h>
+#include <TH2.h>
 #include <THStack.h>
 #include <TLegend.h>
 #include <TMath.h>
@@ -206,7 +207,7 @@ void showHistograms(double canvasSizeX, double canvasSizeY,
   histogram_minbias_unstitched->Draw("e1psame");
 
   TLegend* legend = 0;
-  if ( legendEntry_minbias != "" ) {
+  if ( legendEntry_minbias_stitched != "" ) {
     legend = new TLegend(legendPosX, legendPosY, legendPosX + legendSizeX, legendPosY + legendSizeY, "", "brNDC"); 
     legend->SetBorderSize(0);
     legend->SetFillColor(0);
@@ -253,7 +254,7 @@ void showHistograms(double canvasSizeX, double canvasSizeY,
   delete canvas;  
 }
 
-void makeGenJetPlots()
+void makeRatePlots_stacked()
 {
 //--- stop ROOT from keeping references to all histograms
   TH1::AddDirectory(false);
@@ -382,16 +383,16 @@ void makeGenJetPlots()
 	            isolationWP != isolationWPs[*tauIdOption].end(); ++isolationWP ) {
 
                 std::string histogram2dName_minbias_unstitched = Form(("%s/%s/%s/" + dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s_%s").data(), 
-                  process->data(), srcVertices[*vertexOption].data(), "lumiScale",
+                  "minbias", srcVertices[*vertexOption].data(), "lumiScale",
                   pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), tauIdOption->data(),
                   absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
                 TH2* histogram2d_minbias_unstitched = loadHistogram2d(inputFiles["minbias"], histogram2dName_minbias_unstitched);
 
                 TH1* histogram_rateSingleTau_minbias_unstitched = makeRateHistogram(histogram2d_minbias_unstitched, 1);
-                histograms_rateSingleTau_minbias_unstitched[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                histograms_rateSingleTau_minbias_unstitched[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
                   [*absEtaRange][*min_leadTrackPt][*isolationWP] = histogram_rateSingleTau_minbias_unstitched;
                 TH1* histogram_rateDoubleTau_minbias_unstitched = makeRateHistogram(histogram2d_minbias_unstitched, 2);
-                histograms_rateDoubleTau_minbias_unstitched[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                histograms_rateDoubleTau_minbias_unstitched[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
                   [*absEtaRange][*min_leadTrackPt][*isolationWP] = histogram_rateDoubleTau_minbias_unstitched;
 
                 for ( std::vector<std::string>::const_iterator process = processes.begin();
@@ -404,10 +405,10 @@ void makeGenJetPlots()
 
                   TH1* histogram_rateSingleTau_process_stitched = makeRateHistogram(histogram2d_process_stitched, 1);
                   histograms_rateSingleTau_vs_processes_stitched[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
-                    [*absEtaRange][*min_leadTrackPt][*isolationWP][*process] = histogram_rateSingleTau;
+                    [*absEtaRange][*min_leadTrackPt][*isolationWP][*process] = histogram_rateSingleTau_process_stitched;
                   TH1* histogram_rateDoubleTau_process_stitched = makeRateHistogram(histogram2d_process_stitched, 2);
                   histograms_rateDoubleTau_vs_processes_stitched[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
-                    [*absEtaRange][*min_leadTrackPt][*isolationWP][*process] = histogram_rateDoubleTau;
+                    [*absEtaRange][*min_leadTrackPt][*isolationWP][*process] = histogram_rateDoubleTau_process_stitched;
                 } // process
 
                 TH1* histogram1_minbias_unstitched = histograms_rateSingleTau_minbias_unstitched[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
@@ -425,12 +426,13 @@ void makeGenJetPlots()
                   histograms1_processes_stitched["qcd_pt80to120"],  legendEntries["qcd_pt80to120"],
                   histograms1_processes_stitched["qcd_pt120to170"], legendEntries["qcd_pt120to170"],
                   histograms1_processes_stitched["qcd_pt170to300"], legendEntries["qcd_pt170to300"],
+                  nullptr, "",
 		  colors, fillStyles, 
 		  0.040, 0.63, 0.63, 0.25, 0.31,
 		  labelTextLines, 0.050,
 		  0.63, 0.66, 0.26, 0.07, 
-		  -1., -1., xAxisTitles[*observable], 1.2, 
-		  true, 1.e0, 1.e+6, "Rate", 1.4, 
+		  -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
+		  true, 1.e0, 1.e+8, "Single #tau Trigger Rate [Hz]", 1.4, 
 		  outputFileName1);
                   
                 TH1* histogram2_minbias_unstitched = histograms_rateSingleTau_minbias_unstitched[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
@@ -448,12 +450,13 @@ void makeGenJetPlots()
                   histograms2_processes_stitched["qcd_pt80to120"],  legendEntries["qcd_pt80to120"],
                   histograms2_processes_stitched["qcd_pt120to170"], legendEntries["qcd_pt120to170"],
                   histograms2_processes_stitched["qcd_pt170to300"], legendEntries["qcd_pt170to300"],
+                  nullptr, "",
 		  colors, fillStyles, 
 		  0.040, 0.63, 0.63, 0.25, 0.31,
 		  labelTextLines, 0.050,
 		  0.63, 0.66, 0.26, 0.07, 
-		  -1., -1., xAxisTitles[*observable], 1.2, 
-		  true, 1.e0, 1.e+6, "Rate", 1.4, 
+		  -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
+		  true, 1.e0, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
 		  outputFileName2);
               } // isolationWP
             } // min_leadTrackPt
