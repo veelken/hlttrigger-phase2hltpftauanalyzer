@@ -15,7 +15,8 @@ instLuminosity = 7.5e+34 # cm^-2 s^-1
 conversionFactor = 1.e-36
 
 run_hlt_algorithms = [ "hps" ]
-run_hlt_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
+##run_hlt_srcVertices = [ "offlinePrimaryVertices", "hltPhase2PixelVertices" ]
+run_hlt_srcVertices = [ "offlinePrimaryVertices" ]
 ##run_hlt_srcVertices = [ "hltPhase2PixelVertices" ]
 run_hlt_isolation_maxDeltaZOptions = [ "primaryVertex", "leadTrack" ]
 ##run_hlt_isolation_minTrackHits = [ 3, 5, 8 ]
@@ -24,7 +25,7 @@ l1_useStrips = True
 ##cfgFileName_original = "analyzePFTaus_background_cfg.py"
 cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_background_cfg.py"
 
-version = "2020Aug19"
+version = "2020Aug21"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)

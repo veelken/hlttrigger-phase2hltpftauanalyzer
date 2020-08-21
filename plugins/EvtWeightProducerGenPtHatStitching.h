@@ -11,6 +11,20 @@
 
 #include <TH1.h>
 
+#include <string>
+#include <vector>
+
+namespace EvtWeightProducerGenPtHatStitching_namespace
+{
+  struct sampleEntryType
+  {
+    std::string name_;
+    double crossSection_;
+    int numEvents_;
+    int pT_hat_bin_;
+  };
+}
+
 class EvtWeightProducerGenPtHatStitching : public edm::EDProducer 
 {
  public:
@@ -28,16 +42,9 @@ class EvtWeightProducerGenPtHatStitching : public edm::EDProducer
   edm::InputTag src_pileupSummaryInfo_;
   edm::EDGetTokenT<std::vector<PileupSummaryInfo>> token_pileupSummaryInfo_;
 
-  struct sampleEntryType
-  {
-    std::string name_;
-    double crossSection_;
-    int numEvents_;
-    int pT_hat_bin_;
-  };
-  std::vector<sampleEntryType> samples_;
-  sampleEntryType sample_minbias_;
-  std::vector<sampleEntryType> samples_qcd_;
+  std::vector<EvtWeightProducerGenPtHatStitching_namespace::sampleEntryType> samples_;
+  EvtWeightProducerGenPtHatStitching_namespace::sampleEntryType sample_minbias_;
+  std::vector<EvtWeightProducerGenPtHatStitching_namespace::sampleEntryType> samples_qcd_;
 
   std::vector<double> p_k_;
 

@@ -14,7 +14,23 @@ def addEvtWeightGenPtHat(process, hlt_srcVertices):
 
     for sampleName, sample in background_samples.items(): 
         if sampleName in [ "minbias", "qcd_pt30to50", "qcd_pt50to80", "qcd_pt80to120", "qcd_pt120to170", "qcd_pt170to300" ]:
+            pT_hat_bin = None
+            if sampleName == "minbias":
+                pT_hat_bin = -1
+            elif sampleName == "qcd_pt30to50":
+                pT_hat_bin =  1
+            elif sampleName == "qcd_pt50to80":
+                pT_hat_bin =  2
+            elif sampleName == "qcd_pt80to120":
+                pT_hat_bin =  3
+            elif sampleName == "qcd_pt120to170":
+                pT_hat_bin =  4
+            elif sampleName == "qcd_pt170to300":
+                pT_hat_bin =  5
+            else:
+                raise ValueError("Invalid sample = '%s' !!" % sampleName)
             setattr(process.stitchingWeight.samples, sampleName, cms.PSet(
               crossSection = cms.double(sample['crossSection']),
-              numEvents = cms.int32(sample['samples'][hlt_srcVertices]['numEvents'])
+              numEvents = cms.uint32(sample['samples'][hlt_srcVertices]['numEvents']),
+              pT_hat_bin = cms.int32(pT_hat_bin)
             ))

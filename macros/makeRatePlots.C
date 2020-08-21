@@ -292,8 +292,8 @@ void makeRatePlots()
   std::vector<std::string> vertexOptions;
   vertexOptions.push_back("8HitsMaxDeltaZWithOfflineVertices");
   vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOfflineVertices");
-  vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
-  vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVertices");
+  //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVertices");
   //vertexOptions.push_back("8HitsMaxDeltaZWithOnlineVerticesTrimmed");
   //vertexOptions.push_back("8HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed");
 /*
@@ -363,6 +363,10 @@ void makeRatePlots()
   isolationWPs["deepTau"].push_back("absDiscriminatorGt0p883");
   isolationWPs["deepTau"].push_back("absDiscriminatorGt0p931");
   
+  std::vector<std::string> evtWeights;
+  evtWeights.push_back("lumiScale");
+  evtWeights.push_back("stitchingWeight");
+
   std::map<std::string, std::map<std::string, std::string>> legendEntries_vs_isolationWPs; // key = tauIdOption, isolationWP
   legendEntries_vs_isolationWPs["sumChargedIso"]["noIsolation"]             = "No Isolation";
   legendEntries_vs_isolationWPs["sumChargedIso"]["relDiscriminatorLt0p400"] = "I_{ch} < 0.40*p_{T}";
@@ -406,14 +410,15 @@ void makeRatePlots()
   typedef std::map<std::string, string_to_TH1Map5> string_to_TH1Map6;
   typedef std::map<std::string, string_to_TH1Map6> string_to_TH1Map7;
   typedef std::map<std::string, string_to_TH1Map7> string_to_TH1Map8;
-  string_to_TH1Map8 histograms_rateSingleTau_vs_processes;        // key = pfAlgo, vertexOption, tauIdOption, l1MatchingOption, absEtaRange, min_leadTrackPt, isolationWP, process
-  string_to_TH1Map8 histograms_rateDoubleTau_vs_processes;        // key = pfAlgo, vertexOption, tauIdOption, l1MatchingOption, absEtaRange, min_leadTrackPt, isolationWP, process
-  string_to_TH1Map7 histograms_rateSingleTau_vs_isolationWPs;     // key = pfAlgo, vertexOption, tauIdOption, l1MatchingOption, absEtaRange, min_leadTrackPt, isolationWP
-  string_to_TH1Map7 histograms_rateDoubleTau_vs_isolationWPs;     // key = pfAlgo, vertexOption, tauIdOption, l1MatchingOption, absEtaRange, min_leadTrackPt, isolationWP
-  string_to_TH1Map7 histograms_rateSingleTau_vs_leadTrackPt;      // key = pfAlgo, vertexOption, tauIdOption, l1MatchingOption, absEtaRange, isolationWP, min_leadTrackPt
-  string_to_TH1Map7 histograms_rateDoubleTau_vs_leadTrackPt;      // key = pfAlgo, vertexOption, tauIdOption, l1MatchingOption, absEtaRange, isolationWP, min_leadTrackPt
-  string_to_TH1Map7 histograms_rateSingleTau_vs_l1MatchingOption; // key = pfAlgo, vertexOption, tauIdOption, absEtaRange, min_leadTrackPt, isolationWP, l1MatchingOption
-  string_to_TH1Map7 histograms_rateDoubleTau_vs_l1MatchingOption; // key = pfAlgo, vertexOption, tauIdOption, absEtaRange, min_leadTrackPt, isolationWP, l1MatchingOption
+  typedef std::map<std::string, string_to_TH1Map8> string_to_TH1Map9;
+  string_to_TH1Map9 histograms_rateSingleTau_vs_processes;        // key = pfAlgo, vertexOption, tauIdOption, evtWeight, l1MatchingOption, absEtaRange, min_leadTrackPt, isolationWP, process
+  string_to_TH1Map9 histograms_rateDoubleTau_vs_processes;        // key = pfAlgo, vertexOption, tauIdOption, evtWeight, l1MatchingOption, absEtaRange, min_leadTrackPt, isolationWP, process
+  string_to_TH1Map8 histograms_rateSingleTau_vs_isolationWPs;     // key = pfAlgo, vertexOption, tauIdOption, evtWeight, l1MatchingOption, absEtaRange, min_leadTrackPt, isolationWP
+  string_to_TH1Map8 histograms_rateDoubleTau_vs_isolationWPs;     // key = pfAlgo, vertexOption, tauIdOption, evtWeight, l1MatchingOption, absEtaRange, min_leadTrackPt, isolationWP
+  string_to_TH1Map8 histograms_rateSingleTau_vs_leadTrackPt;      // key = pfAlgo, vertexOption, tauIdOption, evtWeight, l1MatchingOption, absEtaRange, isolationWP, min_leadTrackPt
+  string_to_TH1Map8 histograms_rateDoubleTau_vs_leadTrackPt;      // key = pfAlgo, vertexOption, tauIdOption, evtWeight, l1MatchingOption, absEtaRange, isolationWP, min_leadTrackPt
+  string_to_TH1Map8 histograms_rateSingleTau_vs_l1MatchingOption; // key = pfAlgo, vertexOption, tauIdOption, evtWeight, absEtaRange, min_leadTrackPt, isolationWP, l1MatchingOption
+  string_to_TH1Map8 histograms_rateDoubleTau_vs_l1MatchingOption; // key = pfAlgo, vertexOption, tauIdOption, evtWeight, absEtaRange, min_leadTrackPt, isolationWP, l1MatchingOption
   
   for ( std::vector<std::string>::const_iterator pfAlgo = pfAlgos.begin();
 	pfAlgo != pfAlgos.end(); ++pfAlgo ) {
@@ -421,238 +426,263 @@ void makeRatePlots()
 	  vertexOption != vertexOptions.end(); ++vertexOption ) {
       for ( std::vector<std::string>::const_iterator tauIdOption = tauIdOptions.begin();
             tauIdOption != tauIdOptions.end(); ++tauIdOption ) {
-        for ( std::vector<std::string>::const_iterator absEtaRange = absEtaRanges.begin();
-	      absEtaRange != absEtaRanges.end(); ++absEtaRange ) {
-          for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
-	        l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {        
-            for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
-                  min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {              
+        for ( std::vector<std::string>::const_iterator evtWeight = evtWeights.begin();
+              evtWeight != evtWeights.end(); ++evtWeight ) {
+          for ( std::vector<std::string>::const_iterator absEtaRange = absEtaRanges.begin();
+	        absEtaRange != absEtaRanges.end(); ++absEtaRange ) {
+            for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
+	          l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {        
+              for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
+                    min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {              
+                for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs[*tauIdOption].begin();
+	              isolationWP != isolationWPs[*tauIdOption].end(); ++isolationWP ) {
+                  for ( std::vector<std::string>::const_iterator process = processes.begin();
+	                process != processes.end(); ++process ) {
+                    std::string histogram2dName = Form(("%s/%s/%s/" + dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s_%s").data(), 
+                      process->data(), srcVertices[*vertexOption].data(), evtWeight->data(),
+                      pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), tauIdOption->data(),
+                      absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
+                    TH2* histogram2d = loadHistogram2d(inputFiles[*process], histogram2dName);
+
+                    TH1* histogram_rateSingleTau = makeRateHistogram(histogram2d, 1);
+                    histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                      [*absEtaRange][*min_leadTrackPt][*isolationWP][*process] = histogram_rateSingleTau;
+                    TH1* histogram_rateDoubleTau = makeRateHistogram(histogram2d, 2);
+                    histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                      [*absEtaRange][*min_leadTrackPt][*isolationWP][*process] = histogram_rateDoubleTau;
+                  } // process
+                  histograms_rateSingleTau_vs_isolationWPs[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                    [*absEtaRange][*min_leadTrackPt][*isolationWP] = sumHistograms(
+                      histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                      [*absEtaRange][*min_leadTrackPt][*isolationWP], processes);
+                  histograms_rateDoubleTau_vs_isolationWPs[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                    [*absEtaRange][*min_leadTrackPt][*isolationWP] = sumHistograms(
+                      histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                      [*absEtaRange][*min_leadTrackPt][*isolationWP], processes);
+                  histograms_rateSingleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
+                    [*absEtaRange][*isolationWP][*min_leadTrackPt] = sumHistograms(
+                      histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                      [*absEtaRange][*min_leadTrackPt][*isolationWP], processes);              
+                  histograms_rateDoubleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                    [*absEtaRange][*isolationWP][*min_leadTrackPt] = sumHistograms(
+                      histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                      [*absEtaRange][*min_leadTrackPt][*isolationWP], processes);
+                  histograms_rateSingleTau_vs_l1MatchingOption[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight]
+                    [*absEtaRange][*min_leadTrackPt][*isolationWP][*l1MatchingOption] = sumHistograms(
+                      histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                      [*absEtaRange][*min_leadTrackPt][*isolationWP], processes); 
+                  histograms_rateDoubleTau_vs_l1MatchingOption[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight]
+                    [*absEtaRange][*min_leadTrackPt][*isolationWP][*l1MatchingOption] = sumHistograms(
+                      histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                      [*absEtaRange][*min_leadTrackPt][*isolationWP], processes); 
+                } // isolationWP
+              } // min_leadTrackPt
+            } // l1MatchingOption
+
+            for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
+	          l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
+              for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
+                    min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
+
+                std::string isolationWP1 = ( isolationWPs[*tauIdOption].size() >= 1 ) ? isolationWPs[*tauIdOption][0] : "";
+                std::string isolationWP2 = ( isolationWPs[*tauIdOption].size() >= 2 ) ? isolationWPs[*tauIdOption][1] : "";
+                std::string isolationWP3 = ( isolationWPs[*tauIdOption].size() >= 3 ) ? isolationWPs[*tauIdOption][2] : "";
+                std::string isolationWP4 = ( isolationWPs[*tauIdOption].size() >= 4 ) ? isolationWPs[*tauIdOption][3] : "";
+                std::string isolationWP5 = ( isolationWPs[*tauIdOption].size() >= 5 ) ? isolationWPs[*tauIdOption][4] : "";
+                std::string isolationWP6 = ( isolationWPs[*tauIdOption].size() >= 6 ) ? isolationWPs[*tauIdOption][5] : "";
+
+                string_to_TH1Map1 histograms1 = histograms_rateSingleTau_vs_isolationWPs[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                  [*absEtaRange][*min_leadTrackPt];
+                std::string outputFileName1 = Form("makeRatePlots_SingleTau_%s%s%s_%s_%s_%s_vs_isolationWP_%s.png", 
+                  pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(),
+                  tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data(), 
+                  evtWeight->data());
+                showHistograms(1150, 1150,
+                               getHistogram(histograms1, isolationWP1), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP1),
+                               getHistogram(histograms1, isolationWP2), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP2),
+                               getHistogram(histograms1, isolationWP3), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP3),
+                               getHistogram(histograms1, isolationWP4), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP4),
+                               getHistogram(histograms1, isolationWP5), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP5),
+                               getHistogram(histograms1, isolationWP6), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP6),
+		               colors, lineStyles, 
+  		               0.040, 0.66, 0.66, 0.23, 0.28,
+		               labelTextLines, 0.050,
+		               0.63, 0.66, 0.26, 0.07, 
+		               -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
+		               true, 1.e0, 1.e+6, "Single #tau Trigger Rate [Hz]", 1.4, 
+		               outputFileName1);
+
+                string_to_TH1Map1 histograms2 = histograms_rateDoubleTau_vs_isolationWPs[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                  [*absEtaRange][*min_leadTrackPt];
+                std::string outputFileName2 = Form("makeRatePlots_DoubleTau_%s%s%s_%s_%s_%s_vs_isolationWP_%s.png", 
+                  pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(),
+                  tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data(), 
+                  evtWeight->data());
+                showHistograms(1150, 1150,
+                               getHistogram(histograms2, isolationWP1), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP1),
+                               getHistogram(histograms2, isolationWP2), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP2),
+                               getHistogram(histograms2, isolationWP3), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP3),
+                               getHistogram(histograms2, isolationWP4), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP4),
+                               getHistogram(histograms2, isolationWP5), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP5),
+                               getHistogram(histograms2, isolationWP6), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP6),
+		               colors, lineStyles, 
+		               0.040, 0.66, 0.66, 0.23, 0.28,
+  		               labelTextLines, 0.050,
+	 	               0.63, 0.66, 0.26, 0.07, 
+		               -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
+		               true, 1.e0, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
+		               outputFileName2);
+              } // min_leadTrackPt
+            } // l1MatchingOption
+
+            for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
+	          l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
               for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs[*tauIdOption].begin();
 	            isolationWP != isolationWPs[*tauIdOption].end(); ++isolationWP ) {
-                for ( std::vector<std::string>::const_iterator process = processes.begin();
-	              process != processes.end(); ++process ) {
-                  std::string histogram2dName = Form(("%s/%s/" + dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s_%s").data(), 
-                    process->data(), srcVertices[*vertexOption].data(), 
-                    pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), tauIdOption->data(),
-                    absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
-                  TH2* histogram2d = loadHistogram2d(inputFiles[*process], histogram2dName);
+                string_to_TH1Map1 histograms3 = histograms_rateSingleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                  [*absEtaRange][*isolationWP];
+                std::string outputFileName3 = Form("makeRatePlots_SingleTau_%s%s%s_%s_%s_%s_vs_leadTrackPt_%s.png", 
+                  pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(),
+                  tauIdOption->data(), absEtaRange->data(), isolationWP->data(), 
+                  evtWeight->data());
+                showHistograms(1150, 1150,
+                               histograms3["leadTrackPtGt1"], legendEntries_vs_leadTrackPt["leadTrackPtGt1"],
+	      	               histograms3["leadTrackPtGt2"], legendEntries_vs_leadTrackPt["leadTrackPtGt2"],
+		               histograms3["leadTrackPtGt5"], legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
+		               nullptr, "",
+		               nullptr, "",
+		               nullptr, "",
+		               colors, lineStyles, 
+		               0.040, 0.47, 0.79, 0.42, 0.13,
+		               labelTextLines, 0.050,
+		               0.63, 0.66, 0.26, 0.07, 
+		               -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
+		               true, 1.e0, 1.e+8, "Single #tau Trigger Rate [Hz]", 1.4, 
+		               outputFileName3);
 
-                  TH1* histogram_rateSingleTau = makeRateHistogram(histogram2d, 1);
-                  histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
-                    [*absEtaRange][*min_leadTrackPt][*isolationWP][*process] = histogram_rateSingleTau;
-                  TH1* histogram_rateDoubleTau = makeRateHistogram(histogram2d, 2);
-                  histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
-                    [*absEtaRange][*min_leadTrackPt][*isolationWP][*process] = histogram_rateDoubleTau;
-                } // process
-                histograms_rateSingleTau_vs_isolationWPs[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
-                  [*absEtaRange][*min_leadTrackPt][*isolationWP] = sumHistograms(
-                    histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt][*isolationWP], processes);
-                histograms_rateDoubleTau_vs_isolationWPs[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
-                  [*absEtaRange][*min_leadTrackPt][*isolationWP] = sumHistograms(
-                    histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt][*isolationWP], processes);
-                histograms_rateSingleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
-                  [*absEtaRange][*isolationWP][*min_leadTrackPt] = sumHistograms(
-                    histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt][*isolationWP], processes);              
-                histograms_rateDoubleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
-                  [*absEtaRange][*isolationWP][*min_leadTrackPt] = sumHistograms(
-                    histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt][*isolationWP], processes);
-                histograms_rateSingleTau_vs_l1MatchingOption[*pfAlgo][*vertexOption][*tauIdOption]
-                  [*absEtaRange][*min_leadTrackPt][*isolationWP][*l1MatchingOption] = sumHistograms(
-                    histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt][*isolationWP], processes); 
-                histograms_rateDoubleTau_vs_l1MatchingOption[*pfAlgo][*vertexOption][*tauIdOption]
-                  [*absEtaRange][*min_leadTrackPt][*isolationWP][*l1MatchingOption] = sumHistograms(
-                    histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt][*isolationWP], processes); 
+                string_to_TH1Map1 histograms4 = histograms_rateDoubleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                  [*absEtaRange][*isolationWP];
+                std::string outputFileName4 = Form("makeRatePlots_DoubleTau_%s%s%s_%s_%s_%s_vs_leadTrackPt_%s.png", 
+                  pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(),
+                  tauIdOption->data(), absEtaRange->data(), isolationWP->data(), 
+                  evtWeight->data());
+                showHistograms(1150, 1150,
+                               histograms4["leadTrackPtGt1"], legendEntries_vs_leadTrackPt["leadTrackPtGt1"],
+	         	       histograms4["leadTrackPtGt2"], legendEntries_vs_leadTrackPt["leadTrackPtGt2"],
+	 	               histograms4["leadTrackPtGt5"], legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
+		               nullptr, "",
+		               nullptr, "",
+		               nullptr, "",
+		               colors, lineStyles, 
+		               0.040, 0.47, 0.79, 0.42, 0.13,
+		               labelTextLines, 0.050,
+		               0.63, 0.66, 0.26, 0.07, 
+		               -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
+		               true, 1.e0, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
+		               outputFileName4);
               } // isolationWP
-            } // min_leadTrackPt
-          } // l1MatchingOption
+            } // l1MatchingOption
 
-          for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
-	        l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
-            for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
-                  min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
-
-              std::string isolationWP1 = ( isolationWPs[*tauIdOption].size() >= 1 ) ? isolationWPs[*tauIdOption][0] : "";
-              std::string isolationWP2 = ( isolationWPs[*tauIdOption].size() >= 2 ) ? isolationWPs[*tauIdOption][1] : "";
-              std::string isolationWP3 = ( isolationWPs[*tauIdOption].size() >= 3 ) ? isolationWPs[*tauIdOption][2] : "";
-              std::string isolationWP4 = ( isolationWPs[*tauIdOption].size() >= 4 ) ? isolationWPs[*tauIdOption][3] : "";
-              std::string isolationWP5 = ( isolationWPs[*tauIdOption].size() >= 5 ) ? isolationWPs[*tauIdOption][4] : "";
-              std::string isolationWP6 = ( isolationWPs[*tauIdOption].size() >= 6 ) ? isolationWPs[*tauIdOption][5] : "";
-
-              string_to_TH1Map1 histograms1 = histograms_rateSingleTau_vs_isolationWPs[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt];
-              std::string outputFileName1 = Form("makeRatePlots_SingleTau_%s%s%s_%s_%s_%s_vs_isolationWP.png", 
-                pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(),
-                tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data());
-              showHistograms(1150, 1150,
-                             getHistogram(histograms1, isolationWP1), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP1),
-                             getHistogram(histograms1, isolationWP2), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP2),
-                             getHistogram(histograms1, isolationWP3), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP3),
-                             getHistogram(histograms1, isolationWP4), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP4),
-                             getHistogram(histograms1, isolationWP5), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP5),
-                             getHistogram(histograms1, isolationWP6), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP6),
-		             colors, lineStyles, 
-  		             0.040, 0.66, 0.66, 0.23, 0.28,
-		             labelTextLines, 0.050,
-		             0.63, 0.66, 0.26, 0.07, 
-		             -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		             true, 1.e0, 1.e+6, "Single #tau Trigger Rate [Hz]", 1.4, 
-		             outputFileName1);
-
-              string_to_TH1Map1 histograms2 = histograms_rateDoubleTau_vs_isolationWPs[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt];
-              std::string outputFileName2 = Form("makeRatePlots_DoubleTau_%s%s%s_%s_%s_%s_vs_isolationWP.png", 
-                pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(),
-                tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data());
-              showHistograms(1150, 1150,
-                             getHistogram(histograms2, isolationWP1), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP1),
-                             getHistogram(histograms2, isolationWP2), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP2),
-                             getHistogram(histograms2, isolationWP3), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP3),
-                             getHistogram(histograms2, isolationWP4), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP4),
-                             getHistogram(histograms2, isolationWP5), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP5),
-                             getHistogram(histograms2, isolationWP6), getLegendEntry(legendEntries_vs_isolationWPs[*tauIdOption], isolationWP6),
-		             colors, lineStyles, 
-		             0.040, 0.66, 0.66, 0.23, 0.28,
-		             labelTextLines, 0.050,
-		             0.63, 0.66, 0.26, 0.07, 
-		             -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		             true, 1.e0, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
-		             outputFileName2);
-            } // min_leadTrackPt
-          } // l1MatchingOption
-
-          for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
-	        l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
-            for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs[*tauIdOption].begin();
-	          isolationWP != isolationWPs[*tauIdOption].end(); ++isolationWP ) {
-              string_to_TH1Map1 histograms3 = histograms_rateSingleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*isolationWP];
-              std::string outputFileName3 = Form("makeRatePlots_SingleTau_%s%s%s_%s_%s_%s_vs_leadTrackPt.png", 
-                pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(),
-                tauIdOption->data(), absEtaRange->data(), isolationWP->data());
-              showHistograms(1150, 1150,
-                             histograms3["leadTrackPtGt1"], legendEntries_vs_leadTrackPt["leadTrackPtGt1"],
-	      	             histograms3["leadTrackPtGt2"], legendEntries_vs_leadTrackPt["leadTrackPtGt2"],
-		             histograms3["leadTrackPtGt5"], legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
-		             nullptr, "",
-		             nullptr, "",
-		             nullptr, "",
-		             colors, lineStyles, 
-		             0.040, 0.47, 0.79, 0.42, 0.13,
-		             labelTextLines, 0.050,
-		             0.63, 0.66, 0.26, 0.07, 
-		             -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		             true, 1.e0, 1.e+8, "Single #tau Trigger Rate [Hz]", 1.4, 
-		             outputFileName3);
-
-              string_to_TH1Map1 histograms4 = histograms_rateDoubleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*isolationWP];
-              std::string outputFileName4 = Form("makeRatePlots_DoubleTau_%s%s%s_%s_%s_%s_vs_leadTrackPt.png", 
-                pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(),
-                tauIdOption->data(), absEtaRange->data(), isolationWP->data());
-              showHistograms(1150, 1150,
-                             histograms4["leadTrackPtGt1"], legendEntries_vs_leadTrackPt["leadTrackPtGt1"],
-	         	     histograms4["leadTrackPtGt2"], legendEntries_vs_leadTrackPt["leadTrackPtGt2"],
-	 	             histograms4["leadTrackPtGt5"], legendEntries_vs_leadTrackPt["leadTrackPtGt5"],
-		             nullptr, "",
-		             nullptr, "",
-		             nullptr, "",
-		             colors, lineStyles, 
-		             0.040, 0.47, 0.79, 0.42, 0.13,
-		             labelTextLines, 0.050,
-		             0.63, 0.66, 0.26, 0.07, 
-		             -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		             true, 1.e0, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
-		             outputFileName4);
-            } // isolationWP
-          } // l1MatchingOption
-
-          for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
-                min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
-            for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs[*tauIdOption].begin();
-	          isolationWP != isolationWPs[*tauIdOption].end(); ++isolationWP ) {
-              string_to_TH1Map1 histograms5 = histograms_rateSingleTau_vs_l1MatchingOption[*pfAlgo][*vertexOption][*tauIdOption][*absEtaRange][*min_leadTrackPt][*isolationWP];
-              std::string outputFileName5 = Form("makeRatePlots_SingleTau_%s%s_%s_%s_%s_%s_vs_l1MatchingOption.png", 
-                pfAlgo->data(), vertexOption->data(), 
-                tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
-              showHistograms(1150, 1150,
-                             histograms5[""],            legendEntries_vs_l1MatchingOption[""],
-	  	             histograms5["MatchedToL1"], legendEntries_vs_l1MatchingOption["MatchedToL1"],
-		             nullptr, "",
-		             nullptr, "",
-		             nullptr, "",
-		             nullptr, "",
-		             colors, lineStyles, 
-		             0.040, 0.47, 0.79, 0.42, 0.13,
-		             labelTextLines, 0.050,
-		             0.63, 0.66, 0.26, 0.07, 
-		             -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		             true, 1.e0, 1.e+8, "Single #tau Trigger Rate [Hz]", 1.4, 
-		             outputFileName5);
-
-              string_to_TH1Map1 histograms6 = histograms_rateDoubleTau_vs_l1MatchingOption[*pfAlgo][*vertexOption][*tauIdOption][*absEtaRange][*min_leadTrackPt][*isolationWP];
-              std::string outputFileName6 = Form("makeRatePlots_DoubleTau_%s%s_%s_%s_%s_%s_vs_l1MatchingOption.png", 
-                pfAlgo->data(), vertexOption->data(),
-                tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
-              showHistograms(1150, 1150,
-	  	             histograms6[""],            legendEntries_vs_l1MatchingOption[""],
-		             histograms6["MatchedToL1"], legendEntries_vs_l1MatchingOption["MatchedToL1"],
-		             nullptr, "",
-		             nullptr, "",
-		             nullptr, "",
-		             nullptr, "",
-		             colors, lineStyles, 
-		             0.040, 0.47, 0.79, 0.42, 0.13,
-		             labelTextLines, 0.050,
-		             0.63, 0.66, 0.26, 0.07, 
-		             -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		             true, 1.e0, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
-		             outputFileName6);
-            } // isolationWP
-          } // min_leadTrackPt
-
-          for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
-	        l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
             for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
                   min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
               for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs[*tauIdOption].begin();
 	            isolationWP != isolationWPs[*tauIdOption].end(); ++isolationWP ) {
-                string_to_TH1Map1 histograms7 = histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt][*isolationWP];
-                std::string outputFileName7 = Form("makeRatePlots_SingleTau_%s%s%s_%s_%s_%s_%s_vs_processes.png", 
-                  pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), 
-                  tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
+                string_to_TH1Map1 histograms5 = histograms_rateSingleTau_vs_l1MatchingOption[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*absEtaRange]
+                  [*min_leadTrackPt][*isolationWP];
+                std::string outputFileName5 = Form("makeRatePlots_SingleTau_%s%s_%s_%s_%s_%s_vs_l1MatchingOption_%s.png", 
+                  pfAlgo->data(), vertexOption->data(), 
+                  tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data(), 
+                  evtWeight->data());
                 showHistograms(1150, 1150,
-                               histograms7["minbias"], legendEntries_vs_processes["minbias"],
-                               histograms7["QCD"],     legendEntries_vs_processes["QCD"],
-                               histograms7["DY"],      legendEntries_vs_processes["DY"],
-                               histograms7["W"],       legendEntries_vs_processes["W"],
-                               nullptr, "",
+                               histograms5[""],            legendEntries_vs_l1MatchingOption[""],
+	    	               histograms5["MatchedToL1"], legendEntries_vs_l1MatchingOption["MatchedToL1"],
+		               nullptr, "",
+		               nullptr, "",
+		               nullptr, "",
 		               nullptr, "",
 		               colors, lineStyles, 
-		               0.040, 0.65, 0.66, 0.24, 0.28,
+		               0.040, 0.47, 0.79, 0.42, 0.13,
 		               labelTextLines, 0.050,
 		               0.63, 0.66, 0.26, 0.07, 
 		               -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		               true, 1.e-1, 1.e+6, "Single #tau Trigger Rate [Hz]", 1.4, 
-		               outputFileName7);
+		               true, 1.e0, 1.e+8, "Single #tau Trigger Rate [Hz]", 1.4, 
+		               outputFileName5);
 
-                string_to_TH1Map1 histograms8 = histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption][*absEtaRange][*min_leadTrackPt][*isolationWP];
-                std::string outputFileName8 = Form("makeRatePlots_DoubleTau_%s%s%s_%s_%s_%s_%s_vs_processes.png", 
-                  pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), 
-                  tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
+                string_to_TH1Map1 histograms6 = histograms_rateDoubleTau_vs_l1MatchingOption[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight]
+                  [*absEtaRange][*min_leadTrackPt][*isolationWP];
+                std::string outputFileName6 = Form("makeRatePlots_DoubleTau_%s%s_%s_%s_%s_%s_vs_l1MatchingOption_%s.png", 
+                  pfAlgo->data(), vertexOption->data(),
+                  tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data(), 
+                  evtWeight->data());
                 showHistograms(1150, 1150,
-                               histograms8["minbias"], legendEntries_vs_processes["minbias"],
-                               histograms8["QCD"],     legendEntries_vs_processes["QCD"],
-                               histograms8["DY"],      legendEntries_vs_processes["DY"],
-                               histograms8["W"],       legendEntries_vs_processes["W"],
-                               nullptr, "",
+	    	               histograms6[""],            legendEntries_vs_l1MatchingOption[""],
+		               histograms6["MatchedToL1"], legendEntries_vs_l1MatchingOption["MatchedToL1"],
+		               nullptr, "",
+		               nullptr, "",
+		               nullptr, "",
 		               nullptr, "",
 		               colors, lineStyles, 
-		               0.040, 0.65, 0.66, 0.24, 0.28,
+		               0.040, 0.47, 0.79, 0.42, 0.13,
 		               labelTextLines, 0.050,
 		               0.63, 0.66, 0.26, 0.07, 
 		               -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
-		               true, 1.e-1, 1.e+6, "Double #tau Trigger Rate [Hz]", 1.4, 
-		               outputFileName8);
+		               true, 1.e0, 1.e+8, "Double #tau Trigger Rate [Hz]", 1.4, 
+		               outputFileName6);
               } // isolationWP
             } // min_leadTrackPt
-          } // l1MatchingOption
-        } // absEtaRange
+
+            for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
+	          l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
+              for ( std::vector<std::string>::const_iterator min_leadTrackPt = min_leadTrackPtValues.begin();
+                    min_leadTrackPt != min_leadTrackPtValues.end(); ++min_leadTrackPt ) {
+                for ( std::vector<std::string>::const_iterator isolationWP = isolationWPs[*tauIdOption].begin();
+	              isolationWP != isolationWPs[*tauIdOption].end(); ++isolationWP ) {
+                  string_to_TH1Map1 histograms7 = histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                    [*absEtaRange][*min_leadTrackPt][*isolationWP];
+                  std::string outputFileName7 = Form("makeRatePlots_SingleTau_%s%s%s_%s_%s_%s_%s_vs_processes_%s.png", 
+                    pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), 
+                    tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data(), 
+                    evtWeight->data());
+                  showHistograms(1150, 1150,
+                                 histograms7["minbias"], legendEntries_vs_processes["minbias"],
+                                 histograms7["QCD"],     legendEntries_vs_processes["QCD"],
+                                 histograms7["DY"],      legendEntries_vs_processes["DY"],
+                                 histograms7["W"],       legendEntries_vs_processes["W"],
+                                 nullptr, "",
+		                 nullptr, "",
+		                 colors, lineStyles, 
+		                 0.040, 0.65, 0.66, 0.24, 0.28,
+		                 labelTextLines, 0.050,
+		                 0.63, 0.66, 0.26, 0.07, 
+		                 -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
+		                 true, 1.e-1, 1.e+6, "Single #tau Trigger Rate [Hz]", 1.4, 
+		                 outputFileName7);
+
+                  string_to_TH1Map1 histograms8 = histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
+                    [*absEtaRange][*min_leadTrackPt][*isolationWP];
+                  std::string outputFileName8 = Form("makeRatePlots_DoubleTau_%s%s%s_%s_%s_%s_%s_vs_processes_%s.png", 
+                    pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), 
+                    tauIdOption->data(), absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data(), 
+                    evtWeight->data());
+                  showHistograms(1150, 1150,
+                                 histograms8["minbias"], legendEntries_vs_processes["minbias"],
+                                 histograms8["QCD"],     legendEntries_vs_processes["QCD"],
+                                 histograms8["DY"],      legendEntries_vs_processes["DY"],
+                                 histograms8["W"],       legendEntries_vs_processes["W"],
+                                 nullptr, "",
+		                 nullptr, "",
+		                 colors, lineStyles, 
+		                 0.040, 0.65, 0.66, 0.24, 0.28,
+		                 labelTextLines, 0.050,
+		                 0.63, 0.66, 0.26, 0.07, 
+		                 -1., -1., "HLT #tau p_{T} Threshold [GeV]", 1.2, 
+		                 true, 1.e-1, 1.e+6, "Double #tau Trigger Rate [Hz]", 1.4, 
+		                 outputFileName8);
+                } // isolationWP
+              } // min_leadTrackPt
+            } // l1MatchingOption
+          } // absEtaRange
+        } // evtWeight
       } // tauIdOption
     } // vertexOption
   } // pfAlgo

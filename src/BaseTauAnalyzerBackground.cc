@@ -66,7 +66,7 @@ BaseTauAnalyzerBackground::BaseTauAnalyzerBackground(const edm::ParameterSet& cf
   num_dzValues_ = min_dzValues_.size();
 
   src_evtWeight_ = cfg.getParameter<edm::InputTag>("src_evtWeight");
-  token_genJets_ = consumes<double>(src_evtWeight_);
+  token_evtWeight_ = consumes<double>(src_evtWeight_);
 
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }

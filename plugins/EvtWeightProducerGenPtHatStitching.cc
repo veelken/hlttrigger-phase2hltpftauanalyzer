@@ -4,10 +4,11 @@
 
 #include <TArrayF.h>
 
-#include <string>
-#include <vector>
 #include <iostream>
 #include <iomanip>
+#include <algorithm> 
+
+using namespace EvtWeightProducerGenPtHatStitching_namespace;
 
 namespace
 {
@@ -45,13 +46,20 @@ namespace
   {
     return format_vT(vi);
   }
+
+  bool
+  isLowerPtHatBin(const sampleEntryType& sample1,
+                  const sampleEntryType& sample2)
+  {
+    return sample1.pT_hat_bin_ < sample2.pT_hat_bin_;
+  }
 }
 
 EvtWeightProducerGenPtHatStitching::EvtWeightProducerGenPtHatStitching(const edm::ParameterSet& cfg) 
   : moduleLabel_(cfg.getParameter<std::string>("@module_label"))
   , histogram_X_(nullptr)
 {
-  std::cout << "<EvtWeightProducerGenPtHatStitching::EvtWeightProducerGenPtHatStitching (moduleLabel = " << moduleLabel_ << ")>:" << std::endl;
+  //std::cout << "<EvtWeightProducerGenPtHatStitching::EvtWeightProducerGenPtHatStitching (moduleLabel = " << moduleLabel_ << ")>:" << std::endl;
 
   src_genEventInfo_ = cfg.getParameter<edm::InputTag>("src_genEventInfo");
   token_genEventInfo_ = consumes<GenEventInfoProduct>(src_genEventInfo_);
@@ -77,6 +85,7 @@ EvtWeightProducerGenPtHatStitching::EvtWeightProducerGenPtHatStitching(const edm
     sample.pT_hat_bin_ = cfg_sample.getParameter<int>("pT_hat_bin");
     samples_.push_back(sample);
   }
+  std::sort(samples_.begin(), samples_.end(), isLowerPtHatBin);
   bool isInitialized_minbias = false;
   std::vector<bool> isInitialized_qcd(numBins_pT_hat_);
   for ( std::vector<sampleEntryType>::const_iterator sample = samples_.begin();
@@ -132,9 +141,9 @@ EvtWeightProducerGenPtHatStitching::EvtWeightProducerGenPtHatStitching(const edm
   for ( int idxBin = 0; idxBin < numBins_pT_hat_; ++idxBin )
   {
     p_k_[idxBin] = crossSections_qcd[idxBin]/crossSection_minbias;
-    assert(p_k_[idxBin] >= 0. && p_k_[idxBin] >= 1.);
+    assert(p_k_[idxBin] >= 0. && p_k_[idxBin] <= 1.);
   }
-  std::cout << "p_k = " << format_vdouble(p_k_) << std::endl;
+  //std::cout << " p_k = " << format_vdouble(p_k_) << std::endl;
     
   bxFrequency_ = cfg.getParameter<double>("bxFrequency");
 
@@ -155,7 +164,7 @@ EvtWeightProducerGenPtHatStitching::~EvtWeightProducerGenPtHatStitching()
 
 void EvtWeightProducerGenPtHatStitching::produce(edm::Event& evt, const edm::EventSetup& es)
 {
-  std::cout << "<EvtWeightProducerGenPtHatStitching::produce (moduleLabel = " << moduleLabel_ << ")>:" << std::endl;
+  //std::cout << "<EvtWeightProducerGenPtHatStitching::produce (moduleLabel = " << moduleLabel_ << ")>:" << std::endl;
 
   std::unique_ptr<double> evtWeight(new double());
 
@@ -192,19 +201,20 @@ void EvtWeightProducerGenPtHatStitching::produce(edm::Event& evt, const edm::Eve
   int N = 0;
   for ( int idxBin = 0; idxBin < numBins_pT_hat_; ++idxBin )
   {
-    double histogram_X_binContent = histogram_X_->GetBinContent(idxBin);
+    double histogram_X_binContent = histogram_X_->GetBinContent(idxBin + 1);
     assert(histogram_X_binContent >= 0);
     x_k[idxBin] = histogram_X_binContent;
     N += x_k[idxBin];
   }
-  std::cout << "x_k = " << format_vint(x_k) << " (N = " << N << ")" << std::endl;
+  //std::cout << " x_k = " << format_vint(x_k) << " (N = " << N << ")" << std::endl;
 
   double rate_data = bxFrequency_;
   double expEvents_mc = 0.;
   for ( std::vector<sampleEntryType>::const_iterator sample = samples_.begin();
         sample != samples_.end(); ++sample ) {
     double prob_corr = 0.;
-    if ( sample->pT_hat_bin_ != -1 ) // minbias sample
+    //std::cout << "checking sample = " << sample->name_ << " (pT_hat_bin = " << sample->pT_hat_bin_ << ")" << std::endl;
+    if ( sample->pT_hat_bin_ == -1 ) // minbias sample
     {
       prob_corr = 1.;
     }
@@ -213,10 +223,11 @@ void EvtWeightProducerGenPtHatStitching::produce(edm::Event& evt, const edm::Eve
       if ( (N*p_k_[sample->pT_hat_bin_]) > 0. )
       {
         prob_corr = x_k[sample->pT_hat_bin_]/(N*p_k_[sample->pT_hat_bin_]);
-        std::cout << "pT_hat_bin #" << sample->pT_hat_bin_ << ": prob_corr = " << prob_corr << std::endl;
+        //std::cout << " pT_hat_bin #" << sample->pT_hat_bin_ << ": prob_corr = " << prob_corr << std::endl;
       }
     }
     expEvents_mc += sample->numEvents_*prob_corr;
+    //std::cout << "--> expEvents_mc = " << expEvents_mc << std::endl;
   }
   if ( expEvents_mc > 0. )
   {
@@ -226,7 +237,7 @@ void EvtWeightProducerGenPtHatStitching::produce(edm::Event& evt, const edm::Eve
   {
     *evtWeight = 0.;
   }
-  std::cout << "evtWeight = " << (*evtWeight) << std::endl;
+  //std::cout << "evtWeight = " << (*evtWeight) << std::endl;
 
   evt.put(std::move(evtWeight));
 }

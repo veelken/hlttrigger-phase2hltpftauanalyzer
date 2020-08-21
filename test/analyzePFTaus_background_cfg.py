@@ -136,7 +136,7 @@ for hlt_algorithm in hlt_algorithms:
         max_absDiscriminator = cms.vdouble(),
         min_dzValues = cms.vdouble( -1.  ),
         max_dzValues = cms.vdouble(  0.2 ),
-        evtWeight = cms.InputTag(src_evtWeight),
+        src_evtWeight = cms.InputTag(src_evtWeight),
         dqmDirectory = cms.string("%s/%s/%s/%sAnalyzerBackground%s_sumChargedIso" % (processName, hlt_srcVertices, src_evtWeight, hlt_pfTauLabel, suffix))
       )
       setattr(process, moduleName_PFTauAnalyzerBackground_sumChargedIso, module_PFTauAnalyzerBackground_sumChargedIso)
@@ -158,7 +158,7 @@ for hlt_algorithm in hlt_algorithms:
         max_absDiscriminator = cms.vdouble(  0.2599605,  0.4249705,  0.5983682,  0.7848675,  0.8834768,  0.9308689,  0.9573137,  0.9733927 ),
         min_dzValues = cms.vdouble( -1.  ),
         max_dzValues = cms.vdouble(  0.2 ),
-        evtWeight = cms.InputTag(src_evtWeight),
+        src_evtWeight = cms.InputTag(src_evtWeight),
         dqmDirectory = cms.string("%s/%s/%s/%sAnalyzerBackground%s_deepTau" % (processName, hlt_srcVertices, src_evtWeight, hlt_pfTauLabel, suffix))
       )
       setattr(process, moduleName_PFTauAnalyzerBackground_deepTau, module_PFTauAnalyzerBackground_deepTau)

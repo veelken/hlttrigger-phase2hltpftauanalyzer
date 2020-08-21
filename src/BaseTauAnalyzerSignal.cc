@@ -82,8 +82,8 @@ BaseTauAnalyzerSignal::BaseTauAnalyzerSignal(const edm::ParameterSet& cfg)
     throw cms::Exception("BaseTauAnalyzerSignal") 
       << " No '' or '' Configuration parameters defined !!\n";
 
-  edm::Handle<double> evtWeight;
-  evt.getByToken(token_evtWeight_, evtWeight);
+  src_evtWeight_ = cfg.getParameter<edm::InputTag>("src_evtWeight");
+  token_evtWeight_ = consumes<double>(src_evtWeight_);
 
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }

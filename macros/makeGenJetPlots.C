@@ -72,44 +72,14 @@ void showHistograms(double canvasSizeX, double canvasSizeY,
   histogramStack_qcd->SetMinimum(yMin);
   histogramStack_qcd->SetMaximum(yMax);
 
-  if ( histogram_qcd1 ) {
-    histogram_qcd1->SetStats(false);
-    histogram_qcd1->SetFillColor(colors[0]);
-    histogram_qcd1->SetFillStyle(fillStyles[0]);
-    histogram_qcd1->SetLineColor(colors[0]);
-    histogram_qcd1->SetLineWidth(2);
-    histogram_qcd1->SetLineStyle(1);
-    histogramStack_qcd->Add(histogram_qcd1);
-  }
-
-  if ( histogram_qcd2 ) {
-    histogram_qcd2->SetStats(false);
-    histogram_qcd2->SetFillColor(colors[1]);
-    histogram_qcd2->SetFillStyle(fillStyles[1]);
-    histogram_qcd2->SetLineColor(colors[1]);
-    histogram_qcd2->SetLineWidth(2);
-    histogram_qcd2->SetLineStyle(1);
-    histogramStack_qcd->Add(histogram_qcd2);
-  }
-
-  if ( histogram_qcd3 ) {
-    histogram_qcd3->SetStats(false);
-    histogram_qcd3->SetFillColor(colors[2]);
-    histogram_qcd3->SetFillStyle(fillStyles[2]);
-    histogram_qcd3->SetLineColor(colors[2]);
-    histogram_qcd3->SetLineWidth(2);
-    histogram_qcd3->SetLineStyle(1);
-    histogramStack_qcd->Add(histogram_qcd3);
-  }
-
-  if ( histogram_qcd4 ) {
-    histogram_qcd4->SetStats(false);
-    histogram_qcd4->SetFillColor(colors[3]);
-    histogram_qcd4->SetFillStyle(fillStyles[3]);
-    histogram_qcd4->SetLineColor(colors[3]);
-    histogram_qcd4->SetLineWidth(2);
-    histogram_qcd4->SetLineStyle(1);
-    histogramStack_qcd->Add(histogram_qcd4);
+  if ( histogram_qcd6 ) {
+    histogram_qcd6->SetStats(false);
+    histogram_qcd6->SetFillColor(colors[5]);
+    histogram_qcd6->SetFillStyle(fillStyles[5]);
+    histogram_qcd6->SetLineColor(colors[5]);
+    histogram_qcd6->SetLineWidth(2);
+    histogram_qcd6->SetLineStyle(1);
+    histogramStack_qcd->Add(histogram_qcd6);
   }
 
   if ( histogram_qcd5 ) {
@@ -122,14 +92,44 @@ void showHistograms(double canvasSizeX, double canvasSizeY,
     histogramStack_qcd->Add(histogram_qcd5);
   }
 
-  if ( histogram_qcd6 ) {
-    histogram_qcd6->SetStats(false);
-    histogram_qcd6->SetFillColor(colors[5]);
-    histogram_qcd6->SetFillStyle(fillStyles[5]);
-    histogram_qcd6->SetLineColor(colors[5]);
-    histogram_qcd6->SetLineWidth(2);
-    histogram_qcd6->SetLineStyle(1);
-    histogramStack_qcd->Add(histogram_qcd6);
+  if ( histogram_qcd4 ) {
+    histogram_qcd4->SetStats(false);
+    histogram_qcd4->SetFillColor(colors[3]);
+    histogram_qcd4->SetFillStyle(fillStyles[3]);
+    histogram_qcd4->SetLineColor(colors[3]);
+    histogram_qcd4->SetLineWidth(2);
+    histogram_qcd4->SetLineStyle(1);
+    histogramStack_qcd->Add(histogram_qcd4);
+  }
+
+  if ( histogram_qcd3 ) {
+    histogram_qcd3->SetStats(false);
+    histogram_qcd3->SetFillColor(colors[2]);
+    histogram_qcd3->SetFillStyle(fillStyles[2]);
+    histogram_qcd3->SetLineColor(colors[2]);
+    histogram_qcd3->SetLineWidth(2);
+    histogram_qcd3->SetLineStyle(1);
+    histogramStack_qcd->Add(histogram_qcd3);
+  }
+
+  if ( histogram_qcd2 ) {
+    histogram_qcd2->SetStats(false);
+    histogram_qcd2->SetFillColor(colors[1]);
+    histogram_qcd2->SetFillStyle(fillStyles[1]);
+    histogram_qcd2->SetLineColor(colors[1]);
+    histogram_qcd2->SetLineWidth(2);
+    histogram_qcd2->SetLineStyle(1);
+    histogramStack_qcd->Add(histogram_qcd2);
+  }
+
+  if ( histogram_qcd1 ) {
+    histogram_qcd1->SetStats(false);
+    histogram_qcd1->SetFillColor(colors[0]);
+    histogram_qcd1->SetFillStyle(fillStyles[0]);
+    histogram_qcd1->SetLineColor(colors[0]);
+    histogram_qcd1->SetLineWidth(2);
+    histogram_qcd1->SetLineStyle(1);
+    histogramStack_qcd->Add(histogram_qcd1);
   }
 
   histogramStack_qcd->Draw("hist");
@@ -257,20 +257,20 @@ void makeGenJetPlots()
   std::vector<std::string> ptHatRanges = { "qcd1", "qcd2", "qcd3", "qcd4", "qcd5", "qcd6" };
 
   std::map<std::string, std::string> sampleNames_qcd;   // key = ptHatRange
-  sampleNames_qcd["qcd6"] = "qcd_pt30to50";
-  sampleNames_qcd["qcd5"] = "qcd_pt50to80";
-  sampleNames_qcd["qcd4"] = "qcd_pt80to120";
-  sampleNames_qcd["qcd3"] = "qcd_pt120to170";
-  sampleNames_qcd["qcd2"] = "qcd_pt170to300";
-  sampleNames_qcd["qcd1"] = "qcd_ptGt300";
+  sampleNames_qcd["qcd1"] = "qcd_pt30to50";
+  sampleNames_qcd["qcd2"] = "qcd_pt50to80";
+  sampleNames_qcd["qcd3"] = "qcd_pt80to120";
+  sampleNames_qcd["qcd4"] = "qcd_pt120to170";
+  sampleNames_qcd["qcd5"] = "qcd_pt170to300";
+  sampleNames_qcd["qcd6"] = "qcd_ptGt300";
 
   std::map<std::string, std::string> legendEntries_qcd; // key = ptHatRange
-  legendEntries_qcd["qcd6"] = " 30 < #hat{p}_{T} <  50";
-  legendEntries_qcd["qcd5"] = " 50 < #hat{p}_{T} <  80";
-  legendEntries_qcd["qcd4"] = " 80 < #hat{p}_{T} < 120";
-  legendEntries_qcd["qcd3"] = "120 < #hat{p}_{T} < 170";
-  legendEntries_qcd["qcd2"] = "170 < #hat{p}_{T} < 300";
-  legendEntries_qcd["qcd1"] = "300 < #hat{p}_{T} < 470";
+  legendEntries_qcd["qcd1"] = " 30 < #hat{p}_{T} <  50";
+  legendEntries_qcd["qcd2"] = " 50 < #hat{p}_{T} <  80";
+  legendEntries_qcd["qcd3"] = " 80 < #hat{p}_{T} < 120";
+  legendEntries_qcd["qcd4"] = "120 < #hat{p}_{T} < 170";
+  legendEntries_qcd["qcd5"] = "170 < #hat{p}_{T} < 300";
+  legendEntries_qcd["qcd6"] = "300 < #hat{p}_{T} < 470";
 
   std::string dqmDirectory = "GenJetAnalyzer";
 
@@ -305,12 +305,12 @@ void makeGenJetPlots()
           observable->data(), ptRange->data(), absEtaRange->data());
         showHistograms(1150, 1150,
                        histogram_minbias,      "Minbias",
-                       histograms_qcd["qcd1"], legendEntries_qcd["qcd1"],
-                       histograms_qcd["qcd2"], legendEntries_qcd["qcd2"],
-                       histograms_qcd["qcd3"], legendEntries_qcd["qcd3"],
-                       histograms_qcd["qcd4"], legendEntries_qcd["qcd4"],
-                       histograms_qcd["qcd5"], legendEntries_qcd["qcd5"],
                        histograms_qcd["qcd6"], legendEntries_qcd["qcd6"],
+                       histograms_qcd["qcd5"], legendEntries_qcd["qcd5"],
+                       histograms_qcd["qcd4"], legendEntries_qcd["qcd4"],
+                       histograms_qcd["qcd3"], legendEntries_qcd["qcd3"],
+                       histograms_qcd["qcd2"], legendEntries_qcd["qcd2"],
+                       histograms_qcd["qcd1"], legendEntries_qcd["qcd1"],
 		       colors, fillStyles, 
 		       0.040, 0.63, 0.63, 0.25, 0.31,
 		       labelTextLines, 0.050,

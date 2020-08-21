@@ -3,7 +3,7 @@ signal_samples = {
   'qqH_htt' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx_wDeepTau2//',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx_wDeepTau3/',
         'numEvents' : 300000
       },
       'hltPhase2PixelVertices' : {
@@ -23,8 +23,8 @@ background_samples = {
   'minbias' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau2/',
-        'numEvents' : 999646
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau3/',
+        'numEvents' : 999469
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOnlineVtx_wL1/',
@@ -70,8 +70,8 @@ background_samples = {
   'qcd_pt30to50' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
-        'numEvents' : 496878
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
+        'numEvents' : 498662
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
@@ -85,7 +85,7 @@ background_samples = {
   'qcd_pt50to80' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
         'numEvents' : 300000
       },
       'hltPhase2PixelVertices' : {
@@ -100,7 +100,7 @@ background_samples = {
   'qcd_pt80to120' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
         'numEvents' : 100000
       },
       'hltPhase2PixelVertices' : {
@@ -115,7 +115,7 @@ background_samples = {
   'qcd_pt120to170' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
         'numEvents' : 50000
       },
       'hltPhase2PixelVertices' : {
@@ -130,7 +130,7 @@ background_samples = {
   'qcd_pt170to300' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
         'numEvents' : 50000
       },
       'hltPhase2PixelVertices' : {
@@ -145,7 +145,7 @@ background_samples = {
   'dy_mass10to50' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOfflineVtx_wDeepTau2/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOfflineVtx_wDeepTau3/',
         'numEvents' : 96923
       },
       'hltPhase2PixelVertices' : {
@@ -160,7 +160,7 @@ background_samples = {
   'dy_massGt50' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau2/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau3/',
         'numEvents' : 10000
       },
       'hltPhase2PixelVertices' : {
@@ -175,7 +175,7 @@ background_samples = {
   'w' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8_wOfflineVtx_wDeepTau2/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8_wOfflineVtx_wDeepTau3/',
         'numEvents' : 85778
       },
       'hltPhase2PixelVertices' : {
