@@ -13,6 +13,6 @@ minbiasMCFilterSequence += ak4SelGenJets
 
 minbiasMCFilter = cms.EDFilter("MyCandViewCountFilter",
   src = cms.InputTag('ak4SelGenJets'),
-  maxNumber = cms.int(2)
+  maxNumber = cms.int32(2)
 )
 minbiasMCFilterSequence += minbiasMCFilter

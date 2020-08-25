@@ -21,7 +21,7 @@ process.source = cms.Source("PoolSource",
     )
 )
 
-inputFilePath = '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx_wDeepTau2/'
+inputFilePath = '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx_wDeepTau3/'
 processName = "qqH_htt"
 hlt_srcVertices = 'offlinePrimaryVertices'
 #hlt_srcVertices = 'hltPhase2PixelVertices'
@@ -62,6 +62,14 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 
 process.analysisSequence = cms.Sequence()
+
+#--------------------------------------------------------------------------------
+# CV: compute event weights
+process.lumiScale = cms.EDProducer("EvtWeightProducerLumiScale",
+  lumiScale = cms.double(1.) # CV: no event weights needed for signal
+)
+process.analysisSequence += process.lumiScale
+#--------------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------------
 # CV: match offline recontructed and generator-level taus
@@ -410,8 +418,8 @@ for hlt_algorithm in hlt_algorithms:
         process.analysisSequence += module_hltUpdatedPatTausMatchedToL1
         hlt_srcUpdatedPatTaus = moduleName_hltUpdatedPatTausMatchedToL1
 
-      moduleName_PFTauAnalyzerSignal_sumChargedIso_wrtGenHadTaus = "analyze%ss%sSumChargedIsoWrtGenHadTaus" % (hlt_pfTauLabel, suffix)
-      module_PFTauAnalyzerSignal_sumChargedIso_wrtGenHadTaus = cms.EDAnalyzer("RecoPFTauAnalyzerSignal",
+      moduleName_PFTauAnalyzerSignal_recoSumChargedIso_wrtGenHadTaus = "analyze%ss%sRecoSumChargedIsoWrtGenHadTaus" % (hlt_pfTauLabel, suffix)
+      module_PFTauAnalyzerSignal_recoSumChargedIso_wrtGenHadTaus = cms.EDAnalyzer("RecoPFTauAnalyzerSignal",
         srcPFTaus = cms.InputTag(hlt_srcPFTaus),
         srcPFTauDiscriminator = cms.InputTag(hlt_srcPFTauSumChargedIso),
         srcDenominator = cms.InputTag(srcGenHadTaus),
@@ -429,16 +437,16 @@ for hlt_algorithm in hlt_algorithms:
         max_relDiscriminator = cms.vdouble( -1.,    0.40,  0.20,  0.10,  0.05,  0.02,  0.01 ),
         min_absDiscriminator = cms.vdouble(),
         max_absDiscriminator = cms.vdouble(),                                                                                
-        lumiScale = cms.double(1.),
-        dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_sumChargedIso_wrtGenHadTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
+        src_evtWeight = cms.InputTag('lumiScale'),
+        dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_recoSumChargedIso_wrtGenHadTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
       )
-      setattr(process, moduleName_PFTauAnalyzerSignal_sumChargedIso_wrtGenHadTaus, module_PFTauAnalyzerSignal_sumChargedIso_wrtGenHadTaus)
-      process.analysisSequence += module_PFTauAnalyzerSignal_sumChargedIso_wrtGenHadTaus
+      setattr(process, moduleName_PFTauAnalyzerSignal_recoSumChargedIso_wrtGenHadTaus, module_PFTauAnalyzerSignal_recoSumChargedIso_wrtGenHadTaus)
+      process.analysisSequence += module_PFTauAnalyzerSignal_recoSumChargedIso_wrtGenHadTaus
 
-      moduleName_PFTauAnalyzerSignal_deepTau_wrtGenHadTaus = "analyze%ss%sDeepTauWrtGenHadTaus" % (hlt_pfTauLabel, suffix)
-      module_PFTauAnalyzerSignal_deepTau_wrtGenHadTaus = cms.EDAnalyzer("PATTauAnalyzerSignal",
+      moduleName_PFTauAnalyzerSignal_patSumChargedIso_wrtGenHadTaus = "analyze%ss%sPatSumChargedIsoWrtGenHadTaus" % (hlt_pfTauLabel, suffix)
+      module_PFTauAnalyzerSignal_patSumChargedIso_wrtGenHadTaus = cms.EDAnalyzer("PATTauAnalyzerSignal",
         srcPFTaus = cms.InputTag(hlt_srcUpdatedPatTaus),
-        pfTauDiscriminator = cms.string('byDeepTau2017v2VSjetraw'),
+        pfTauDiscriminator = cms.string('chargedIsoPtSum'),
         srcDenominator = cms.InputTag(srcGenHadTaus),
         typeDenominator = cms.string("gen"),         
         min_pt_denominator = cms.double(45.),
@@ -450,15 +458,27 @@ for hlt_algorithm in hlt_algorithms:
         decayModes = cms.vstring("oneProng0Pi0", "oneProng1Pi0", "oneProng2Pi0", "threeProng0Pi0", "threeProng1Pi0", "all"),
         min_leadTrackPt = cms.vdouble(  1.,  2.,  5. ),
         max_leadTrackPt = cms.vdouble( -1., -1., -1. ),
+        min_relDiscriminator = cms.vdouble( -1.,   -1.,   -1.,   -1.,   -1.,   -1.,   -1.   ),
+        max_relDiscriminator = cms.vdouble( -1.,    0.40,  0.20,  0.10,  0.05,  0.02,  0.01 ),
+        min_absDiscriminator = cms.vdouble(),
+        max_absDiscriminator = cms.vdouble(),                                                                                
+        src_evtWeight = cms.InputTag('lumiScale'),
+        dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_patSumChargedIso_wrtGenHadTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
+      )
+      setattr(process, moduleName_PFTauAnalyzerSignal_patSumChargedIso_wrtGenHadTaus, module_PFTauAnalyzerSignal_patSumChargedIso_wrtGenHadTaus)
+      process.analysisSequence += module_PFTauAnalyzerSignal_patSumChargedIso_wrtGenHadTaus
+
+      moduleName_PFTauAnalyzerSignal_patDeepTau_wrtGenHadTaus = "analyze%ss%sPatDeepTauWrtGenHadTaus" % (hlt_pfTauLabel, suffix)
+      module_PFTauAnalyzerSignal_patDeepTau_wrtGenHadTaus = module_PFTauAnalyzerSignal_patSumChargedIso_wrtGenHadTaus.clone(
+        pfTauDiscriminator = cms.string('byDeepTau2017v2VSjetraw'),
         min_relDiscriminator = cms.vdouble(),
         max_relDiscriminator = cms.vdouble(), 
-        min_absDiscriminator = cms.vdouble( -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.        ),
-        max_absDiscriminator = cms.vdouble(  0.2599605,  0.4249705,  0.5983682,  0.7848675,  0.8834768,  0.9308689,  0.9573137,  0.9733927 ),
-        lumiScale = cms.double(1.),
-        dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_deepTau_wrtGenHadTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
+        min_absDiscriminator = cms.vdouble(  0.2599605,  0.4249705,  0.5983682,  0.7848675,  0.8834768,  0.9308689,  0.9573137,  0.9733927 ),
+        max_absDiscriminator = cms.vdouble( -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.        ),
+        dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_patDeepTau_wrtGenHadTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
       )
-      setattr(process, moduleName_PFTauAnalyzerSignal_deepTau_wrtGenHadTaus, module_PFTauAnalyzerSignal_deepTau_wrtGenHadTaus)
-      process.analysisSequence += module_PFTauAnalyzerSignal_deepTau_wrtGenHadTaus
+      setattr(process, moduleName_PFTauAnalyzerSignal_patDeepTau_wrtGenHadTaus, module_PFTauAnalyzerSignal_patDeepTau_wrtGenHadTaus)
+      process.analysisSequence += module_PFTauAnalyzerSignal_patDeepTau_wrtGenHadTaus
 
       from HLTrigger.Phase2HLTPFTaus.PFTauPairProducer_cfi import PFTauPairs
       moduleName_PFTauPairProducer = "hlt%sPairs%s" % (hlt_pfTauLabel, suffix)
@@ -484,23 +504,32 @@ for hlt_algorithm in hlt_algorithms:
       process.analysisSequence += module_PFTauPairAnalyzer_wrtGenHadTaus
 
       if hasMiniAOD:
-        moduleName_PFTauAnalyzerSignal_sumChargedIso_wrtOfflineTaus = "analyze%ss%sSumChargedIsoWrtOfflineTaus" % (hlt_pfTauLabel, suffix)
-        modulePF_PFTauAnalyzerSignal_sumChargedIso_wrtOfflineTaus = module_PFTauAnalyzerSignal_sumChargedIso_wrtGenHadTaus.clone(
+        moduleName_PFTauAnalyzerSignal_recoSumChargedIso_wrtOfflineTaus = "analyze%ss%sRecoSumChargedIsoWrtOfflineTaus" % (hlt_pfTauLabel, suffix)
+        modulePF_PFTauAnalyzerSignal_recoSumChargedIso_wrtOfflineTaus = module_PFTauAnalyzerSignal_recoSumChargedIso_wrtGenHadTaus.clone(
           srcDenominator = cms.InputTag('selectedOfflinePFTaus'),
           typeDenominator = cms.string("offline"),  
-          dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_sumChargedIso_wrtOfflineTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
+          dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_recoSumChargedIso_wrtOfflineTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
         )
-        setattr(process, moduleName_PFTauAnalyzerSignal_sumChargedIso_wrtOfflineTaus, modulePF_PFTauAnalyzerSignal_sumChargedIso_wrtOfflineTaus)
-        process.analysisSequence += modulePF_PFTauAnalyzerSignal_sumChargedIso_wrtOfflineTaus
+        setattr(process, moduleName_PFTauAnalyzerSignal_recoSumChargedIso_wrtOfflineTaus, modulePF_PFTauAnalyzerSignal_recoSumChargedIso_wrtOfflineTaus)
+        process.analysisSequence += modulePF_PFTauAnalyzerSignal_recoSumChargedIso_wrtOfflineTaus
 
-        moduleName_PFTauAnalyzerSignal_deepTau_wrtOfflineTaus = "analyze%ss%sDeepTauWrtOfflineTaus" % (hlt_pfTauLabel, suffix)
-        modulePF_PFTauAnalyzerSignal_deepTau_wrtOfflineTaus = module_PFTauAnalyzerSignal_deepTau_wrtGenHadTaus.clone(
+        moduleName_PFTauAnalyzerSignal_patSumChargedIso_wrtOfflineTaus = "analyze%ss%sPatSumChargedIsoWrtOfflineTaus" % (hlt_pfTauLabel, suffix)
+        modulePF_PFTauAnalyzerSignal_patSumChargedIso_wrtOfflineTaus = module_PFTauAnalyzerSignal_patSumChargedIso_wrtGenHadTaus.clone(
           srcDenominator = cms.InputTag('selectedOfflinePFTaus'),
           typeDenominator = cms.string("offline"),  
-          dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_deepTau_wrtOfflineTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
+          dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_patSumChargedIso_wrtOfflineTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
         )
-        setattr(process, moduleName_PFTauAnalyzerSignal_deepTau_wrtOfflineTaus, modulePF_PFTauAnalyzerSignal_deepTau_wrtOfflineTaus)
-        process.analysisSequence += modulePF_PFTauAnalyzerSignal_deepTau_wrtOfflineTaus
+        setattr(process, moduleName_PFTauAnalyzerSignal_patSumChargedIso_wrtOfflineTaus, modulePF_PFTauAnalyzerSignal_patSumChargedIso_wrtOfflineTaus)
+        process.analysisSequence += modulePF_PFTauAnalyzerSignal_patSumChargedIso_wrtOfflineTaus
+
+        moduleName_PFTauAnalyzerSignal_patDeepTau_wrtOfflineTaus = "analyze%ss%sPatDeepTauWrtOfflineTaus" % (hlt_pfTauLabel, suffix)
+        modulePF_PFTauAnalyzerSignal_patDeepTau_wrtOfflineTaus = module_PFTauAnalyzerSignal_patDeepTau_wrtGenHadTaus.clone(
+          srcDenominator = cms.InputTag('selectedOfflinePFTaus'),
+          typeDenominator = cms.string("offline"),  
+          dqmDirectory = cms.string("%s/%sAnalyzerSignal%s_patDeepTau_wrtOfflineTaus" % (hlt_srcVertices, hlt_pfTauLabel, suffix))
+        )
+        setattr(process, moduleName_PFTauAnalyzerSignal_patDeepTau_wrtOfflineTaus, modulePF_PFTauAnalyzerSignal_patDeepTau_wrtOfflineTaus)
+        process.analysisSequence += modulePF_PFTauAnalyzerSignal_patDeepTau_wrtOfflineTaus
 
         moduleName_PFTauPairAnalyzer_wrtOfflineTaus = "analyze%sPairs%sWrtOfflineTaus" % (hlt_pfTauLabel, suffix)
         module_PFTauPairAnalyzer_wrtOfflineTaus = cms.EDAnalyzer("RecoPFTauPairAnalyzer",

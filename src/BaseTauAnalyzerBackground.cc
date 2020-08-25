@@ -65,7 +65,8 @@ BaseTauAnalyzerBackground::BaseTauAnalyzerBackground(const edm::ParameterSet& cf
   checkArray("dz", min_dzValues_, max_dzValues_);
   num_dzValues_ = min_dzValues_.size();
 
-  lumiScale_ = cfg.getParameter<double>("lumiScale");
+  src_evtWeight_ = cfg.getParameter<edm::InputTag>("src_evtWeight");
+  token_evtWeight_ = consumes<double>(src_evtWeight_);
 
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }
@@ -104,30 +105,29 @@ void BaseTauAnalyzerBackground::beginJob()
         {
           double min_relDiscriminator = min_relDiscriminatorValues_[idx_relDiscriminator];
           double max_relDiscriminator = max_relDiscriminatorValues_[idx_relDiscriminator];
-          ratePlots_.push_back(new ratePlotEntryType(
+          ratePlotEntryType* ratePlot = new ratePlotEntryType(
             min_absEta, max_absEta,
             min_leadTrackPt, max_leadTrackPt, 
             min_relDiscriminator, max_relDiscriminator, -1., -1.,
-            min_dz, max_dz));
+            min_dz, max_dz);
+          ratePlot->bookHistograms(dqmStore);
+          ratePlots_.push_back(ratePlot);
         } // idx_relDiscriminator
         for ( size_t idx_absDiscriminator = 0; idx_absDiscriminator < num_absDiscriminatorValues_; ++idx_absDiscriminator )
         {
           double min_absDiscriminator = min_absDiscriminatorValues_[idx_absDiscriminator];
           double max_absDiscriminator = max_absDiscriminatorValues_[idx_absDiscriminator];
-          ratePlots_.push_back(new ratePlotEntryType(
+          ratePlotEntryType* ratePlot = new ratePlotEntryType(
             min_absEta, max_absEta,
             min_leadTrackPt, max_leadTrackPt, 
             -1., -1., min_absDiscriminator, max_absDiscriminator, 
-            min_dz, max_dz));
+            min_dz, max_dz);
+          ratePlot->bookHistograms(dqmStore);
+          ratePlots_.push_back(ratePlot);
         } // idx_absDiscriminator
       } // idx_dz
     } // idx_leadTrackPt
   } // idx_absEta
-
-  for ( auto ratePlot : ratePlots_ ) 
-  {
-    ratePlot->bookHistograms(dqmStore);
-  }
 }
 
 namespace
@@ -146,11 +146,12 @@ void BaseTauAnalyzerBackground::analyze(const edm::Event& evt, const edm::EventS
   // CV: sort taus by decreasing pT
   std::sort(baseTaus.begin(), baseTaus.end(), isHigherPt);
 
-  const double evtWeight = lumiScale_;
+  edm::Handle<double> evtWeight;
+  evt.getByToken(token_evtWeight_, evtWeight);
 
   for ( auto ratePlot : ratePlots_ ) 
   {
-    ratePlot->fillHistograms(baseTaus, evtWeight);
+    ratePlot->fillHistograms(baseTaus, *evtWeight);
   }
 }
 

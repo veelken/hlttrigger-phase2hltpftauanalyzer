@@ -45,7 +45,8 @@ void MyPATTauSelector::produce(edm::Event& evt, const edm::EventSetup& es)
          (max_pt_            < 0. || pfTau.pt()                          <=  max_pt_                       ) &&
          (min_absEta_        < 0. || pfTau_absEta                        >=  min_absEta_                   ) &&
          (max_absEta_        < 0. || pfTau_absEta                        <=  max_absEta_                   ) &&
-         (                           pfTau.leadPFChargedHadrCand().isNonnull()                             ) &&
+         (                           pfTau.leadPFChargedHadrCand().isNonnull()                             && 
+                                     pfTau.leadPFChargedHadrCand()->bestTrack()                            ) &&
          (min_leadTrackPt_   < 0. || pfTau.leadPFChargedHadrCand()->pt() >=  min_leadTrackPt_              ) &&
          (max_leadTrackPt_   < 0. || pfTau.leadPFChargedHadrCand()->pt() <=  max_leadTrackPt_              ) &&
          (min_relChargedIso_ < 0. || sumChargedIso                       >= (min_relChargedIso_*pfTau.pt())) &&

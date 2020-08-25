@@ -11,6 +11,8 @@ import re
 #     with minor modifications
 #----------------------------------------------------------------------------------------------------
 
+DeepTau_version = "2020Aug13_training_v2"
+
 def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertices, hlt_pfTauLabel, hlt_pfTauSuffix, deepTauSequenceName = "deepTauSequence"):
 
     deepTauSequence = cms.Sequence()
@@ -133,7 +135,7 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
       max_pt              = cms.double(-1.),
       min_absEta          = cms.double(-1.),
       max_absEta          = cms.double(2.4),
-      min_leadTrackPt     = cms.double(5.0),
+      min_leadTrackPt     = cms.double(1.0),
       max_leadTrackPt     = cms.double(-1.),
       tauID_relChargedIso = cms.string("chargedIsoPtSum"),
       min_relChargedIso   = cms.double(-1.),
@@ -164,16 +166,16 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
 
     moduleName_deepTau_even = "hltDeep%sEven%s" % (hlt_pfTauLabel, hlt_pfTauSuffix)
     deepTau_inputFiles_even = [
-      'core:HLTrigger/TallinnHLTPFTauAnalyzer/data/DeepTauPhase2HLTv2even_step1_final_core.pb',
-      'inner:HLTrigger/TallinnHLTPFTauAnalyzer/data/DeepTauPhase2HLTv2even_step1_final_inner.pb',
-      'outer:HLTrigger/TallinnHLTPFTauAnalyzer/data/DeepTauPhase2HLTv2even_step1_final_outer.pb',
+      'core:HLTrigger/TallinnHLTPFTauAnalyzer/data/%s/DeepTauPhase2HLTv2even_step1_final_core.pb' % DeepTau_version,
+      'inner:HLTrigger/TallinnHLTPFTauAnalyzer/data/%s/DeepTauPhase2HLTv2even_step1_final_inner.pb' % DeepTau_version,
+      'outer:HLTrigger/TallinnHLTPFTauAnalyzer/data/%s/DeepTauPhase2HLTv2even_step1_final_outer.pb' % DeepTau_version
     ]
     module_deepTau_even = cms.EDProducer("DeepTauId",
       electrons   = cms.InputTag('dummyElectrons'),
       muons       = cms.InputTag('dummyMuons'),
       taus        = cms.InputTag(moduleName_slimmedTaus),
       pfcands     = cms.InputTag('hltPackedPFCandidates'),
-      vertices    = cms.InputTag('offlineSlimmedPrimaryVertices'),
+      vertices    = cms.InputTag(hlt_srcVertices),
       rho         = cms.InputTag('hltFixedGridRhoAll'),
       graph_file  = cms.vstring(deepTau_inputFiles_even),
       mem_mapped  = cms.bool(False),
@@ -188,9 +190,9 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
 
     moduleName_deepTau_odd = "hltDeep%sOdd%s" % (hlt_pfTauLabel, hlt_pfTauSuffix)
     deepTau_inputFiles_odd = [
-      'core:HLTrigger/TallinnHLTPFTauAnalyzer/data/DeepTauPhase2HLTv2odd_step1_final_core.pb',
-      'inner:HLTrigger/TallinnHLTPFTauAnalyzer/data/DeepTauPhase2HLTv2odd_step1_final_inner.pb',
-      'outer:HLTrigger/TallinnHLTPFTauAnalyzer/data/DeepTauPhase2HLTv2odd_step1_final_outer.pb',
+      'core:HLTrigger/TallinnHLTPFTauAnalyzer/data/%s/DeepTauPhase2HLTv2odd_step1_final_core.pb' % DeepTau_version,
+      'inner:HLTrigger/TallinnHLTPFTauAnalyzer/data/%s/DeepTauPhase2HLTv2odd_step1_final_inner.pb' % DeepTau_version,
+      'outer:HLTrigger/TallinnHLTPFTauAnalyzer/data/%s/DeepTauPhase2HLTv2odd_step1_final_outer.pb' % DeepTau_version
     ]
     module_deepTau_odd = module_deepTau_even.clone(
       graph_file  = cms.vstring(deepTau_inputFiles_odd)

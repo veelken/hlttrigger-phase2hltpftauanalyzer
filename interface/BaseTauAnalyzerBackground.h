@@ -31,7 +31,7 @@ namespace
     std::string number_format = Form("1.%i", precision);
     if( observable_min_value >= 0. && observable_max_value > 0. ) 
     {
-      std::string histogramName_format = std::string("_%s%") + number_format + "fto%" + number_format + "f"
+      std::string histogramName_format = std::string("_%s%") + number_format + "fto%" + number_format + "f";
       histogramName_new.Append(Form(histogramName_format.data(), observableName.data(), observable_min_value, observable_max_value));
     } 
     else if ( observable_min_value >= 0. ) 
@@ -84,7 +84,8 @@ class BaseTauAnalyzerBackground : public edm::EDAnalyzer
   std::vector<double> max_dzValues_;
   size_t num_dzValues_;
 
-  double lumiScale_;
+  edm::InputTag src_evtWeight_;
+  edm::EDGetTokenT<double> token_evtWeight_;
 
   std::string dqmDirectory_;
 
@@ -100,7 +101,7 @@ class BaseTauAnalyzerBackground : public edm::EDAnalyzer
       , min_absEta_(min_absEta)
       , max_absEta_(max_absEta)
       , min_leadTrackPt_(min_leadTrackPt)
-      , max_leadTrackPt_(min_leadTrackPt)
+      , max_leadTrackPt_(max_leadTrackPt)
       , min_relDiscriminator_(min_relDiscriminator)
       , max_relDiscriminator_(max_relDiscriminator)
       , min_absDiscriminator_(min_absDiscriminator)
@@ -121,7 +122,7 @@ class BaseTauAnalyzerBackground : public edm::EDAnalyzer
       {
         histogramName_suffix.Append("_noIsolation");
       }
-      histogramName_suffix = getHistogramName(histogramName_suffix, "dz", min_dz_, max_dz_);
+      histogramName_suffix = getHistogramName(histogramName_suffix, "dz", min_dz_, max_dz_, 1);
       histogramName_suffix = histogramName_suffix.ReplaceAll(".", "p");
 
       TString histogramName_numPFTaus_vs_ptThreshold = Form("numPFTaus_vs_ptThreshold%s", histogramName_suffix.Data());
@@ -140,7 +141,7 @@ class BaseTauAnalyzerBackground : public edm::EDAnalyzer
         if ( (min_absEta_           < 0. || baseTau_absEta              >=  min_absEta_                              ) &&
 	     (max_absEta_           < 0. || baseTau_absEta              <=  max_absEta_                              ) &&
              (min_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() >=  min_leadTrackPt_                         ) &&
-             (max_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() >=  max_leadTrackPt_                         ) &&
+             (max_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() <=  max_leadTrackPt_                         ) &&
              (min_relDiscriminator_ < 0. || baseTau->discriminator()    >= (min_relDiscriminator_*baseTau->p4().pt())) &&
              (max_relDiscriminator_ < 0. || baseTau->discriminator()    <= (max_relDiscriminator_*baseTau->p4().pt())) &&
              (min_absDiscriminator_ < 0. || baseTau->discriminator()    >=  min_absDiscriminator_                    ) &&

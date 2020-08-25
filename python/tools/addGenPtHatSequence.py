@@ -9,6 +9,15 @@ def addGenPtHatSequence(process, hlt_srcVertices, hlt_isolation_maxDeltaZOptions
 
     process.genPtHatSequence = cms.Sequence()
 
+    process.genPtHatAnalzerBeforeCuts = cms.EDAnalyzer("GenPtHatAnalyzer",
+      src_genEventInfo = cms.InputTag('generator'),
+      src_genJets = cms.InputTag('ak4GenJetsNoNu'),
+      src_pileupSummaryInfo = cms.InputTag('addPileupInfo'),
+      lumiScale = cms.double(lumiScale),
+      dqmDirectory = cms.string("GenPtHatAnalyzer/beforeCuts")
+    )
+    process.genPtHatSequence += process.genPtHatAnalzerBeforeCuts
+
     hlt_isolation_maxDeltaZOption = None
     if hlt_srcVertices == 'hltPhase2PixelVertices' and "leadTrack" in hlt_isolation_maxDeltaZOptions:
       hlt_isolation_maxDeltaZOption = "leadTrack"
@@ -61,11 +70,9 @@ def addGenPtHatSequence(process, hlt_srcVertices, hlt_isolation_maxDeltaZOptions
     )
     process.genPtHatSequence += process.hltHpsPFTauPairFilter
 
-    process.genPtHatAnalzer = cms.EDAnalyzer("GenPtHatAnalyzer",
-      src = cms.InputTag('generator'),
-      lumiScale = cms.double(lumiScale),
-      dqmDirectory = cms.string("GenPtHatAnalyzer")
+    process.genPtHatAnalzerAfterCuts = process.genPtHatAnalzerBeforeCuts.clone(
+      dqmDirectory = cms.string("GenPtHatAnalyzer/afterCuts")
     )
-    process.genPtHatSequence += process.genPtHatAnalzer
+    process.genPtHatSequence += process.genPtHatAnalzerAfterCuts
 
     process.genPtHatPath = cms.Path(process.genPtHatSequence)

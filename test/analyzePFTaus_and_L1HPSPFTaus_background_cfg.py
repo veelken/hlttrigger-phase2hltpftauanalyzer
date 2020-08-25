@@ -24,7 +24,7 @@ process.source = cms.Source("PoolSource",
 ##    ) 
 )
 
-inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau2/'
+inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau3/'
 #inputFilePath = None
 inputFileNames = []
 #processName = "minbias"
@@ -72,11 +72,16 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 process.analysisSequence = cms.Sequence()
 
 #--------------------------------------------------------------------------------
-# CV: remove minbias MC events that overlap with QCD MC samples
+# CV: compute event weights
 
-if processName == "minbias":
-    process.load("HLTrigger.TallinnHLTPFTauAnalyzer.minbiasMCFilter_cff")
-    process.analysisSequence += process.minbiasMCFilterSequence
+process.lumiScale = cms.EDProducer("EvtWeightProducerLumiScale",
+  lumiScale = cms.double(lumiScale)
+)
+process.analysisSequence += process.lumiScale
+
+from HLTrigger.TallinnHLTPFTauAnalyzer.tools.addEvtWeightGenPtHat import addEvtWeightGenPtHat
+addEvtWeightGenPtHat(process, hlt_srcVertices)
+process.analysisSequence += process.stitchingWeight
 #--------------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------------
@@ -234,49 +239,70 @@ for hlt_algorithm in hlt_algorithms:
         process.analysisSequence += module_hltUpdatedPatTausMatchedToL1
         hlt_srcUpdatedPatTaus = moduleName_hltUpdatedPatTausMatchedToL1
 
-      moduleName_PFTauAnalyzerBackground_sumChargedIso = "analyze%ss%sSumChargedIso" % (hlt_pfTauLabel, suffix)
-      module_PFTauAnalyzerBackground_sumChargedIso = cms.EDAnalyzer("RecoPFTauAnalyzerBackground",
-        srcPFTaus = cms.InputTag(hlt_srcPFTaus),
-        srcPFTauDiscriminator = cms.InputTag(hlt_srcPFTauSumChargedIso),
-        min_pt = cms.double(20.),
-        max_pt = cms.double(-1.),
-        min_absEta = cms.vdouble( -1.,   1.4,   1.4, -1.,    -1.  ),
-        max_absEta = cms.vdouble(  1.4,  2.172, 2.4,  2.172,  2.4 ),
-        min_leadTrackPt = cms.vdouble(  1.,  2.,  5. ),
-        max_leadTrackPt = cms.vdouble( -1., -1., -1. ),
-        min_relDiscriminator = cms.vdouble( -1.,   -1.,   -1.,   -1.,   -1.,   -1.,   -1.   ),
-        max_relDiscriminator = cms.vdouble( -1.,    0.40,  0.20,  0.10,  0.05,  0.02,  0.01 ),
-        min_absDiscriminator = cms.vdouble(),
-        max_absDiscriminator = cms.vdouble(),
-        min_dzValues = cms.vdouble( -1.  ),
-        max_dzValues = cms.vdouble(  0.2 ),
-        lumiScale = cms.double(lumiScale),
-        dqmDirectory = cms.string("%s/%s/%sAnalyzerBackground%s_sumChargedIso" % (processName, hlt_srcVertices, hlt_pfTauLabel, suffix))
-      )
-      setattr(process, moduleName_PFTauAnalyzerBackground_sumChargedIso, module_PFTauAnalyzerBackground_sumChargedIso)
-      process.analysisSequence += module_PFTauAnalyzerBackground_sumChargedIso
+      for evtWeight in [ "LumiScale", "GenPtHatStitching" ]:
+        src_evtWeight = None
+        if evtWeight == "LumiScale":
+          src_evtWeight = 'lumiScale'
+        elif evtWeight == "GenPtHatStitching":
+          src_evtWeight = 'stitchingWeight'
+        else:
+          raise ValueError("Invalid parameter evtWeight = '%s' !!" % evtWeight)
 
-      moduleName_PFTauAnalyzerBackground_deepTau = "analyze%ss%sDeepTau" % (hlt_pfTauLabel, suffix)
-      module_PFTauAnalyzerBackground_deepTau = cms.EDAnalyzer("PATTauAnalyzerBackground",
-        srcPFTaus = cms.InputTag(hlt_srcUpdatedPatTaus),
-        pfTauDiscriminator = cms.string('byDeepTau2017v2VSjetraw'),
-        min_pt = cms.double(20.),
-        max_pt = cms.double(-1.),
-        min_absEta = cms.vdouble( -1.,   1.4,   1.4, -1.,    -1.  ),
-        max_absEta = cms.vdouble(  1.4,  2.172, 2.4,  2.172,  2.4 ),
-        min_leadTrackPt = cms.vdouble(  1.,  2.,  5. ),
-        max_leadTrackPt = cms.vdouble( -1., -1., -1. ),
-        min_relDiscriminator = cms.vdouble(),
-        max_relDiscriminator = cms.vdouble(), 
-        min_absDiscriminator = cms.vdouble( -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.        ),
-        max_absDiscriminator = cms.vdouble(  0.2599605,  0.4249705,  0.5983682,  0.7848675,  0.8834768,  0.9308689,  0.9573137,  0.9733927 ),
-        min_dzValues = cms.vdouble( -1.  ),
-        max_dzValues = cms.vdouble(  0.2 ),
-        lumiScale = cms.double(lumiScale),
-        dqmDirectory = cms.string("%s/%s/%sAnalyzerBackground%s_deepTau" % (processName, hlt_srcVertices, hlt_pfTauLabel, suffix))
-      )
-      setattr(process, moduleName_PFTauAnalyzerBackground_deepTau, module_PFTauAnalyzerBackground_deepTau)
-      process.analysisSequence += module_PFTauAnalyzerBackground_deepTau
+        moduleName_PFTauAnalyzerBackground_recoSumChargedIso = "analyze%ss%sRecoSumChargedIso%s" % (hlt_pfTauLabel, suffix, evtWeight)
+        module_PFTauAnalyzerBackground_recoSumChargedIso = cms.EDAnalyzer("RecoPFTauAnalyzerBackground",
+          srcPFTaus = cms.InputTag(hlt_srcPFTaus),
+          srcPFTauDiscriminator = cms.InputTag(hlt_srcPFTauSumChargedIso),
+          min_pt = cms.double(20.),
+          max_pt = cms.double(-1.),
+          min_absEta = cms.vdouble( -1.,   1.4,   1.4, -1.,    -1.  ),
+          max_absEta = cms.vdouble(  1.4,  2.172, 2.4,  2.172,  2.4 ),
+          min_leadTrackPt = cms.vdouble(  1.,  2.,  5. ),
+          max_leadTrackPt = cms.vdouble( -1., -1., -1. ),
+          min_relDiscriminator = cms.vdouble( -1.,   -1.,   -1.,   -1.,   -1.,   -1.,   -1.   ),
+          max_relDiscriminator = cms.vdouble( -1.,    0.40,  0.20,  0.10,  0.05,  0.02,  0.01 ),
+          min_absDiscriminator = cms.vdouble(),
+          max_absDiscriminator = cms.vdouble(),
+          min_dzValues = cms.vdouble( -1.  ),
+          max_dzValues = cms.vdouble(  0.2 ),
+          src_evtWeight = cms.InputTag(src_evtWeight),
+          dqmDirectory = cms.string("%s/%s/%s/%sAnalyzerBackground%s_recoSumChargedIso" % (processName, hlt_srcVertices, src_evtWeight, hlt_pfTauLabel, suffix))
+        )
+        setattr(process, moduleName_PFTauAnalyzerBackground_recoSumChargedIso, module_PFTauAnalyzerBackground_recoSumChargedIso)
+        process.analysisSequence += module_PFTauAnalyzerBackground_recoSumChargedIso
+
+        moduleName_PFTauAnalyzerBackground_patSumChargedIso = "analyze%ss%sPatSumChargedIso%s" % (hlt_pfTauLabel, suffix, evtWeight)
+        module_PFTauAnalyzerBackground_patSumChargedIso = cms.EDAnalyzer("PATTauAnalyzerBackground",
+          srcPFTaus = cms.InputTag(hlt_srcUpdatedPatTaus),
+          pfTauDiscriminator = cms.string('chargedIsoPtSum'),
+          min_pt = cms.double(20.),
+          max_pt = cms.double(-1.),
+          min_absEta = cms.vdouble( -1.,   1.4,   1.4, -1.,    -1.  ),
+          max_absEta = cms.vdouble(  1.4,  2.172, 2.4,  2.172,  2.4 ),
+          min_leadTrackPt = cms.vdouble(  1.,  2.,  5. ),
+          max_leadTrackPt = cms.vdouble( -1., -1., -1. ),
+          min_relDiscriminator = cms.vdouble( -1.,   -1.,   -1.,   -1.,   -1.,   -1.,   -1.   ),
+          max_relDiscriminator = cms.vdouble( -1.,    0.40,  0.20,  0.10,  0.05,  0.02,  0.01 ),
+          min_absDiscriminator = cms.vdouble(),
+          max_absDiscriminator = cms.vdouble(),
+          min_dzValues = cms.vdouble( -1.  ),
+          max_dzValues = cms.vdouble(  0.2 ),
+          src_evtWeight = cms.InputTag(src_evtWeight),
+          dqmDirectory = cms.string("%s/%s/%s/%sAnalyzerBackground%s_patSumChargedIso" % (processName, hlt_srcVertices, src_evtWeight, hlt_pfTauLabel, suffix))
+        )
+        setattr(process, moduleName_PFTauAnalyzerBackground_patSumChargedIso, module_PFTauAnalyzerBackground_patSumChargedIso)
+        process.analysisSequence += module_PFTauAnalyzerBackground_patSumChargedIso
+
+        moduleName_PFTauAnalyzerBackground_patDeepTau = "analyze%ss%sPatDeepTau%s" % (hlt_pfTauLabel, suffix, evtWeight)
+        module_PFTauAnalyzerBackground_patDeepTau = module_PFTauAnalyzerBackground_patSumChargedIso.clone(
+          pfTauDiscriminator = cms.string('byDeepTau2017v2VSjetraw'),
+          min_relDiscriminator = cms.vdouble(),
+          max_relDiscriminator = cms.vdouble(), 
+          min_absDiscriminator = cms.vdouble(  0.2599605,  0.4249705,  0.5983682,  0.7848675,  0.8834768,  0.9308689,  0.9573137,  0.9733927 ),
+          max_absDiscriminator = cms.vdouble( -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.        ),
+          dqmDirectory = cms.string("%s/%s/%s/%sAnalyzerBackground%s_patDeepTau" % (processName, hlt_srcVertices, src_evtWeight, hlt_pfTauLabel, suffix))
+        )
+        setattr(process, moduleName_PFTauAnalyzerBackground_patDeepTau, module_PFTauAnalyzerBackground_patDeepTau)
+        process.analysisSequence += module_PFTauAnalyzerBackground_patDeepTau
 
       from HLTrigger.Phase2HLTPFTaus.PFTauPairProducer_cfi import PFTauPairs
       moduleName_PFTauPairProducer = "hlt%sPairs%s" % (hlt_pfTauLabel, suffix)
@@ -317,9 +343,8 @@ for hlt_algorithm in hlt_algorithms:
 #--------------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------------
-# CV: fill histogram of generator PtHat information when running on QCD multijet MC samples
-#    (generator PtHat information will be valid for QCD multijet MC samples only)
-if processName == "QCD":
+# CV: fill histogram of generator PtHat information when running on minbias or QCD multijet MC samples
+if processName in [ "minbias", "QCD" ]:
     print("Adding GenPtHatAnalyzer.")
     from HLTrigger.TallinnHLTPFTauAnalyzer.tools.addGenPtHatSequence import addGenPtHatSequence
     addGenPtHatSequence(process, hlt_srcVertices, hlt_isolation_maxDeltaZOptions, hlt_isolation_minTrackHits, lumiScale, True)
@@ -360,3 +385,6 @@ process.p = cms.Path(process.analysisSequence + process.savePlots)
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool(True)
 )
+
+##dump_file = open('dump.py','w')
+##dump_file.write(process.dumpPython())
