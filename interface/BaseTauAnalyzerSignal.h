@@ -246,7 +246,7 @@ class BaseTauAnalyzerSignal : public edm::EDAnalyzer
                (min_absEta_           < 0. || baseTau_absEta              >=  min_absEta_                              ) &&
 	       (max_absEta_           < 0. || baseTau_absEta              <=  max_absEta_                              ) &&
                (min_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() >=  min_leadTrackPt_                         ) &&
-               (max_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() >=  max_leadTrackPt_                         ) &&
+               (max_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() <=  max_leadTrackPt_                         ) &&
                (min_relDiscriminator_ < 0. || baseTau->discriminator()    >= (min_relDiscriminator_*baseTau->p4().pt())) &&
                (max_relDiscriminator_ < 0. || baseTau->discriminator()    <= (max_relDiscriminator_*baseTau->p4().pt())) &&
                (min_absDiscriminator_ < 0. || baseTau->discriminator()    >=  min_absDiscriminator_                    ) &&
@@ -258,22 +258,30 @@ class BaseTauAnalyzerSignal : public edm::EDAnalyzer
 	}
 
 	double denominatorTau_absEta = TMath::Abs(denominatorTau.eta());
-	if ( denominatorTau_absEta > min_absEta_ && denominatorTau_absEta < max_absEta_ ) 
+	if ( (min_absEta_ < 0. || denominatorTau_absEta >= min_absEta_) && 
+             (max_absEta_ < 0. || denominatorTau_absEta <= max_absEta_) ) 
 	{
 	  histogram_pt_denominator_->Fill(denominatorTau.pt(), evtWeight);
 	  if ( isMatched ) histogram_pt_numerator_->Fill(denominatorTau.pt(), evtWeight);
 	}
-	if ( denominatorTau.pt() > min_pt_denominator_ && denominatorTau.pt() < max_pt_denominator_ ) 
+	if ( (min_pt_denominator_ < 0. || denominatorTau.pt() >= min_pt_denominator_) && 
+             (max_pt_denominator_ < 0. || denominatorTau.pt() <= max_pt_denominator_) ) 
 	{
 	  histogram_eta_denominator_->Fill(denominatorTau.eta(), evtWeight);
 	  if ( isMatched ) histogram_eta_numerator_->Fill(denominatorTau.eta(), evtWeight);
 	}
-	if ( denominatorTau.pt() > min_pt_denominator_ && denominatorTau.pt() < max_pt_denominator_ && denominatorTau_absEta > min_absEta_ && denominatorTau_absEta < max_absEta_ )
-	{
+	if ( (min_pt_denominator_ < 0. || denominatorTau.pt()   >= min_pt_denominator_) && 
+             (max_pt_denominator_ < 0. || denominatorTau.pt()   <= max_pt_denominator_) &&
+             (min_absEta_ < 0.         || denominatorTau_absEta >= min_absEta_        ) && 
+             (max_absEta_ < 0.         || denominatorTau_absEta <= max_absEta_        ) )  
+        {
 	  histogram_phi_denominator_->Fill(denominatorTau.phi(), evtWeight);
 	  if ( isMatched ) histogram_phi_numerator_->Fill(denominatorTau.phi(), evtWeight);
 	}
-	if ( denominatorTau.pt() > min_pt_denominator_ && denominatorTau.pt() < max_pt_denominator_ && denominatorTau_absEta > min_absEta_ && denominatorTau_absEta < max_absEta_ )
+	if ( (min_pt_denominator_ < 0. || denominatorTau.pt()   >= min_pt_denominator_) && 
+             (max_pt_denominator_ < 0. || denominatorTau.pt()   <= max_pt_denominator_) &&
+             (min_absEta_ < 0.         || denominatorTau_absEta >= min_absEta_        ) &&
+             (max_absEta_ < 0.         || denominatorTau_absEta <= max_absEta_        ) )  
 	{
 	  histogram_minDeltaR_denominator_->Fill(minDeltaR, evtWeight);
 	  if ( isMatched ) histogram_minDeltaR_numerator_->Fill(minDeltaR, evtWeight);
@@ -314,7 +322,7 @@ class BaseTauAnalyzerSignal : public edm::EDAnalyzer
                (min_absEta_           < 0. || baseTau_absEta              >=  min_absEta_                              ) &&
 	       (max_absEta_           < 0. || baseTau_absEta              <=  max_absEta_                              ) &&
                (min_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() >=  min_leadTrackPt_                         ) &&
-               (max_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() >=  max_leadTrackPt_                         ) &&
+               (max_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() <=  max_leadTrackPt_                         ) &&
                (min_relDiscriminator_ < 0. || baseTau->discriminator()    >= (min_relDiscriminator_*baseTau->p4().pt())) &&
                (max_relDiscriminator_ < 0. || baseTau->discriminator()    <= (max_relDiscriminator_*baseTau->p4().pt())) &&
                (min_absDiscriminator_ < 0. || baseTau->discriminator()    >=  min_absDiscriminator_                    ) &&
@@ -325,23 +333,31 @@ class BaseTauAnalyzerSignal : public edm::EDAnalyzer
           }
 	}
 
-	double denominatorTau_absEta = TMath::Abs(denominatorTau.eta());
-	if ( denominatorTau_absEta > min_absEta_ && denominatorTau_absEta < max_absEta_ ) 
+        double denominatorTau_absEta = TMath::Abs(denominatorTau.eta());
+	if ( (min_absEta_ < 0. || denominatorTau_absEta >= min_absEta_) && 
+             (max_absEta_ < 0. || denominatorTau_absEta <= max_absEta_) ) 
 	{
 	  histogram_pt_denominator_->Fill(denominatorTau.pt(), evtWeight);
 	  if ( isMatched ) histogram_pt_numerator_->Fill(denominatorTau.pt(), evtWeight);
 	}
-	if ( denominatorTau.pt() > min_pt_denominator_ && denominatorTau.pt() < max_pt_denominator_ ) 
+	if ( (min_pt_denominator_ < 0. || denominatorTau.pt() >= min_pt_denominator_) && 
+             (max_pt_denominator_ < 0. || denominatorTau.pt() <= max_pt_denominator_) ) 
 	{
 	  histogram_eta_denominator_->Fill(denominatorTau.eta(), evtWeight);
 	  if ( isMatched ) histogram_eta_numerator_->Fill(denominatorTau.eta(), evtWeight);
 	}
-	if ( denominatorTau.pt() > min_pt_denominator_ && denominatorTau.pt() < max_pt_denominator_ && denominatorTau_absEta > min_absEta_ && denominatorTau_absEta < max_absEta_ )
-	{
+	if ( (min_pt_denominator_ < 0. || denominatorTau.pt()   >= min_pt_denominator_) && 
+             (max_pt_denominator_ < 0. || denominatorTau.pt()   <= max_pt_denominator_) &&
+             (min_absEta_ < 0.         || denominatorTau_absEta >= min_absEta_        ) && 
+             (max_absEta_ < 0.         || denominatorTau_absEta <= max_absEta_        ) )  
+        {
 	  histogram_phi_denominator_->Fill(denominatorTau.phi(), evtWeight);
 	  if ( isMatched ) histogram_phi_numerator_->Fill(denominatorTau.phi(), evtWeight);
 	}
-	if ( denominatorTau.pt() > min_pt_denominator_ && denominatorTau.pt() < max_pt_denominator_ && denominatorTau_absEta > min_absEta_ && denominatorTau_absEta < max_absEta_ )
+	if ( (min_pt_denominator_ < 0. || denominatorTau.pt()   >= min_pt_denominator_) && 
+             (max_pt_denominator_ < 0. || denominatorTau.pt()   <= max_pt_denominator_) &&
+             (min_absEta_ < 0.         || denominatorTau_absEta >= min_absEta_        ) &&
+             (max_absEta_ < 0.         || denominatorTau_absEta <= max_absEta_        ) )  
 	{
 	  histogram_minDeltaR_denominator_->Fill(minDeltaR, evtWeight);
 	  if ( isMatched ) histogram_minDeltaR_numerator_->Fill(minDeltaR, evtWeight);

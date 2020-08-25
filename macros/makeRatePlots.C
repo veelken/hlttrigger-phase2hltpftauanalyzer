@@ -221,8 +221,8 @@ void showHistograms(double canvasSizeX, double canvasSizeY,
   size_t idx = outputFileName.find_last_of('.');
   outputFileName_plot.append(std::string(outputFileName, 0, idx));
   if ( idx != std::string::npos ) canvas->Print(std::string(outputFileName_plot).append(std::string(outputFileName, idx)).data());
-  canvas->Print(std::string(outputFileName_plot).append(".png").data());
-  canvas->Print(std::string(outputFileName_plot).append(".pdf").data());
+  //canvas->Print(std::string(outputFileName_plot).append(".png").data());
+  //canvas->Print(std::string(outputFileName_plot).append(".pdf").data());
   
   delete label;
   delete legend;
@@ -257,7 +257,7 @@ void makeRatePlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/rate/2020Jul29/";
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/rate/2020Aug24v2/";
 
   std::vector<std::string> processes;
   processes.push_back("minbias");
@@ -331,8 +331,9 @@ void makeRatePlots()
   srcVertices["3HitsMaxDeltaZToLeadTrackWithOnlineVerticesTrimmed"] = "hltPhase2TrimmedPixelVertices";
 
   std::vector<std::string> tauIdOptions;
-  tauIdOptions.push_back("sumChargedIso");
-  tauIdOptions.push_back("deepTau");
+  tauIdOptions.push_back("recoSumChargedIso");
+  tauIdOptions.push_back("patSumChargedIso");
+  tauIdOptions.push_back("patDeepTau");
 
   std::vector<std::string> l1MatchingOptions;
   l1MatchingOptions.push_back("");            // CV: no matching of HLT taus to L1 taus
@@ -346,39 +347,41 @@ void makeRatePlots()
   absEtaRanges.push_back("absEtaLt2p40");
 
   std::vector<std::string> min_leadTrackPtValues;
-  min_leadTrackPtValues.push_back("leadTrackPtGt1");
-  min_leadTrackPtValues.push_back("leadTrackPtGt2");
+  //min_leadTrackPtValues.push_back("leadTrackPtGt1");
+  //min_leadTrackPtValues.push_back("leadTrackPtGt2");
   min_leadTrackPtValues.push_back("leadTrackPtGt5");
 
   std::map<std::string, std::vector<std::string>> isolationWPs; // key = tauIdOption
-  isolationWPs["sumChargedIso"].push_back("noIsolation");
-  isolationWPs["sumChargedIso"].push_back("relDiscriminatorLt0p400");
-  isolationWPs["sumChargedIso"].push_back("relDiscriminatorLt0p200");
-  isolationWPs["sumChargedIso"].push_back("relDiscriminatorLt0p100");
-  isolationWPs["sumChargedIso"].push_back("relDiscriminatorLt0p050");
-  isolationWPs["deepTau"].push_back("absDiscriminatorGt0p260");
-  isolationWPs["deepTau"].push_back("absDiscriminatorGt0p425");
-  isolationWPs["deepTau"].push_back("absDiscriminatorGt0p598");
-  isolationWPs["deepTau"].push_back("absDiscriminatorGt0p785");
-  isolationWPs["deepTau"].push_back("absDiscriminatorGt0p883");
-  isolationWPs["deepTau"].push_back("absDiscriminatorGt0p931");
+  isolationWPs["recoSumChargedIso"].push_back("noIsolation");
+  isolationWPs["recoSumChargedIso"].push_back("relDiscriminatorLt0p400");
+  isolationWPs["recoSumChargedIso"].push_back("relDiscriminatorLt0p200");
+  isolationWPs["recoSumChargedIso"].push_back("relDiscriminatorLt0p100");
+  isolationWPs["recoSumChargedIso"].push_back("relDiscriminatorLt0p050");
+  isolationWPs["patSumChargedIso"] = isolationWPs["recoSumChargedIso"];
+  isolationWPs["patDeepTau"].push_back("absDiscriminatorGt0p260");
+  isolationWPs["patDeepTau"].push_back("absDiscriminatorGt0p425");
+  isolationWPs["patDeepTau"].push_back("absDiscriminatorGt0p598");
+  isolationWPs["patDeepTau"].push_back("absDiscriminatorGt0p785");
+  isolationWPs["patDeepTau"].push_back("absDiscriminatorGt0p883");
+  isolationWPs["patDeepTau"].push_back("absDiscriminatorGt0p931");
   
   std::vector<std::string> evtWeights;
   evtWeights.push_back("lumiScale");
   evtWeights.push_back("stitchingWeight");
 
   std::map<std::string, std::map<std::string, std::string>> legendEntries_vs_isolationWPs; // key = tauIdOption, isolationWP
-  legendEntries_vs_isolationWPs["sumChargedIso"]["noIsolation"]             = "No Isolation";
-  legendEntries_vs_isolationWPs["sumChargedIso"]["relDiscriminatorLt0p400"] = "I_{ch} < 0.40*p_{T}";
-  legendEntries_vs_isolationWPs["sumChargedIso"]["relDiscriminatorLt0p200"] = "I_{ch} < 0.20*p_{T}";
-  legendEntries_vs_isolationWPs["sumChargedIso"]["relDiscriminatorLt0p100"] = "I_{ch} < 0.10*p_{T}";
-  legendEntries_vs_isolationWPs["sumChargedIso"]["relDiscriminatorLt0p050"] = "I_{ch} < 0.05*p_{T}";
-  legendEntries_vs_isolationWPs["deepTau"]["absDiscriminatorGt0p260"]       = "D > 0.260";
-  legendEntries_vs_isolationWPs["deepTau"]["absDiscriminatorGt0p425"]       = "D > 0.425";
-  legendEntries_vs_isolationWPs["deepTau"]["absDiscriminatorGt0p598"]       = "D > 0.598";
-  legendEntries_vs_isolationWPs["deepTau"]["absDiscriminatorGt0p785"]       = "D > 0.785";
-  legendEntries_vs_isolationWPs["deepTau"]["absDiscriminatorGt0p883"]       = "D > 0.883";
-  legendEntries_vs_isolationWPs["deepTau"]["absDiscriminatorGt0p931"]       = "D > 0.931";
+  legendEntries_vs_isolationWPs["recoSumChargedIso"]["noIsolation"]             = "No Isolation";
+  legendEntries_vs_isolationWPs["recoSumChargedIso"]["relDiscriminatorLt0p400"] = "I_{ch} < 0.40*p_{T}";
+  legendEntries_vs_isolationWPs["recoSumChargedIso"]["relDiscriminatorLt0p200"] = "I_{ch} < 0.20*p_{T}";
+  legendEntries_vs_isolationWPs["recoSumChargedIso"]["relDiscriminatorLt0p100"] = "I_{ch} < 0.10*p_{T}";
+  legendEntries_vs_isolationWPs["recoSumChargedIso"]["relDiscriminatorLt0p050"] = "I_{ch} < 0.05*p_{T}";
+  legendEntries_vs_isolationWPs["patSumChargedIso"] = legendEntries_vs_isolationWPs["recoSumChargedIso"];
+  legendEntries_vs_isolationWPs["patDeepTau"]["absDiscriminatorGt0p260"]        = "D > 0.260";
+  legendEntries_vs_isolationWPs["patDeepTau"]["absDiscriminatorGt0p425"]        = "D > 0.425";
+  legendEntries_vs_isolationWPs["patDeepTau"]["absDiscriminatorGt0p598"]        = "D > 0.598";
+  legendEntries_vs_isolationWPs["patDeepTau"]["absDiscriminatorGt0p785"]        = "D > 0.785";
+  legendEntries_vs_isolationWPs["patDeepTau"]["absDiscriminatorGt0p883"]        = "D > 0.883";
+  legendEntries_vs_isolationWPs["patDeepTau"]["absDiscriminatorGt0p931"]        = "D > 0.931";
 
   std::map<std::string, std::string> legendEntries_vs_leadTrackPt; // key = min_leadTrackPt
   legendEntries_vs_leadTrackPt["leadTrackPtGt1"] = "lead. Track p_{T} > 1 GeV";
@@ -438,11 +441,29 @@ void makeRatePlots()
 	              isolationWP != isolationWPs[*tauIdOption].end(); ++isolationWP ) {
                   for ( std::vector<std::string>::const_iterator process = processes.begin();
 	                process != processes.end(); ++process ) {
-                    std::string histogram2dName = Form(("%s/%s/%s/" + dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s_%s").data(), 
-                      process->data(), srcVertices[*vertexOption].data(), evtWeight->data(),
+                    std::string evtWeight_process;
+                    if ( (*process) == "minbias" or (*process) == "QCD" )
+                    {
+                      evtWeight_process = *evtWeight;
+                    }
+                    else if ( (*process) == "DY" or (*process) == "W" )
+                    {
+                      evtWeight_process = "lumiScale"; // CV: stiching weights only defined for minbias and QCD MC
+                    } 
+                    else 
+                    {
+                      std::cerr << "No 'evtWeight' option defined for process = '" << (*process) << "' !!" << std::endl;
+                      assert(0);
+                    }
+                    std::string histogram2dName = Form(("%s/%s/%s/" + dqmDirectory + "/numPFTaus_vs_ptThreshold_%s_%s_%s_dzLt0p2").data(), 
+                      process->data(), srcVertices[*vertexOption].data(), evtWeight_process.data(),
                       pfAlgo->data(), vertexOption->data(), l1MatchingOption->data(), tauIdOption->data(),
                       absEtaRange->data(), min_leadTrackPt->data(), isolationWP->data());
                     TH2* histogram2d = loadHistogram2d(inputFiles[*process], histogram2dName);
+                    if ( (*process) == "QCD" && evtWeight_process == "lumiScale" )
+                    {
+                      histogram2d->Scale(200.); // CV: need to undo division by 200 in samples_cfi.py file
+                    }
 
                     TH1* histogram_rateSingleTau = makeRateHistogram(histogram2d, 1);
                     histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
@@ -459,7 +480,7 @@ void makeRatePlots()
                     [*absEtaRange][*min_leadTrackPt][*isolationWP] = sumHistograms(
                       histograms_rateDoubleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
                       [*absEtaRange][*min_leadTrackPt][*isolationWP], processes);
-                  histograms_rateSingleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*tauIdOption][*l1MatchingOption]
+                  histograms_rateSingleTau_vs_leadTrackPt[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
                     [*absEtaRange][*isolationWP][*min_leadTrackPt] = sumHistograms(
                       histograms_rateSingleTau_vs_processes[*pfAlgo][*vertexOption][*tauIdOption][*evtWeight][*l1MatchingOption]
                       [*absEtaRange][*min_leadTrackPt][*isolationWP], processes);              

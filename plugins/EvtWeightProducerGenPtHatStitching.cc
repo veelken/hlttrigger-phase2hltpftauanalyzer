@@ -2,6 +2,8 @@
 
 #include "FWCore/Utilities/interface/Exception.h"
 
+#include "HLTrigger/TallinnHLTPFTauAnalyzer/interface/generalAuxFunctions.h"
+
 #include <TArrayF.h>
 
 #include <iostream>
@@ -12,41 +14,6 @@ using namespace EvtWeightProducerGenPtHatStitching_namespace;
 
 namespace
 {
-  // CV: code for format_vT, format_vdouble, and format_vint functions taken from
-  //       https://github.com/HEP-KBFI/tth-htt/blob/master/src/generalAuxFunctions.cc
-  template <typename T>
-  std::string
-  format_vT(const std::vector<T> & vT)  
-  {
-    std::ostringstream os;
-    const unsigned numEntries = vT.size();
-
-    os << "{ ";
-    for(unsigned iEntry = 0; iEntry < numEntries; ++iEntry)
-    {
-      os << vT[iEntry];
-      if(iEntry < numEntries - 1)
-      {
-        os << ", ";
-      }
-    }
-    os << " }";
-
-    return os.str();
-  }
-
-  std::string
-  format_vdouble(const std::vector<double> & vd) 
-  {
-    return format_vT(vd);
-  }
-
-  std::string
-  format_vint(const std::vector<int> & vi)
-  {
-    return format_vT(vi);
-  }
-
   bool
   isLowerPtHatBin(const sampleEntryType& sample1,
                   const sampleEntryType& sample2)
@@ -59,7 +26,7 @@ EvtWeightProducerGenPtHatStitching::EvtWeightProducerGenPtHatStitching(const edm
   : moduleLabel_(cfg.getParameter<std::string>("@module_label"))
   , histogram_X_(nullptr)
 {
-  //std::cout << "<EvtWeightProducerGenPtHatStitching::EvtWeightProducerGenPtHatStitching (moduleLabel = " << moduleLabel_ << ")>:" << std::endl;
+  std::cout << "<EvtWeightProducerGenPtHatStitching::EvtWeightProducerGenPtHatStitching (moduleLabel = " << moduleLabel_ << ")>:" << std::endl;
 
   src_genEventInfo_ = cfg.getParameter<edm::InputTag>("src_genEventInfo");
   token_genEventInfo_ = consumes<GenEventInfoProduct>(src_genEventInfo_);
@@ -143,7 +110,7 @@ EvtWeightProducerGenPtHatStitching::EvtWeightProducerGenPtHatStitching(const edm
     p_k_[idxBin] = crossSections_qcd[idxBin]/crossSection_minbias;
     assert(p_k_[idxBin] >= 0. && p_k_[idxBin] <= 1.);
   }
-  //std::cout << " p_k = " << format_vdouble(p_k_) << std::endl;
+  std::cout << " p_k = " << format_vdouble(p_k_) << std::endl;
     
   bxFrequency_ = cfg.getParameter<double>("bxFrequency");
 

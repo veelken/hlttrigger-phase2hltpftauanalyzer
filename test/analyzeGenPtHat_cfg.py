@@ -12,7 +12,7 @@ process.load('Configuration.StandardSequences.Reconstruction_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(-1)
 )
 
 process.source = cms.Source("PoolSource",
@@ -24,13 +24,12 @@ process.source = cms.Source("PoolSource",
 ##    ) 
 )
 
-inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau2/'
-#inputFilePath = '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau2/'
+inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau3/'
+#inputFilePath = '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/'
 #inputFilePath = None
 inputFileNames = []
 sampleName = "minbias"
 #sampleName = "qcd_pt30to50"
-lumiScale = 2.8e+7 # 28 MHz
 outputFileName = "analyzeGenPtHat_%s_DEBUG.root" % sampleName
 
 ##inputFilePath = None
@@ -60,8 +59,8 @@ process.analysisSequence = cms.Sequence()
 process.genPtHatAnalzer = cms.EDAnalyzer("GenPtHatAnalyzer",
    src_genEventInfo = cms.InputTag('generator'),
    src_genJets = cms.InputTag('ak4GenJetsNoNu'),
-   src_pileupSummaryInfo = cms.InputTag('slimmedAddPileupInfo'),
-   lumiScale = cms.double(lumiScale),
+   src_pileupSummaryInfo = cms.InputTag('addPileupInfo'),
+   lumiScale = cms.double(1.),
    dqmDirectory = cms.string("GenPtHatAnalyzer/%s" % sampleName)
 )
 process.analysisSequence += process.genPtHatAnalzer
@@ -69,9 +68,9 @@ process.analysisSequence += process.genPtHatAnalzer
 process.dumpGenPtHat = cms.EDAnalyzer("DumpGenPtHat",
    src_genEventInfo = cms.InputTag('generator'),
    src_genJets = cms.InputTag('ak4GenJetsNoNu'),
-   src_pileupSummaryInfo = cms.InputTag('slimmedAddPileupInfo')
+   src_pileupSummaryInfo = cms.InputTag('addPileupInfo')
 )
-process.analysisSequence += process.dumpGenPtHat
+##process.analysisSequence += process.dumpGenPtHat
 
 process.load("DQMServices.Core.DQMStore_cfi")
 

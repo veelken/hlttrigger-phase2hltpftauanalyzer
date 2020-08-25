@@ -8,7 +8,8 @@ from HLTrigger.TallinnHLTPFTauAnalyzer.samples_cfi import background_samples
 
 # CV: define instantaneous luminosity for HL-LHC running period taken from the twiki
 #       https://twiki.cern.ch/twiki/bin/viewauth/CMS/HighLevelTriggerPhase2#Rate_calculations
-instLuminosity = 7.5e+34 # cm^-2 s^-1
+##instLuminosity = 7.5e+34 # cm^-2 s^-1 (nominal instantaneous luminosity for HL-LHC running period)
+instLuminosity = 7.0e+34 # cm^-2 s^-1 (instantaneous luminosity corresponding to 200 pileup interactions per bunch-crossing for an inelastic proton-proton (minbias) cross-section of 80 mb)
 
 # CV: define conversion factor from pb to cm^2, taken from wikipedia
 #       https://en.wikipedia.org/wiki/Barn_(unit)
@@ -25,7 +26,7 @@ l1_useStrips = True
 ##cfgFileName_original = "analyzePFTaus_background_cfg.py"
 cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_background_cfg.py"
 
-version = "2020Aug21"
+version = "2020Aug24v2"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)

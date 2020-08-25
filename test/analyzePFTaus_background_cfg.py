@@ -24,7 +24,7 @@ process.source = cms.Source("PoolSource",
 ##    ) 
 )
 
-inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau2/'
+inputFilePath = '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau3/'
 #inputFilePath = None
 inputFileNames = []
 #processName = "minbias"
@@ -120,8 +120,8 @@ for hlt_algorithm in hlt_algorithms:
       else:
         raise ValueError("Invalid parameter evtWeight = '%s' !!" % evtWeight)
 
-      moduleName_PFTauAnalyzerBackground_sumChargedIso = "analyze%ss%sSumChargedIso%s" % (hlt_pfTauLabel, suffix, evtWeight)
-      module_PFTauAnalyzerBackground_sumChargedIso = cms.EDAnalyzer("RecoPFTauAnalyzerBackground",
+      moduleName_PFTauAnalyzerBackground_recoSumChargedIso = "analyze%ss%sRecoSumChargedIso%s" % (hlt_pfTauLabel, suffix, evtWeight)
+      module_PFTauAnalyzerBackground_recoSumChargedIso = cms.EDAnalyzer("RecoPFTauAnalyzerBackground",
         srcPFTaus = cms.InputTag('hltSelected%ss%s' % (hlt_pfTauLabel, suffix)),
         srcPFTauDiscriminator = cms.InputTag('hltSelected%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix)),
         min_pt = cms.double(20.),
@@ -137,32 +137,44 @@ for hlt_algorithm in hlt_algorithms:
         min_dzValues = cms.vdouble( -1.  ),
         max_dzValues = cms.vdouble(  0.2 ),
         src_evtWeight = cms.InputTag(src_evtWeight),
-        dqmDirectory = cms.string("%s/%s/%s/%sAnalyzerBackground%s_sumChargedIso" % (processName, hlt_srcVertices, src_evtWeight, hlt_pfTauLabel, suffix))
+        dqmDirectory = cms.string("%s/%s/%s/%sAnalyzerBackground%s_recoSumChargedIso" % (processName, hlt_srcVertices, src_evtWeight, hlt_pfTauLabel, suffix))
       )
-      setattr(process, moduleName_PFTauAnalyzerBackground_sumChargedIso, module_PFTauAnalyzerBackground_sumChargedIso)
-      process.analysisSequence += module_PFTauAnalyzerBackground_sumChargedIso
+      setattr(process, moduleName_PFTauAnalyzerBackground_recoSumChargedIso, module_PFTauAnalyzerBackground_recoSumChargedIso)
+      process.analysisSequence += module_PFTauAnalyzerBackground_recoSumChargedIso
 
-      moduleName_PFTauAnalyzerBackground_deepTau = "analyze%ss%sDeepTau%s" % (hlt_pfTauLabel, suffix, evtWeight)
-      module_PFTauAnalyzerBackground_deepTau = cms.EDAnalyzer("PATTauAnalyzerBackground",
+      moduleName_PFTauAnalyzerBackground_patSumChargedIso = "analyze%ss%sPatSumChargedIso%s" % (hlt_pfTauLabel, suffix, evtWeight)
+      module_PFTauAnalyzerBackground_patSumChargedIso = cms.EDAnalyzer("PATTauAnalyzerBackground",
         srcPFTaus = cms.InputTag('hltUpdatedPat%ss%s' % (hlt_pfTauLabel, suffix)),
-        pfTauDiscriminator = cms.string('byDeepTau2017v2VSjetraw'),
+        pfTauDiscriminator = cms.string('chargedIsoPtSum'),
         min_pt = cms.double(20.),
         max_pt = cms.double(-1.),
         min_absEta = cms.vdouble( -1.,   1.4,   1.4, -1.,    -1.  ),
         max_absEta = cms.vdouble(  1.4,  2.172, 2.4,  2.172,  2.4 ),
         min_leadTrackPt = cms.vdouble(  1.,  2.,  5. ),
         max_leadTrackPt = cms.vdouble( -1., -1., -1. ),
-        min_relDiscriminator = cms.vdouble(),
-        max_relDiscriminator = cms.vdouble(), 
-        min_absDiscriminator = cms.vdouble( -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.        ),
-        max_absDiscriminator = cms.vdouble(  0.2599605,  0.4249705,  0.5983682,  0.7848675,  0.8834768,  0.9308689,  0.9573137,  0.9733927 ),
+        min_relDiscriminator = cms.vdouble( -1.,   -1.,   -1.,   -1.,   -1.,   -1.,   -1.   ),
+        max_relDiscriminator = cms.vdouble( -1.,    0.40,  0.20,  0.10,  0.05,  0.02,  0.01 ),
+        min_absDiscriminator = cms.vdouble(),
+        max_absDiscriminator = cms.vdouble(),
         min_dzValues = cms.vdouble( -1.  ),
         max_dzValues = cms.vdouble(  0.2 ),
         src_evtWeight = cms.InputTag(src_evtWeight),
-        dqmDirectory = cms.string("%s/%s/%s/%sAnalyzerBackground%s_deepTau" % (processName, hlt_srcVertices, src_evtWeight, hlt_pfTauLabel, suffix))
+        dqmDirectory = cms.string("%s/%s/%s/%sAnalyzerBackground%s_patSumChargedIso" % (processName, hlt_srcVertices, src_evtWeight, hlt_pfTauLabel, suffix))
       )
-      setattr(process, moduleName_PFTauAnalyzerBackground_deepTau, module_PFTauAnalyzerBackground_deepTau)
-      process.analysisSequence += module_PFTauAnalyzerBackground_deepTau
+      setattr(process, moduleName_PFTauAnalyzerBackground_patSumChargedIso, module_PFTauAnalyzerBackground_patSumChargedIso)
+      process.analysisSequence += module_PFTauAnalyzerBackground_patSumChargedIso
+
+      moduleName_PFTauAnalyzerBackground_patDeepTau = "analyze%ss%sPatDeepTau%s" % (hlt_pfTauLabel, suffix, evtWeight)
+      module_PFTauAnalyzerBackground_patDeepTau = module_PFTauAnalyzerBackground_patSumChargedIso.clone(
+        pfTauDiscriminator = cms.string('byDeepTau2017v2VSjetraw'),
+        min_relDiscriminator = cms.vdouble(),
+        max_relDiscriminator = cms.vdouble(), 
+        min_absDiscriminator = cms.vdouble(  0.2599605,  0.4249705,  0.5983682,  0.7848675,  0.8834768,  0.9308689,  0.9573137,  0.9733927 ),
+        max_absDiscriminator = cms.vdouble( -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.,        -1.        ),
+        dqmDirectory = cms.string("%s/%s/%s/%sAnalyzerBackground%s_patDeepTau" % (processName, hlt_srcVertices, src_evtWeight, hlt_pfTauLabel, suffix))
+      )
+      setattr(process, moduleName_PFTauAnalyzerBackground_patDeepTau, module_PFTauAnalyzerBackground_patDeepTau)
+      process.analysisSequence += module_PFTauAnalyzerBackground_patDeepTau
 
     from HLTrigger.Phase2HLTPFTaus.PFTauPairProducer_cfi import PFTauPairs
     moduleName_PFTauPairProducer = "hlt%sPairs%s" % (hlt_pfTauLabel, suffix)

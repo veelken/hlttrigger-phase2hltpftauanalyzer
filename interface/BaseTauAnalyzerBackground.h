@@ -101,7 +101,7 @@ class BaseTauAnalyzerBackground : public edm::EDAnalyzer
       , min_absEta_(min_absEta)
       , max_absEta_(max_absEta)
       , min_leadTrackPt_(min_leadTrackPt)
-      , max_leadTrackPt_(min_leadTrackPt)
+      , max_leadTrackPt_(max_leadTrackPt)
       , min_relDiscriminator_(min_relDiscriminator)
       , max_relDiscriminator_(max_relDiscriminator)
       , min_absDiscriminator_(min_absDiscriminator)
@@ -141,7 +141,7 @@ class BaseTauAnalyzerBackground : public edm::EDAnalyzer
         if ( (min_absEta_           < 0. || baseTau_absEta              >=  min_absEta_                              ) &&
 	     (max_absEta_           < 0. || baseTau_absEta              <=  max_absEta_                              ) &&
              (min_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() >=  min_leadTrackPt_                         ) &&
-             (max_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() >=  max_leadTrackPt_                         ) &&
+             (max_leadTrackPt_      < 0. || baseTau->leadTrackP4().pt() <=  max_leadTrackPt_                         ) &&
              (min_relDiscriminator_ < 0. || baseTau->discriminator()    >= (min_relDiscriminator_*baseTau->p4().pt())) &&
              (max_relDiscriminator_ < 0. || baseTau->discriminator()    <= (max_relDiscriminator_*baseTau->p4().pt())) &&
              (min_absDiscriminator_ < 0. || baseTau->discriminator()    >=  min_absDiscriminator_                    ) &&

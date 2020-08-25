@@ -11,7 +11,7 @@ import re
 #     with minor modifications
 #----------------------------------------------------------------------------------------------------
 
-DeepTau_version = "2020Aug13"
+DeepTau_version = "2020Aug13_training_v2"
 
 def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertices, hlt_pfTauLabel, hlt_pfTauSuffix, deepTauSequenceName = "deepTauSequence"):
 
@@ -135,7 +135,7 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
       max_pt              = cms.double(-1.),
       min_absEta          = cms.double(-1.),
       max_absEta          = cms.double(2.4),
-      min_leadTrackPt     = cms.double(5.0),
+      min_leadTrackPt     = cms.double(1.0),
       max_leadTrackPt     = cms.double(-1.),
       tauID_relChargedIso = cms.string("chargedIsoPtSum"),
       min_relChargedIso   = cms.double(-1.),

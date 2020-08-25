@@ -36,7 +36,7 @@ void GenPtHatAnalyzer::beginJob()
 
   dqmStore.setCurrentFolder(dqmDirectory_);
 
-  me_genPtHat_hardscatter_ = dqmStore.book1D("genPtHat_hardscatter", "genPtHat_hardscatter", 1002, -1.5, 1000.5);
+  me_genPtHat_hardscatter_ = dqmStore.book1D("genPtHat_hardscatter", "genPtHat_hardscatter", 1002, -2., 1000.);
   histogram_genPtHat_hardscatter_ = me_genPtHat_hardscatter_->getTH1();
   assert(histogram_genPtHat_hardscatter_);
 
@@ -48,7 +48,7 @@ void GenPtHatAnalyzer::beginJob()
   histogram_subleadGenJetPt_vs_genPtHat_ = dynamic_cast<TH2*>(me_subleadGenJetPt_vs_genPtHat_->getTH1());
   assert(histogram_subleadGenJetPt_vs_genPtHat_);
 
-  me_genPtHat_pileup_ = dqmStore.book1D("genPtHat_pileup", "genPtHat_pileup", 1002, -1.5, 1000.5);
+  me_genPtHat_pileup_ = dqmStore.book1D("genPtHat_pileup", "genPtHat_pileup", 1002, -2., 1000.);
   histogram_genPtHat_pileup_ = me_genPtHat_pileup_->getTH1();
   assert(histogram_genPtHat_pileup_);
 }
@@ -76,7 +76,7 @@ void GenPtHatAnalyzer::analyze(const edm::Event& evt, const edm::EventSetup& es)
 
   const double evtWeight = lumiScale_;
 
-  double genPtHat_hardscatter = -1.;
+  double genPtHat_hardscatter = -1.e+3;
   bool genPtHat_hardscatter_isValid = false;
   if ( genEventInfoProduct.isValid() )
   {

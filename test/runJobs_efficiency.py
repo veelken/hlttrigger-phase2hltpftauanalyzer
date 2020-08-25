@@ -16,7 +16,7 @@ l1_useStrips = True
 ##cfgFileName_original = "analyzePFTaus_signal_cfg.py"
 cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_signal_cfg.py"
 
-version = "2020Aug21"
+version = "2020Aug24v2"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/efficiency", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/efficiency", version)

@@ -80,6 +80,7 @@ background_samples = {
     },
     'numJobs' : 10, 
     'crossSection' : 118400000.0/200,
+    'kFactor_pT_hat' : 1.15,
     'process' : "QCD"
   },
   'qcd_pt50to80' : {
@@ -95,6 +96,7 @@ background_samples = {
     },
     'numJobs' : 10, 
     'crossSection' : 17650000.0/200,
+    'kFactor_pT_hat' : 1.15,
     'process' : "QCD"
   },
   'qcd_pt80to120' : {
@@ -110,6 +112,7 @@ background_samples = {
     },
     'numJobs' : 10, 
     'crossSection' : 2671000.0/200,
+    'kFactor_pT_hat' : 1.15,
     'process' : "QCD"
   },
   'qcd_pt120to170' : {
@@ -125,6 +128,7 @@ background_samples = {
     },
     'numJobs' : 10, 
     'crossSection' : 469700.0/200,
+    'kFactor_pT_hat' : 1.10,
     'process' : "QCD"
   },
   'qcd_pt170to300' : {
@@ -140,6 +144,7 @@ background_samples = {
     },
     'numJobs' : 10, 
     'crossSection' : 121700.0/200,
+    'kFactor_pT_hat' : 1.10,
     'process' : "QCD"
   },  
   'dy_mass10to50' : {
