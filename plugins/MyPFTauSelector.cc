@@ -13,6 +13,7 @@ MyPFTauSelector::MyPFTauSelector(const edm::ParameterSet& cfg)
   max_pt_ = cfg.getParameter<double>("max_pt");
   min_absEta_ = cfg.getParameter<double>("min_absEta");
   max_absEta_ = cfg.getParameter<double>("max_absEta");
+  decayModes_ = cfg.getParameter<std::vector<int>>("decayModes");
   min_leadTrackPt_ = cfg.getParameter<double>("min_leadTrackPt");
   max_leadTrackPt_ = cfg.getParameter<double>("max_leadTrackPt");
   min_relChargedIso_ = cfg.getParameter<double>("min_relChargedIso");
@@ -58,7 +59,21 @@ void MyPFTauSelector::produce(edm::Event& evt, const edm::EventSetup& es)
          (min_absChargedIso_ < 0. || sumChargedIso                                     >=  min_absChargedIso_             ) &&
 	 (max_absChargedIso_ < 0. || sumChargedIso                                     <=  max_absChargedIso_             ) )
     {
-      isSelected = true;
+      if ( decayModes_.size() >= 1 )
+      {
+        for ( std::vector<int>::const_iterator decayMode = decayModes_.begin();
+              decayMode != decayModes_.end(); ++decayMode ) {
+          if ( pfTau->decayMode() == (*decayMode) ) 
+          {
+            isSelected = true;
+            break;
+          }
+        }
+      }
+      else 
+      {
+        isSelected = true;
+      }
     }
     if ( (isSelected && !invert_) || (!isSelected && invert_) ) 
     {

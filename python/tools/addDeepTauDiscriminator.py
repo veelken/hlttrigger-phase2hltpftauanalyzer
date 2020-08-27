@@ -148,6 +148,7 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
       max_pt              = cms.double(-1.),
       min_absEta          = cms.double(-1.),
       max_absEta          = cms.double(2.4),
+      decayModes          = cms.vint32(0, 1, 2, 10, 11),
       min_leadTrackPt     = cms.double(1.0),
       max_leadTrackPt     = cms.double(-1.),
       tauID_relChargedIso = cms.string("chargedIsoPtSumHGCalFix"),

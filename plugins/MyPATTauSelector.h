@@ -27,6 +27,7 @@ class MyPATTauSelector : public edm::EDProducer
   double max_pt_;
   double min_absEta_;
   double max_absEta_;
+  std::vector<int> decayModes_;
   double min_leadTrackPt_;
   double max_leadTrackPt_;
   std::string tauID_relChargedIso_;
