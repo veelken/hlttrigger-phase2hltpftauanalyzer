@@ -191,7 +191,7 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
       pfcands = cms.InputTag('hltPackedPFCandidates'),
       vertices = cms.InputTag(hlt_srcVertices),
       rho = cms.InputTag('hltFixedGridRhoAll'),
-      disable_hcalFraction_workaround = cms.book(True),
+      disable_hcalFraction_workaround = cms.bool(True),
       graph_file = cms.vstring(deepTau_inputFiles_even),
       mem_mapped = cms.bool(False),
       version = cms.uint32(2),
