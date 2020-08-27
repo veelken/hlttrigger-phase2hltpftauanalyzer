@@ -118,8 +118,8 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
     singleID(module_patTaus.tauIDSources, 'hlt%sDiscriminationByDecayModeFindingNewDMs%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "decayModeFindingNewDMs")
     singleID(module_patTaus.tauIDSources, 'hltSelected%sChargedIsoPtSum%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "chargedIsoPtSumHGCalFix")
     singleID(module_patTaus.tauIDSources, 'hltSelected%sNeutralIsoPtSum%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "neutralIsoPtSumHGCalFix")
-    singleID(process.patTaus.tauIDSources, 'hltSelected%sChargedIsoPtSumdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "chargedIsoPtSumdR03HGCalFix")
-    singleID(process.patTaus.tauIDSources, 'hltSelected%sNeutralIsoPtSumdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "neutralIsoPtSumdR03HGCalFix")
+    singleID(module_patTaus.tauIDSources, 'hltSelected%sChargedIsoPtSumdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "chargedIsoPtSumdR03HGCalFix")
+    singleID(module_patTaus.tauIDSources, 'hltSelected%sNeutralIsoPtSumdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "neutralIsoPtSumdR03HGCalFix")
     containerID(module_patTaus.tauIDSources, 'hlt%sBasicDiscriminators%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "IDdefinitions", [
       [ "chargedIsoPtSum", "ChargedIsoPtSum" ],
       [ "neutralIsoPtSum", "NeutralIsoPtSum" ],
@@ -129,7 +129,7 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
       [ "photonPtSumOutsideSignalCone", "PhotonPtSumOutsideSignalCone" ],
       [ "byCombinedIsolationDeltaBetaCorrRaw3Hits", "ByRawCombinedIsolationDBSumPtCorr3Hits" ]
     ])
-    containerID(process.patTaus.tauIDSources, 'hlt%sBasicDiscriminatorsdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "IDdefinitions", [
+    containerID(module_patTaus.tauIDSources, 'hlt%sBasicDiscriminatorsdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "IDdefinitions", [
       [ "chargedIsoPtSumdR03", "ChargedIsoPtSum" ],
       [ "neutralIsoPtSumdR03", "NeutralIsoPtSum" ],
       [ "puCorrPtSumdR03", "PUcorrPtSum" ],
@@ -143,20 +143,20 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
 
     moduleName_selectedPatTaus = "hltSelectedPat%ss%s" % (hlt_pfTauLabel, hlt_pfTauSuffix)
     module_selectedPatTaus = cms.EDProducer("MyPATTauSelector",
-      src                 = cms.InputTag(moduleName_patTaus),
-      min_pt              = cms.double(20.0),
-      max_pt              = cms.double(-1.),
-      min_absEta          = cms.double(-1.),
-      max_absEta          = cms.double(2.4),
-      decayModes          = cms.vint32(0, 1, 2, 10, 11),
-      min_leadTrackPt     = cms.double(1.0),
-      max_leadTrackPt     = cms.double(-1.),
+      src = cms.InputTag(moduleName_patTaus),
+      min_pt = cms.double(20.0),
+      max_pt = cms.double(-1.),
+      min_absEta = cms.double(-1.),
+      max_absEta = cms.double(2.4),
+      decayModes = cms.vint32(0, 1, 2, 10, 11),
+      min_leadTrackPt = cms.double(1.0),
+      max_leadTrackPt = cms.double(-1.),
       tauID_relChargedIso = cms.string("chargedIsoPtSumHGCalFix"),
-      min_relChargedIso   = cms.double(-1.),
-      max_relChargedIso   = cms.double(-1.),
-      min_absChargedIso   = cms.double(-1.),
-      max_absChargedIso   = cms.double(-1.),
-      invert              = cms.bool(False)
+      min_relChargedIso = cms.double(-1.),
+      max_relChargedIso = cms.double(-1.),
+      min_absChargedIso = cms.double(-1.),
+      max_absChargedIso = cms.double(-1.),
+      invert = cms.bool(False)
     )
     setattr(process, moduleName_selectedPatTaus, module_selectedPatTaus)
     deepTauSequence += module_selectedPatTaus
@@ -185,18 +185,19 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
       'outer:HLTrigger/TallinnHLTPFTauAnalyzer/data/%s/DeepTauPhase2HLTv2even_step1_final_outer.pb' % DeepTau_version
     ]
     module_deepTau_even = cms.EDProducer("DeepTauId",
-      electrons   = cms.InputTag('dummyElectrons'),
-      muons       = cms.InputTag('dummyMuons'),
-      taus        = cms.InputTag(moduleName_slimmedTaus),
-      pfcands     = cms.InputTag('hltPackedPFCandidates'),
-      vertices    = cms.InputTag(hlt_srcVertices),
-      rho         = cms.InputTag('hltFixedGridRhoAll'),
-      graph_file  = cms.vstring(deepTau_inputFiles_even),
-      mem_mapped  = cms.bool(False),
-      version     = cms.uint32(2),
-      VSeWP       = cms.vstring(),
-      VSmuWP      = cms.vstring(),
-      VSjetWP     = cms.vstring(),
+      electrons = cms.InputTag('dummyElectrons'),
+      muons = cms.InputTag('dummyMuons'),
+      taus = cms.InputTag(moduleName_slimmedTaus),
+      pfcands = cms.InputTag('hltPackedPFCandidates'),
+      vertices = cms.InputTag(hlt_srcVertices),
+      rho = cms.InputTag('hltFixedGridRhoAll'),
+      disable_hcalFraction_workaround = cms.book(True),
+      graph_file = cms.vstring(deepTau_inputFiles_even),
+      mem_mapped = cms.bool(False),
+      version = cms.uint32(2),
+      VSeWP = cms.vstring(),
+      VSmuWP = cms.vstring(),
+      VSjetWP = cms.vstring(),
       debug_level = cms.int32(0),
     )
     setattr(process, moduleName_deepTau_even, module_deepTau_even)
