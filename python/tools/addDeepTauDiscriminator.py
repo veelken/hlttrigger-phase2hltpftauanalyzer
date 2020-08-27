@@ -116,6 +116,10 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
     from PhysicsTools.PatAlgos.producersLayer1.tauProducer_cfi import singleID, containerID
     singleID(module_patTaus.tauIDSources, 'hlt%sDiscriminationByDecayModeFinding%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "decayModeFinding")
     singleID(module_patTaus.tauIDSources, 'hlt%sDiscriminationByDecayModeFindingNewDMs%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "decayModeFindingNewDMs")
+    singleID(module_patTaus.tauIDSources, 'hltSelected%sChargedIsoPtSum%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "chargedIsoPtSumHGCalFix")
+    singleID(module_patTaus.tauIDSources, 'hltSelected%sNeutralIsoPtSum%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "neutralIsoPtSumHGCalFix")
+    singleID(process.patTaus.tauIDSources, 'hltSelected%sChargedIsoPtSumdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "chargedIsoPtSumdR03HGCalFix")
+    singleID(process.patTaus.tauIDSources, 'hltSelected%sNeutralIsoPtSumdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "neutralIsoPtSumdR03HGCalFix")
     containerID(module_patTaus.tauIDSources, 'hlt%sBasicDiscriminators%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "IDdefinitions", [
       [ "chargedIsoPtSum", "ChargedIsoPtSum" ],
       [ "neutralIsoPtSum", "NeutralIsoPtSum" ],
@@ -124,6 +128,15 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
       [ "footprintCorrection", "TauFootprintCorrection" ],
       [ "photonPtSumOutsideSignalCone", "PhotonPtSumOutsideSignalCone" ],
       [ "byCombinedIsolationDeltaBetaCorrRaw3Hits", "ByRawCombinedIsolationDBSumPtCorr3Hits" ]
+    ])
+    containerID(process.patTaus.tauIDSources, 'hlt%sBasicDiscriminatorsdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "IDdefinitions", [
+      [ "chargedIsoPtSumdR03", "ChargedIsoPtSum" ],
+      [ "neutralIsoPtSumdR03", "NeutralIsoPtSum" ],
+      [ "puCorrPtSumdR03", "PUcorrPtSum" ],
+      [ "neutralIsoPtSumWeightdR03", "NeutralIsoPtSumWeight" ],
+      [ "footprintCorrectiondR03", "TauFootprintCorrection" ],
+      [ "photonPtSumOutsideSignalConedR03", "PhotonPtSumOutsideSignalCone" ],
+      [ "byCombinedIsolationDeltaBetaCorrRaw3HitsdR03", "ByRawCombinedIsolationDBSumPtCorr3Hits" ]
     ])
     setattr(process, moduleName_patTaus, module_patTaus)
     deepTauSequence += module_patTaus
@@ -137,7 +150,7 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
       max_absEta          = cms.double(2.4),
       min_leadTrackPt     = cms.double(1.0),
       max_leadTrackPt     = cms.double(-1.),
-      tauID_relChargedIso = cms.string("chargedIsoPtSum"),
+      tauID_relChargedIso = cms.string("chargedIsoPtSumHGCalFix"),
       min_relChargedIso   = cms.double(-1.),
       max_relChargedIso   = cms.double(-1.),
       min_absChargedIso   = cms.double(-1.),
