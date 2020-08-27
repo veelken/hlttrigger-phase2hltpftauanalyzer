@@ -42,7 +42,7 @@ void DumpRecoPFCandidates::analyze(const edm::Event& evt, const edm::EventSetup&
       else if ( pfCand.particleId() == reco::PFCandidate::gamma ) type_string = "PFPhoton";
       else if ( pfCand.particleId() == reco::PFCandidate::mu    ) type_string = "PFMuon";
       else                                                        type_string = "N/A";
-      std::cout << "PFCandidate #" << idxPFCand << " (type = " << type_string << "):" 
+      std::cout << "PFCandidate #" << idxPFCand << " (type = " << type_string << ", pdgId = " << pfCand.pdgId() << "):" 
 	        << " pT = " << pfCand.pt() << ", eta = " << pfCand.eta() << ", phi = " << pfCand.phi() << std::endl;
       std::cout << " vertex: x = " << pfCand.vertex().x() << ", y = " << pfCand.vertex().y() << ", z = " << pfCand.vertex().z() << std::endl;
       if ( pfCand.bestTrack() )
