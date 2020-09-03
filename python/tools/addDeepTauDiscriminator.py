@@ -116,10 +116,10 @@ def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertic
     from PhysicsTools.PatAlgos.producersLayer1.tauProducer_cfi import singleID, containerID
     singleID(module_patTaus.tauIDSources, 'hlt%sDiscriminationByDecayModeFinding%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "decayModeFinding")
     singleID(module_patTaus.tauIDSources, 'hlt%sDiscriminationByDecayModeFindingNewDMs%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "decayModeFindingNewDMs")
-    singleID(module_patTaus.tauIDSources, 'hltSelected%sChargedIsoPtSum%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "chargedIsoPtSumHGCalFix")
-    singleID(module_patTaus.tauIDSources, 'hltSelected%sNeutralIsoPtSum%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "neutralIsoPtSumHGCalFix")
-    singleID(module_patTaus.tauIDSources, 'hltSelected%sChargedIsoPtSumdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "chargedIsoPtSumdR03HGCalFix")
-    singleID(module_patTaus.tauIDSources, 'hltSelected%sNeutralIsoPtSumdR03%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "neutralIsoPtSumdR03HGCalFix")
+    singleID(module_patTaus.tauIDSources, 'hltSelected%sChargedIsoPtSumHGCalFix%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "chargedIsoPtSumHGCalFix")
+    singleID(module_patTaus.tauIDSources, 'hltSelected%sNeutralIsoPtSumHGCalFix%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "neutralIsoPtSumHGCalFix")
+    singleID(module_patTaus.tauIDSources, 'hltSelected%sChargedIsoPtSumdR03HGCalFix%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "chargedIsoPtSumdR03HGCalFix")
+    singleID(module_patTaus.tauIDSources, 'hltSelected%sNeutralIsoPtSumdR03HGCalFix%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "neutralIsoPtSumdR03HGCalFix")
     containerID(module_patTaus.tauIDSources, 'hlt%sBasicDiscriminators%s' % (hlt_pfTauLabel, hlt_pfTauSuffix), "IDdefinitions", [
       [ "chargedIsoPtSum", "ChargedIsoPtSum" ],
       [ "neutralIsoPtSum", "NeutralIsoPtSum" ],
