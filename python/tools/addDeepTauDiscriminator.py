@@ -11,7 +11,7 @@ import re
 #     with minor modifications
 #----------------------------------------------------------------------------------------------------
 
-DeepTau_version = "2020Aug13_training_v2"
+DeepTau_version = "2020Sep01wHGCalFix_training_v1"
 
 def addDeepTauDiscriminator(process, hlt_srcPFTaus, hlt_srcPFJets, hlt_srcVertices, hlt_pfTauLabel, hlt_pfTauSuffix, deepTauSequenceName = "deepTauSequence"):
 
