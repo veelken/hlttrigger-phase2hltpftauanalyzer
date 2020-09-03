@@ -36,7 +36,7 @@ def addGenPtHatSequence(process, hlt_srcVertices, hlt_isolation_maxDeltaZOptions
         module_hltPFTaus = getattr(process, moduleName_hltPFTaus)
         process.analysisSequence += module_hltPFTaus
 
-    moduleName_hltPFTauChargedIsoPtSum = "hltSelectedHpsPFTauChargedIsoPtSum%s" % suffix
+    moduleName_hltPFTauChargedIsoPtSum = "hltSelectedHpsPFTauChargedIsoPtSumHGCalFix%s" % suffix
     if hasattr(process, moduleName_hltPFTauChargedIsoPtSum):
         module_hltPFTauChargedIsoPtSum = getattr(process, moduleName_hltPFTauChargedIsoPtSum)
         process.analysisSequence += module_hltPFTauChargedIsoPtSum
@@ -48,8 +48,10 @@ def addGenPtHatSequence(process, hlt_srcVertices, hlt_isolation_maxDeltaZOptions
       max_pt = cms.double(-1.),
       min_absEta = cms.double(-1.),
       max_absEta = cms.double(2.4),
+      decayModes = cms.vint32(0, 1, 2, 10, 11),
       min_leadTrackPt = cms.double(5.),
       max_leadTrackPt = cms.double(-1.),
+      tauID_relChargedIso = cms.string("chargedIsoPtSumHGCalFix"),
       min_relChargedIso = cms.double(-1.),
       max_relChargedIso = cms.double(0.05),
       min_absChargedIso = cms.double(-1.),

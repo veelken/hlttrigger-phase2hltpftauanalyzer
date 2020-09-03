@@ -123,7 +123,7 @@ for hlt_algorithm in hlt_algorithms:
       moduleName_PFTauAnalyzerBackground_recoSumChargedIso = "analyze%ss%sRecoSumChargedIso%s" % (hlt_pfTauLabel, suffix, evtWeight)
       module_PFTauAnalyzerBackground_recoSumChargedIso = cms.EDAnalyzer("RecoPFTauAnalyzerBackground",
         srcPFTaus = cms.InputTag('hltSelected%ss%s' % (hlt_pfTauLabel, suffix)),
-        srcPFTauDiscriminator = cms.InputTag('hltSelected%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix)),
+        srcPFTauDiscriminator = cms.InputTag('hltSelected%sChargedIsoPtSumHGCalFix%s' % (hlt_pfTauLabel, suffix)),
         min_pt = cms.double(20.),
         max_pt = cms.double(-1.),
         min_absEta = cms.vdouble( -1.,   1.4,   1.4, -1.,    -1.  ),
@@ -145,7 +145,7 @@ for hlt_algorithm in hlt_algorithms:
       moduleName_PFTauAnalyzerBackground_patSumChargedIso = "analyze%ss%sPatSumChargedIso%s" % (hlt_pfTauLabel, suffix, evtWeight)
       module_PFTauAnalyzerBackground_patSumChargedIso = cms.EDAnalyzer("PATTauAnalyzerBackground",
         srcPFTaus = cms.InputTag('hltUpdatedPat%ss%s' % (hlt_pfTauLabel, suffix)),
-        pfTauDiscriminator = cms.string('chargedIsoPtSum'),
+        pfTauDiscriminator = cms.string('chargedIsoPtSumHGCalFix'),
         min_pt = cms.double(20.),
         max_pt = cms.double(-1.),
         min_absEta = cms.vdouble( -1.,   1.4,   1.4, -1.,    -1.  ),
@@ -180,7 +180,7 @@ for hlt_algorithm in hlt_algorithms:
     moduleName_PFTauPairProducer = "hlt%sPairs%s" % (hlt_pfTauLabel, suffix)
     module_PFTauPairProducer = PFTauPairs.clone(
       srcPFTaus = cms.InputTag('hltSelected%ss%s' % (hlt_pfTauLabel, suffix)),
-      srcPFTauSumChargedIso = cms.InputTag('hltSelected%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix))
+      srcPFTauSumChargedIso = cms.InputTag('hltSelected%sChargedIsoPtSumHGCalFix%s' % (hlt_pfTauLabel, suffix))
     )
     setattr(process, moduleName_PFTauPairProducer, module_PFTauPairProducer)
     process.analysisSequence += module_PFTauPairProducer
@@ -198,8 +198,8 @@ for hlt_algorithm in hlt_algorithms:
     moduleName_PFTauIsolationAnalyzer = "analyze%sIsolation%s" % (hlt_pfTauLabel, suffix)
     module_PFTauIsolationAnalyzer = cms.EDAnalyzer("RecoPFTauIsolationAnalyzer",
       srcPFTaus = cms.InputTag('hltSelected%ss%s' % (hlt_pfTauLabel, suffix)),
-      srcPFTauSumChargedIso = cms.InputTag('hltSelected%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix)),
-      srcPFTauSumNeutralIso = cms.InputTag('hltSelected%sNeutralIsoPtSum%s' % (hlt_pfTauLabel, suffix)),
+      srcPFTauSumChargedIso = cms.InputTag('hltSelected%sChargedIsoPtSumHGCalFix%s' % (hlt_pfTauLabel, suffix)),
+      srcPFTauSumNeutralIso = cms.InputTag('hltSelected%sNeutralIsoPtSumHGCalFix%s' % (hlt_pfTauLabel, suffix)),
       srcGenTaus = cms.InputTag(''),
       dRmatch = cms.double(0.3),                                                            
       srcRho = cms.InputTag('hltKT6PFJets:rho'),

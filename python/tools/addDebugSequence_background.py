@@ -19,10 +19,10 @@ def addDebugSequenceBackground(process, hlt_srcVertices, hlt_isolation_maxDeltaZ
     suffix = get_suffix(hlt_srcVertices, hlt_isolation_maxDeltaZOption, hlt_isolation_minTrackHits)
 
     src_hltPFTaus = "hltSelectedHpsPFTaus%s" % suffix
-    src_hltPFTauChargedIsoPtSum = "hltSelectedHpsPFTauChargedIsoPtSum%s" % suffix
+    src_hltPFTauChargedIsoPtSum = "hltSelectedHpsPFTauChargedIsoPtSumHGCalFix%s" % suffix
  
     src_hltPFTaus_matchedToL1 = "hltSelectedHpsPFTaus%sMatchedToL1" % suffix
-    src_hltPFTauChargedIsoPtSum_matchedToL1 = "hltSelectedHpsPFTauChargedIsoPtSum%sMatchedToL1" % suffix
+    src_hltPFTauChargedIsoPtSum_matchedToL1 = "hltSelectedHpsPFTauChargedIsoPtSumHGCalFix%sMatchedToL1" % suffix
 
     process.hltHpsPFTausPassingPtGt125 = cms.EDProducer("MyPFTauSelector",
       src = cms.InputTag(src_hltPFTaus),
@@ -31,10 +31,12 @@ def addDebugSequenceBackground(process, hlt_srcVertices, hlt_isolation_maxDeltaZ
       max_pt = cms.double(-1.),
       min_absEta = cms.double(-1.),
       max_absEta = cms.double(2.4),
+      decayModes = cms.vint32(0, 1, 2, 10, 11),
       min_leadTrackPt = cms.double(5.),
       max_leadTrackPt = cms.double(-1.),
+      tauID_relChargedIso = cms.string("chargedIsoPtSumHGCalFix"),
       min_relChargedIso = cms.double(-1.),
-      max_relChargedIso = cms.double(0.05),
+      max_relChargedIso = cms.double(0.05),    
       min_absChargedIso = cms.double(-1.),
       max_absChargedIso = cms.double(-1.),
       invert = cms.bool(False)
