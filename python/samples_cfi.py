@@ -3,8 +3,8 @@ signal_samples = {
   'qqH_htt' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx_wDeepTau3/',
-        'numEvents' : 300000
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx_wDeepTau4/',
+        'numEvents' : 299716
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOnlineVtx_wL1_2FM/',
@@ -23,8 +23,8 @@ background_samples = {
   'minbias' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau3/',
-        'numEvents' : 999469
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau4/',
+        'numEvents' : 995044
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOnlineVtx_wL1/',
@@ -70,7 +70,7 @@ background_samples = {
   'qcd_pt30to50' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau4/',
         'numEvents' : 498662
       },
       'hltPhase2PixelVertices' : {
@@ -80,13 +80,14 @@ background_samples = {
     },
     'numJobs' : 10, 
     'crossSection' : 118400000.0/200,
-    'kFactor_pT_hat' : 1.15,
+    ##'kFactor_pT_hat' : 1.15,
+    'kFactor_pT_hat' : 1.0,
     'process' : "QCD"
   },
   'qcd_pt50to80' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau4/',
         'numEvents' : 300000
       },
       'hltPhase2PixelVertices' : {
@@ -96,13 +97,14 @@ background_samples = {
     },
     'numJobs' : 10, 
     'crossSection' : 17650000.0/200,
-    'kFactor_pT_hat' : 1.15,
+    ##'kFactor_pT_hat' : 1.15,
+    'kFactor_pT_hat' : 1.0,
     'process' : "QCD"
   },
   'qcd_pt80to120' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau4/',
         'numEvents' : 100000
       },
       'hltPhase2PixelVertices' : {
@@ -112,13 +114,14 @@ background_samples = {
     },
     'numJobs' : 10, 
     'crossSection' : 2671000.0/200,
-    'kFactor_pT_hat' : 1.15,
+    ##'kFactor_pT_hat' : 1.15,
+    'kFactor_pT_hat' : 1.0,
     'process' : "QCD"
   },
   'qcd_pt120to170' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau4/',
         'numEvents' : 50000
       },
       'hltPhase2PixelVertices' : {
@@ -128,13 +131,14 @@ background_samples = {
     },
     'numJobs' : 10, 
     'crossSection' : 469700.0/200,
-    'kFactor_pT_hat' : 1.10,
+    ##'kFactor_pT_hat' : 1.10,
+    'kFactor_pT_hat' : 1.0,
     'process' : "QCD"
   },
   'qcd_pt170to300' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau4/',
         'numEvents' : 50000
       },
       'hltPhase2PixelVertices' : {
@@ -144,13 +148,14 @@ background_samples = {
     },
     'numJobs' : 10, 
     'crossSection' : 121700.0/200,
-    'kFactor_pT_hat' : 1.10,
+    ##'kFactor_pT_hat' : 1.10,
+    'kFactor_pT_hat' : 1.0,
     'process' : "QCD"
   },  
   'dy_mass10to50' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOfflineVtx_wDeepTau3/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOfflineVtx_wDeepTau4/',
         'numEvents' : 96923
       },
       'hltPhase2PixelVertices' : {
@@ -165,7 +170,7 @@ background_samples = {
   'dy_massGt50' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau3/',
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau4/',
         'numEvents' : 10000
       },
       'hltPhase2PixelVertices' : {
@@ -180,8 +185,8 @@ background_samples = {
   'w' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8_wOfflineVtx_wDeepTau3/',
-        'numEvents' : 85778
+        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8_wOfflineVtx_wDeepTau4/',
+        'numEvents' : 85397
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
