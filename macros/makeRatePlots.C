@@ -257,7 +257,7 @@ void makeRatePlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/rate/2020Aug24v2/";
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/rate/2020Sep03/";
 
   std::vector<std::string> processes;
   processes.push_back("minbias");
