@@ -875,17 +875,14 @@ void makeEfficiencyPlots()
                   } // hlt_isolationWP
                 } // hlt_min_leadTrackPt
               } // l1MatchingOption
-std::cout << "break-point 1 reached" << std::endl;
+
               // CV: make final plot that shows trigger efficiency in steps
               for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
 	            l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
-std::cout << "break-point 2 reached" << std::endl;
                 for ( std::vector<std::string>::const_iterator hlt_min_leadTrackPt = hlt_min_leadTrackPtValues.begin();
                       hlt_min_leadTrackPt != hlt_min_leadTrackPtValues.end(); ++hlt_min_leadTrackPt ) {
-std::cout << "break-point 3 reached" << std::endl;
     	          for ( std::vector<std::string>::const_iterator hlt_isolationWP = hlt_isolationWPs[*hlt_tauIdOption].begin();
 	                hlt_isolationWP != hlt_isolationWPs[*hlt_tauIdOption].end(); ++hlt_isolationWP ) {  
-std::cout << "break-point 4 reached" << std::endl;
                     std::vector<TGraph*> graphs;
                     std::vector<std::string> legendEntries;
                     if ( (*l1MatchingOption) == "MatchedToL1" ) 
@@ -939,7 +936,6 @@ std::cout << "break-point 4 reached" << std::endl;
                     std::string outputFileName4 = Form("makeEfficiencyPlots_%s%s%s_%s_%s_%s_%s_final.png", 
                       hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), 
                       hlt_tauIdOption->data(), observable->data(), absEtaRange->data(), hlt_ptThreshold->data());
-std::cout << "graphs[0] = " << graphs[0] << std::endl;
 	            showGraphs(1150, 850,
                                graphs[0], legendEntries[0],
                                graphs[1], legendEntries[1],
