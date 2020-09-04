@@ -213,6 +213,7 @@ void showGraphs(double canvasSizeX, double canvasSizeY,
 
   if ( !graph1 ) {
     std::cerr << "<showGraphs>: graph1 = NULL --> skipping !!" << std::endl;
+    delete canvas;
     return;
   }
 
@@ -891,18 +892,18 @@ void makeEfficiencyPlots()
                       legendEntries.push_back("L1");
                     }
                     // CV: track finding
-                    graphs.push_back(graphs_hlt_efficiency_vs_isolationWPs[*hlt_pfAlgo][*hlt_vertexOption][*hlt_tauIdOption][*l1MatchingOption]
+                    graphs.push_back(graphs_hlt_efficiency_vs_isolationWPs[*hlt_pfAlgo][*hlt_vertexOption]["recoSumChargedIso"][*l1MatchingOption]
                       [*observable][*absEtaRange][*hlt_ptThreshold]["leadTrackPtGt1"]["noIsolation"]);
                     legendEntries.push_back("Track finding");
                     // CV: lead. track pT > 5 GeV
-                    graphs.push_back(graphs_hlt_efficiency_vs_isolationWPs[*hlt_pfAlgo][*hlt_vertexOption][*hlt_tauIdOption][*l1MatchingOption]
+                    graphs.push_back(graphs_hlt_efficiency_vs_isolationWPs[*hlt_pfAlgo][*hlt_vertexOption]["recoSumChargedIso"][*l1MatchingOption]
                       [*observable][*absEtaRange][*hlt_ptThreshold]["leadTrackPtGt5"]["noIsolation"]);
                     legendEntries.push_back(legendEntries_vs_leadTrackPt["leadTrackPtGt5"]);
                     if ( (*hlt_tauIdOption) == "recoSumChargedIso" || (*hlt_tauIdOption) == "patSumChargedIso" ) 
                     {
                       // CV: charged isolation < 0.05 * tau pT
                       graphs.push_back(graphs_hlt_efficiency_vs_isolationWPs[*hlt_pfAlgo][*hlt_vertexOption][*hlt_tauIdOption][*l1MatchingOption]
-                        [*observable][*absEtaRange][*hlt_ptThreshold]["leadTrackPtGt5"]["relChargedIsoLt0p05"]);
+                        [*observable][*absEtaRange][*hlt_ptThreshold]["leadTrackPtGt5"]["relDiscriminatorLt0p050"]);
                       legendEntries.push_back(legendEntries_vs_isolationWPs[*hlt_tauIdOption]["relDiscriminatorLt0p050"]);
                     }
                     else if ( (*hlt_tauIdOption) == "patDeepTau" )
@@ -917,10 +918,10 @@ void makeEfficiencyPlots()
                     const std::string& legendEntry4 = ( legendEntries.size() >= 4 ) ? legendEntries[3] : "";
   	            bool addFitFunctions4 = false;
                     double legendPosX = 0.57;
-	            if ( (*observable) == "pt" ) 
-	            {
-	              addFitFunctions4 = true;
-	            }
+	            //if ( (*observable) == "pt" ) 
+	            //{
+	            //  addFitFunctions4 = true;
+	            //}
                     if ( (*observable) == "eta" ) 
 	            {
                       legendPosX = 0.36;
