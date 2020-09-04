@@ -455,7 +455,7 @@ void makeEfficiencyPlots()
 //--- suppress the output canvas 
   gROOT->SetBatch(true);
 
-  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/efficiency/2020Aug24v2/";
+  std::string inputFilePath = "/hdfs/local/veelken/Phase2HLT/efficiency/2020Sep03/";
   std::string inputFileName = "hadd_qqH_htt_all.root";
   std::string inputFileName_full = inputFilePath;
   if ( inputFileName_full.find_last_of("/") != (inputFileName_full.size() - 1) ) inputFileName_full.append("/");
