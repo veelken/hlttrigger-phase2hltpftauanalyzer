@@ -26,7 +26,7 @@ l1_useStrips = True
 ##cfgFileName_original = "analyzePFTaus_background_cfg.py"
 cfgFileName_original = "analyzePFTaus_and_L1HPSPFTaus_background_cfg.py"
 
-version = "2020Aug24v2"
+version = "2020Sep03"
 
 configDir  = os.path.join("/home",       getpass.getuser(), "Phase2HLT/rate", version)
 outputDir  = os.path.join("/hdfs/local", getpass.getuser(), "Phase2HLT/rate", version)

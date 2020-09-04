@@ -158,8 +158,8 @@ for hlt_algorithm in hlt_algorithms:
       #----------------------------------------------------------------------------
 
       hlt_srcPFTaus = 'hltSelected%ss%s' % (hlt_pfTauLabel, suffix)
-      hlt_srcPFTauSumChargedIso = 'hltSelected%sChargedIsoPtSum%s' % (hlt_pfTauLabel, suffix)
-      hlt_srcPFTauSumNeutralIso = 'hltSelected%sNeutralIsoPtSum%s' % (hlt_pfTauLabel, suffix)
+      hlt_srcPFTauSumChargedIso = 'hltSelected%sChargedIsoPtSumHGCalFix%s' % (hlt_pfTauLabel, suffix)
+      hlt_srcPFTauSumNeutralIso = 'hltSelected%sNeutralIsoPtSumHGCalFix%s' % (hlt_pfTauLabel, suffix)
       hlt_srcUpdatedPatTaus = 'hltUpdatedPat%ss%s' % (hlt_pfTauLabel, suffix)
       if hlt_matchToL1:
         suffix += "MatchedToL1"
@@ -194,11 +194,11 @@ for hlt_algorithm in hlt_algorithms:
         hlt_srcPFTaus = moduleName_hltPFTausMatchedToL1
 
         from HLTrigger.Phase2HLTPFTaus.PFRecoTauChargedIsoPtSum_cfi import hltPFTauChargedIsoPtSum
-        moduleName_hltPFTauChargedIsoPtSum = "%sMatchedToL1" % hlt_srcPFTauSumChargedIso
-        module_hltPFTauChargedIsoPtSum = hltPFTauChargedIsoPtSum.clone()
-        module_hltPFTauChargedIsoPtSum.PFTauProducer = cms.InputTag(hlt_srcPFTaus)
-        module_hltPFTauChargedIsoPtSum.particleFlowSrc = cms.InputTag('particleFlowTmp')
-        module_hltPFTauChargedIsoPtSum.vertexSrc = cms.InputTag(hlt_srcVertices)
+        moduleName_hltPFTauChargedIsoPtSumHGCalFix = "%sMatchedToL1" % hlt_srcPFTauSumChargedIso
+        module_hltPFTauChargedIsoPtSumHGCalFix = hltPFTauChargedIsoPtSum.clone()
+        module_hltPFTauChargedIsoPtSumHGCalFix.PFTauProducer = cms.InputTag(hlt_srcPFTaus)
+        module_hltPFTauChargedIsoPtSumHGCalFix.particleFlowSrc = cms.InputTag('particleFlowTmp')
+        module_hltPFTauChargedIsoPtSumHGCalFix.vertexSrc = cms.InputTag(hlt_srcVertices)
         hlt_isolation_maxDeltaZ            = None
         hlt_isolation_maxDeltaZToLeadTrack = None
         if hlt_isolation_maxDeltaZOption == "primaryVertex":
@@ -209,23 +209,23 @@ for hlt_algorithm in hlt_algorithms:
           hlt_isolation_maxDeltaZToLeadTrack =  0.15 # value optimized for offline tau reconstruction at higher pileup expected during LHC Phase-2
         else:
           raise ValueError("Invalid parameter hlt_isolation_maxDeltaZOption = '%s' !!" % hlt_isolation_maxDeltaZOption)
-        module_hltPFTauChargedIsoPtSum.qualityCuts.isolationQualityCuts.maxDeltaZ = cms.double(hlt_isolation_maxDeltaZ)
-        module_hltPFTauChargedIsoPtSum.qualityCuts.isolationQualityCuts.maxDeltaZToLeadTrack = cms.double(hlt_isolation_maxDeltaZToLeadTrack)
-        module_hltPFTauChargedIsoPtSum.qualityCuts.primaryVertexSrc = cms.InputTag(hlt_srcVertices)
-        module_hltPFTauChargedIsoPtSum.qualityCuts.isolationQualityCuts.minTrackHits = cms.uint32(hlt_isolation_minTrackHits)
-        setattr(process, moduleName_hltPFTauChargedIsoPtSum, module_hltPFTauChargedIsoPtSum)
-        process.analysisSequence += module_hltPFTauChargedIsoPtSum
-        hlt_srcPFTauSumChargedIso = moduleName_hltPFTauChargedIsoPtSum
+        module_hltPFTauChargedIsoPtSumHGCalFix.qualityCuts.isolationQualityCuts.maxDeltaZ = cms.double(hlt_isolation_maxDeltaZ)
+        module_hltPFTauChargedIsoPtSumHGCalFix.qualityCuts.isolationQualityCuts.maxDeltaZToLeadTrack = cms.double(hlt_isolation_maxDeltaZToLeadTrack)
+        module_hltPFTauChargedIsoPtSumHGCalFix.qualityCuts.primaryVertexSrc = cms.InputTag(hlt_srcVertices)
+        module_hltPFTauChargedIsoPtSumHGCalFix.qualityCuts.isolationQualityCuts.minTrackHits = cms.uint32(hlt_isolation_minTrackHits)
+        setattr(process, moduleName_hltPFTauChargedIsoPtSumHGCalFix, module_hltPFTauChargedIsoPtSumHGCalFix)
+        process.analysisSequence += module_hltPFTauChargedIsoPtSumHGCalFix
+        hlt_srcPFTauSumChargedIso = moduleName_hltPFTauChargedIsoPtSumHGCalFix
 
-        moduleName_hltPFTauNeutralIsoPtSum = "%sMatchedToL1" % hlt_srcPFTauSumNeutralIso
-        module_hltPFTauNeutralIsoPtSum = module_hltPFTauChargedIsoPtSum.clone(
+        moduleName_hltPFTauNeutralIsoPtSumHGCalFix = "%sMatchedToL1" % hlt_srcPFTauSumNeutralIso
+        module_hltPFTauNeutralIsoPtSumHGCalFix = module_hltPFTauChargedIsoPtSumHGCalFix.clone(
           ApplyDiscriminationByTrackerIsolation = cms.bool(False),
           ApplyDiscriminationByECALIsolation = cms.bool(True),
           WeightECALIsolation = cms.double(1.)
         )
-        setattr(process, moduleName_hltPFTauNeutralIsoPtSum, module_hltPFTauNeutralIsoPtSum)
-        process.analysisSequence += module_hltPFTauNeutralIsoPtSum
-        hlt_srcPFTauSumNeutralIso = moduleName_hltPFTauNeutralIsoPtSum
+        setattr(process, moduleName_hltPFTauNeutralIsoPtSumHGCalFix, module_hltPFTauNeutralIsoPtSumHGCalFix)
+        process.analysisSequence += module_hltPFTauNeutralIsoPtSumHGCalFix
+        hlt_srcPFTauSumNeutralIso = moduleName_hltPFTauNeutralIsoPtSumHGCalFix
 
         moduleName_hltUpdatedPatTausMatchedToL1 = "%sMatchedToL1" % hlt_srcUpdatedPatTaus
         module_hltUpdatedPatTausMatchedToL1 = cms.EDFilter("PATTauAntiOverlapSelector",
@@ -273,7 +273,7 @@ for hlt_algorithm in hlt_algorithms:
         moduleName_PFTauAnalyzerBackground_patSumChargedIso = "analyze%ss%sPatSumChargedIso%s" % (hlt_pfTauLabel, suffix, evtWeight)
         module_PFTauAnalyzerBackground_patSumChargedIso = cms.EDAnalyzer("PATTauAnalyzerBackground",
           srcPFTaus = cms.InputTag(hlt_srcUpdatedPatTaus),
-          pfTauDiscriminator = cms.string('chargedIsoPtSum'),
+          pfTauDiscriminator = cms.string('chargedIsoPtSumHGCalFix'),
           min_pt = cms.double(20.),
           max_pt = cms.double(-1.),
           min_absEta = cms.vdouble( -1.,   1.4,   1.4, -1.,    -1.  ),
