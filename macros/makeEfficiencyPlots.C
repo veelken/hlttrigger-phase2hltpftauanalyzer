@@ -524,7 +524,7 @@ void makeEfficiencyPlots()
 
   std::vector<std::string> l1MatchingOptions;
   l1MatchingOptions.push_back("");            // CV: no matching of HLT taus to L1 taus
-  //l1MatchingOptions.push_back("MatchedToL1"); 
+  l1MatchingOptions.push_back("MatchedToL1"); 
 
   std::vector<std::string> observables;
   observables.push_back("pt");
@@ -557,8 +557,8 @@ void makeEfficiencyPlots()
   //hlt_ptThresholds.push_back("pt_numeratorGt50");
 
   std::vector<std::string> hlt_min_leadTrackPtValues;
-  //hlt_min_leadTrackPtValues.push_back("leadTrackPtGt1");
-  //hlt_min_leadTrackPtValues.push_back("leadTrackPtGt2");
+  hlt_min_leadTrackPtValues.push_back("leadTrackPtGt1");
+  hlt_min_leadTrackPtValues.push_back("leadTrackPtGt2");
   hlt_min_leadTrackPtValues.push_back("leadTrackPtGt5");
 
   std::map<std::string, std::vector<std::string>> hlt_isolationWPs; // key = hlt_tauIdOption
@@ -806,7 +806,7 @@ void makeEfficiencyPlots()
 		             outputFileName1);
                 } // hlt_min_leadTrackPt
               } // l1MatchingOption
-/*
+
               for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
 	            l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
                 for ( std::vector<std::string>::const_iterator hlt_isolationWP = hlt_isolationWPs[*hlt_tauIdOption].begin();
@@ -875,14 +875,17 @@ void makeEfficiencyPlots()
                   } // hlt_isolationWP
                 } // hlt_min_leadTrackPt
               } // l1MatchingOption
-
+std::cout << "break-point 1 reached" << std::endl;
               // CV: make final plot that shows trigger efficiency in steps
               for ( std::vector<std::string>::const_iterator l1MatchingOption = l1MatchingOptions.begin();
 	            l1MatchingOption != l1MatchingOptions.end(); ++l1MatchingOption ) {
+std::cout << "break-point 2 reached" << std::endl;
                 for ( std::vector<std::string>::const_iterator hlt_min_leadTrackPt = hlt_min_leadTrackPtValues.begin();
                       hlt_min_leadTrackPt != hlt_min_leadTrackPtValues.end(); ++hlt_min_leadTrackPt ) {
+std::cout << "break-point 3 reached" << std::endl;
     	          for ( std::vector<std::string>::const_iterator hlt_isolationWP = hlt_isolationWPs[*hlt_tauIdOption].begin();
 	                hlt_isolationWP != hlt_isolationWPs[*hlt_tauIdOption].end(); ++hlt_isolationWP ) {  
+std::cout << "break-point 4 reached" << std::endl;
                     std::vector<TGraph*> graphs;
                     std::vector<std::string> legendEntries;
                     if ( (*l1MatchingOption) == "MatchedToL1" ) 
@@ -936,6 +939,7 @@ void makeEfficiencyPlots()
                     std::string outputFileName4 = Form("makeEfficiencyPlots_%s%s%s_%s_%s_%s_%s_final.png", 
                       hlt_pfAlgo->data(), hlt_vertexOption->data(), l1MatchingOption->data(), 
                       hlt_tauIdOption->data(), observable->data(), absEtaRange->data(), hlt_ptThreshold->data());
+std::cout << "graphs[0] = " << graphs[0] << std::endl;
 	            showGraphs(1150, 850,
                                graphs[0], legendEntries[0],
                                graphs[1], legendEntries[1],
@@ -954,7 +958,6 @@ void makeEfficiencyPlots()
 	          } // hlt_isolationWP
   	        } // hlt_min_leadTrackPt
               } // l1MatchingOption
- */
             } // hlt_ptThreshold
           } // absEtaRange
         } // observable
