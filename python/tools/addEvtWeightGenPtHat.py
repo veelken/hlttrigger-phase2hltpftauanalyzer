@@ -1,8 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-from HLTrigger.TallinnHLTPFTauAnalyzer.samples_cfi import background_samples
-
-def addEvtWeightGenPtHat(process, hlt_srcVertices):
+def addEvtWeightGenPtHat(process, hlt_srcVertices, samples_cfi = "HLTrigger/TallinnHLTPFTauAnalyzer/python/samples_cfi.py"):
 
     process.stitchingWeight = cms.EDProducer("EvtWeightProducerGenPtHatStitching",
       src_genEventInfo = cms.InputTag('generator'),
@@ -11,6 +9,14 @@ def addEvtWeightGenPtHat(process, hlt_srcVertices):
       pT_hat_bins = cms.vdouble(0., 30., 50., 80., 120., 170., 300.),
       bxFrequency = cms.double(2.8e+7) # 28 MHz bunch-crossing frequency
     )
+
+    background_samples = None
+    if samples_cfi == "HLTrigger/TallinnHLTPFTauAnalyzer/python/samples_cfi.py":
+        from HLTrigger.TallinnHLTPFTauAnalyzer.samples_cfi import background_samples
+    elif samples_cfi == "HLTrigger/mcStitchingPaper/python/samples_cfi.py":
+        from HLTrigger.mcStitchingPaper.samples_cfi import background_samples
+    else:
+        raise ValueError("Invalid parameter samples_cfi = '%s' !!" % samples_cfi)
 
     for sampleName, sample in background_samples.items(): 
         if sampleName in [ "minbias", "qcd_pt30to50", "qcd_pt50to80", "qcd_pt80to120", "qcd_pt120to170", "qcd_pt170to300" ]:
