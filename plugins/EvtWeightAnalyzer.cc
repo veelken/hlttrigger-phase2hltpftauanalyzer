@@ -13,6 +13,14 @@ EvtWeightAnalyzer::EvtWeightAnalyzer(const edm::ParameterSet& cfg)
   src_ = cfg.getParameter<edm::InputTag>("src");
   token_ = consumes<double>(src_);
 
+  numBins_evtWeight_ = cfg.getParameter<int>("numBins_evtWeight");
+  xMin_evtWeight_ = cfg.getParameter<double>("xMin_evtWeight");
+  xMax_evtWeight_ = cfg.getParameter<double>("xMax_evtWeight");
+
+  numBins_log10evtWeight_ = cfg.getParameter<int>("numBins_log10evtWeight");
+  xMin_log10evtWeight_ = cfg.getParameter<double>("xMin_log10evtWeight");
+  xMax_log10evtWeight_ = cfg.getParameter<double>("xMax_log10evtWeight");
+
   dqmDirectory_ = cfg.getParameter<std::string>("dqmDirectory");
 }
 
@@ -30,7 +38,11 @@ void EvtWeightAnalyzer::beginJob()
 
   dqmStore.setCurrentFolder(dqmDirectory_);
 
-  me_log10evtWeight_ = dqmStore.book1D("log10evtWeight", "log10evtWeight", 200, -15., +5.);
+  me_evtWeight_ = dqmStore.book1D("evtWeight", "evtWeight", numBins_evtWeight_, xMin_evtWeight_, xMax_evtWeight_);
+  histogram_evtWeight_ = me_evtWeight_->getTH1();
+  assert(histogram_evtWeight_);
+
+  me_log10evtWeight_ = dqmStore.book1D("log10evtWeight", "log10evtWeight", numBins_log10evtWeight_, xMin_log10evtWeight_, xMax_log10evtWeight_);
   histogram_log10evtWeight_ = me_log10evtWeight_->getTH1();
   assert(histogram_log10evtWeight_);
 }
@@ -40,8 +52,9 @@ void EvtWeightAnalyzer::analyze(const edm::Event& evt, const edm::EventSetup& es
   edm::Handle<double> evtWeight;
   evt.getByToken(token_, evtWeight);
 
-  double log10evtWeight = TMath::Log10(TMath::Max(1.e-37, *evtWeight));
+  fillWithOverFlow(histogram_evtWeight_, *evtWeight, 1.);
 
+  double log10evtWeight = TMath::Log10(TMath::Max(1.e-37, *evtWeight));
   fillWithOverFlow(histogram_log10evtWeight_, log10evtWeight, 1.);
 }
 

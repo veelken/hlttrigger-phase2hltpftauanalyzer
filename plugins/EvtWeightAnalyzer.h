@@ -33,7 +33,18 @@ class EvtWeightAnalyzer : public edm::EDAnalyzer
   edm::InputTag src_;
   edm::EDGetTokenT<double> token_;
 
+  int numBins_evtWeight_;
+  double xMin_evtWeight_;
+  double xMax_evtWeight_;
+
+  int numBins_log10evtWeight_;
+  double xMin_log10evtWeight_;
+  double xMax_log10evtWeight_;
+
   std::string dqmDirectory_;
+
+  MonitorElement* me_evtWeight_;
+  TH1* histogram_evtWeight_;
 
   MonitorElement* me_log10evtWeight_;
   TH1* histogram_log10evtWeight_;
