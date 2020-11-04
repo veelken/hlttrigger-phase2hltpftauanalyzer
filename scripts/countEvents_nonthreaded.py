@@ -7,17 +7,21 @@ from HLTrigger.TallinnHLTPFTauAnalyzer.tools.jobTools import getInputFileNames
 from HLTrigger.TallinnHLTPFTauAnalyzer.tools.safe_root import ROOT
 
 inputFilePaths = [
-  ##'/hdfs/cms/store/user/rdewanje/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/HLTConfig_VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5_wOfflineVtx_wDeepTau3/',
-  ##'/hdfs/cms/store/user/rdewanje/MinBias_TuneCP5_14TeV-pythia8/HLTConfig_MinBias_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau3/',
-  ##'/hdfs/cms/store/user/rdewanje/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_30to50_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
-  ##'/hdfs/cms/store/user/rdewanje/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_50to80_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
-  ##'/hdfs/cms/store/user/rdewanje/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_80to120_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
-  ##'/hdfs/cms/store/user/rdewanje/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_120to170_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
-  ##'/hdfs/cms/store/user/rdewanje/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_170to300_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
-  ##'/hdfs/cms/store/user/rdewanje/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/HLTConfig_QCD_Pt_300to470_TuneCP5_14TeV_pythia8_wOfflineVtx_wDeepTau3/',
-  '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOfflineVtx_wDeepTau3/',
-  '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOfflineVtx_wDeepTau3/',
-  '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8_wOfflineVtx_wDeepTau3/',
+  #'/hdfs/cms/store/user/sbhowmik/VBFHToTauTau_M125_14TeV_powheg_pythia8_correctedGridpack_tuneCP5/VBFHToTauTau_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  #'/hdfs/cms/store/user/sbhowmik/MinBias_TuneCP5_14TeV-pythia8/MinBias_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  #'/hdfs/cms/store/user/sbhowmik/QCD_Pt_30to50_TuneCP5_14TeV_pythia8/QCDPt30to50_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  #'/hdfs/cms/store/user/sbhowmik/QCD_Pt_50to80_TuneCP5_14TeV_pythia8/QCDPt50to80_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  #'/hdfs/cms/store/user/sbhowmik/QCD_Pt_80to120_TuneCP5_14TeV_pythia8/QCDPt80to120_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  #'/hdfs/cms/store/user/sbhowmik/QCD_Pt_120to170_TuneCP5_14TeV_pythia8/QCDPt120to170_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  #'/hdfs/cms/store/user/sbhowmik/QCD_Pt_170to300_TuneCP5_14TeV_pythia8/QCDPt170to300_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  #'/hdfs/cms/store/user/sbhowmik/QCD_Pt_300to470_TuneCP5_14TeV_pythia8/QCDPt300to470_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  #'/hdfs/cms/store/user/sbhowmik/QCD_Pt_470to600_TuneCP5_14TeV_pythia8/QCDPt470to600_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',   
+  #'/hdfs/cms/store/user/sbhowmik/QCD_Pt_600oInf_TuneCP5_14TeV_pythia8/QCDPt600toInf_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  '/hdfs/cms/store/user/sbhowmik/GluGluHToTauTau_M125_14TeV_powheg_pythia8_TuneCP5/GluGluHToTauTau_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  '/hdfs/cms/store/user/sbhowmik/DYToLL_M-50_TuneCP5_14TeV-pythia8/DYJetsToLL_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  '/hdfs/cms/store/user/sbhowmik/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/WJetsToLNu_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  '/hdfs/cms/store/user/sbhowmik/TTTo2L2Nu_TuneCP5_14TeV-powheg-pythia8/TTTo2L2Nu_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+  '/hdfs/cms/store/user/sbhowmik/TTToSemiLepton_TuneCP5_14TeV-powheg-pythia8/TTToSemiLepton_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
 ]
 
 events_treeName = 'Events'

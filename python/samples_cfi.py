@@ -13,6 +13,16 @@ signal_samples = {
     },
     'numJobs' : 10,
     'process' : "qqH_htt"
+  },
+  'ggH_htt' : {
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/sbhowmik/GluGluHToTauTau_M125_14TeV_powheg_pythia8_TuneCP5/GluGluHToTauTau_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+        'numEvents' : 90400
+      }
+    },
+    'numJobs' : 10,
+    'process' : "ggH_htt"
   }
 }
 
@@ -152,26 +162,11 @@ background_samples = {
     'kFactor_pT_hat' : 1.0,
     'process' : "QCD"
   },  
-  'dy_mass10to50' : {
-    'samples' : {
-      'offlinePrimaryVertices' : { 
-        'inputFilePath' : '',
-        'numEvents' : XXX,
-      },
-      'hltPhase2PixelVertices' : {
-        'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8/HLTConfig_DYJetsToLL_M-10to50_TuneCP5_14TeV-madgraphMLM-pythia8_wOnlineVtx_wL1/',
-        'numEvents' : 96923
-      }
-    },
-    'numJobs' : 10, 
-    'crossSection' : 16880.0,
-    'process' : "DY"
-  },
   'dy_massGt50' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '',
-        'numEvents' : XXX, 
+        'inputFilePath' : '/hdfs/cms/store/user/sbhowmik/DYToLL_M-50_TuneCP5_14TeV-pythia8/DYJetsToLL_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+        'numEvents' : 299300
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/DYToLL_M-50_TuneCP5_14TeV-pythia8/HLTConfig_DYToLL_M-50_TuneCP5_14TeV-pythia8_wOnlineVtx_wL1/',
@@ -185,8 +180,8 @@ background_samples = {
   'w' : {
     'samples' : {
       'offlinePrimaryVertices' : { 
-        'inputFilePath' : '',
-        'numEvents' : XXX,
+        'inputFilePath' : '/hdfs/cms/store/user/sbhowmik/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/WJetsToLNu_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+        'numEvents' : 85778
       },
       'hltPhase2PixelVertices' : {
         'inputFilePath' : '/hdfs/cms/store/user/rdewanje/WJetsToLNu_TuneCP5_14TeV-amcatnloFXFX-pythia8/HLTConfig_WJetsToLNu_TuneCP5_14TeV_pythia8_wOnlineVtx_wL1/',
@@ -196,5 +191,27 @@ background_samples = {
     'numJobs' : 10, 
     'crossSection' : 56990.0,
     'process' : "W"
+  },
+  'tt_dl' : {
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/sbhowmik/TTTo2L2Nu_TuneCP5_14TeV-powheg-pythia8/TTTo2L2Nu_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+        'numEvents' : 996922
+      }
+    },
+    'numJobs' : 10, 
+    'crossSection' : 104.6,
+    'process' : "TT"
+  },
+  'tt_sl' : {
+    'samples' : {
+      'offlinePrimaryVertices' : { 
+        'inputFilePath' : '/hdfs/cms/store/user/sbhowmik/TTToSemiLepton_TuneCP5_14TeV-powheg-pythia8/TTToSemiLepton_Phase2HLTTDRSummer20ReRECOMiniAOD_CMSSW_1113_20201009/',
+        'numEvents' : 299368
+      }
+    },
+    'numJobs' : 10, 
+    'crossSection' : 432.6,
+    'process' : "TT"
   }
 }

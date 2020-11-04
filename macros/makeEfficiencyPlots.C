@@ -534,9 +534,9 @@ void makeEfficiencyPlots()
   //observables.push_back("minDeltaR");
 
   std::vector<std::string> absEtaRanges;
-  //absEtaRanges.push_back("absEtaLt1p40");
+  absEtaRanges.push_back("absEtaLt1p40");
   //absEtaRanges.push_back("absEta1p40to2p17");
-  //absEtaRanges.push_back("absEta1p40to2p40");
+  absEtaRanges.push_back("absEta1p40to2p40");
   //absEtaRanges.push_back("absEtaLt2p17");
   absEtaRanges.push_back("absEtaLt2p40");
 

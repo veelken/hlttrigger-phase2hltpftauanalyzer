@@ -3,7 +3,8 @@ import os
 import re
 import subprocess
 
-inputFile_regex = r"step3_RAW2DIGI_RECO_[a-zA-Z0-9-_]+.root"
+##inputFile_regex = r"step3_RAW2DIGI_RECO_[a-zA-Z0-9-_]+.root"
+inputFile_regex = r"NTuple_produce_HLT_Taus_and_L1Taus_[a-zA-Z0-9-_]+.root"
 inputFile_matcher = re.compile(inputFile_regex)
 
 def getInputFileNames(inputFilePath):
